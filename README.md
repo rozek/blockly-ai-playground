@@ -14,6 +14,17 @@ By combining these two technologies, the "blockly-ai-agent" offers beginners and
 
 < (currently, this repository is just a placeholder used to ask for funding)
 
+## Prerequisites ##
+
+"blockly-ai-agent" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on ones computer) and, presumably, many others.
+
+As a consequence, you will need
+
+* the **URL of an API entry point** (either locally on your machine or on the internet) and
+* an **API Access Key** if you are using an official AI provider
+
+While you may use 
+
 ## License ##
 
 [MIT License](LICENSE.md)
