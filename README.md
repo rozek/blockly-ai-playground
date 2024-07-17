@@ -1,4 +1,4 @@
-# blockly-ai #
+# blockly-ai-agent #
 
 a workspace with custom blocks to create personal AI Agents with Blockly
 
