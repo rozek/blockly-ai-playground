@@ -25,7 +25,7 @@ As a consequence, you will need
 
 While you may already use large language models (LLMs) on their own, they can only show their true capabilities in combination with other tools - this is what makes "agents" so powerful.
 
-One of these tools is the web search. Since automating search engines is quite tedious, the "blockly-ai-agent" uses [SearXNG](https://docs.searxng.org/) for that purpose. Although there are several [public servers](https://searx.space/) which offer a web interface similar to other search engines, the [SearXNG API](https://docs.searxng.org/dev/search_api.html) is normally not publically available and you should run your own SearXNG instance instead (which does not have to be public but may remain private) - fortunately, installation is really simple if you use [Docker](https://www.docker.com/) for that purpose (which is free for personal use, choose "Docker Desktop" rather than the CLI version - it is much simpler to maintain)
+One of these tools is the web search. Since automating search engines is quite tedious, the "blockly-ai-agent" uses [SearXNG](https://docs.searxng.org/) for that purpose. Although there are several [public servers](https://searx.space/) which offer a web interface similar to other search engines, the [SearXNG API](https://docs.searxng.org/dev/search_api.html) is normally not publically available and you should run your own SearXNG instance instead (which does not have to be public but may remain private) - fortunately, installation is really simple if you use [Docker](https://www.docker.com/) (which is free for personal use, choose "Docker Desktop" rather than the CLI version - it is much simpler to maintain)
 
 Thus, if you want to use the built-in web search, you should install
 
