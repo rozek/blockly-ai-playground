@@ -16,14 +16,16 @@ By combining these two technologies, the "blockly-ai-agent" offers beginners and
 
 ## Prerequisites ##
 
-"blockly-ai-agent" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on ones computer) and, presumably, many others.
+"blockly-ai-agent" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on one's computer) and, presumably, many others.
 
 As a consequence, you will need
 
 * the **URL of an API entry point** (either locally on your machine or on the internet) and
 * an **API Access Key** if you are using an official AI provider
 
-While you may use 
+While you may already use large language models (LLMs) on their own, they can only show their true capabilities in combination with other tools - this is what makes "agents" so powerful.
+
+One of these tools is the web search. Since automating search engines is quite tedious, the "blockly-ai-agent" uses [SearXNG](https://docs.searxng.org/) for that purpose. Although there are several public servers which offer a web interface similar to other search engines, the SearXNG API is normally not publically available and you should run your own SearXNG instance insted - fortunately, installation is really simple if you use docker for that purpose
 
 ## License ##
 
