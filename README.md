@@ -2,7 +2,7 @@
 
 a workspace with custom blocks to create personal AI Agents with Blockly
 
-> (Work in progress, please stay tuned)
+> (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
 
 ## Overview ##
 
