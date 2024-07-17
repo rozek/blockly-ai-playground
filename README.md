@@ -12,8 +12,6 @@ AI agents are "cool" these days and can be found at many places - but for most o
 
 By combining these two technologies, the "blockly-ai-agent" offers beginners and casual programmers an easy way to play and experiment with their own AI agents!
 
-> (currently, this repository is just a placeholder used to ask for funding)
-
 ## Prerequisites ##
 
 "blockly-ai-agent" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on one's computer) and, presumably, many others.
