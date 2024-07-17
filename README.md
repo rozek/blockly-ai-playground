@@ -6,7 +6,7 @@ build your own AI agent using Blockly - even if you are a complete beginner!
 
 ## Overview ##
 
-AI agents are "cool" these days and used almost everywhere - but for most of us, they are basically "black boxes" which do not reveal how they work internally.
+AI agents are "cool" these days and can be found at many places - but for most of us, they are basically "black boxes" which do not reveal how they work internally.
 
 [Blockly](https://developers.google.com/blockly) is a visual programming environment developed by Google that allows users to create code using drag-and-drop "Lego"-like blocks. It is designed to simplify coding by abstracting away the syntax, making it accessible for beginners and educational purposes.
 
