@@ -1,6 +1,6 @@
 # blockly-ai #
 
-Blocks and Editor to create personal AI Agents with Blockly
+a workspace with custom blocks to create personal AI Agents with Blockly
 
 > (Work in progress, please stay tuned)
 
