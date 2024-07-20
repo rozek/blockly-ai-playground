@@ -448,55 +448,38 @@ PUX.Style = `  #PUX_1 { left:29px; top:33px; width:242px; height:230px; right:au
     border:solid 1px #000000; 
   }
 
-  #PUX_31 {
+  #PUX_30 {
     left:20px; top:19px; width:341px; height:242px; right:auto; bottom:auto; 
     line-height:1.4; 
   }
 
-  #PUX_24 {
+  #PUX_23 {
     left:11px; top:11px; width:auto; height:40px; right:10px; bottom:auto; 
     background-color:#f8f8f8; 
     border:dotted 1px #000000; 
   }
 
-  #PUX_25 {
+  #PUX_24 {
     left:0px; top:0px; width:90px; height:40px; right:auto; bottom:auto; 
     border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
   }
 
-  #PUX_26 {
+  #PUX_25 {
     left:8px; top:8px; width:56px; height:29px; right:auto; bottom:auto; 
     text-align:center; 
   }
 
-  #PUX_27 {
+  #PUX_26 {
     left:100px; top:0px; width:121px; height:40px; right:auto; bottom:auto; 
     border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
   }
 
-  #PUX_28 {
+  #PUX_27 {
     left:8px; top:7px; width:103px; height:29px; right:auto; bottom:auto; 
     text-align:center; 
   }
 
-  #PUX_29 { left:11px; top:50px; width:auto; height:auto; right:10px; bottom:12px }
-
-  #PUX_23 {
-    left:675px; top:14px; width:81px; height:31px; right:auto; bottom:auto; 
-    border-width:1px; border-color:#333333; 
-    border-radius:4px; 
-    padding:5px 5px 5px 16px;
-    color:#333333; 
-    text-align:center; 
-  }
-
-  #PUX_23:hover { background-color:#f2f2f2 }
-  #PUX_23:focus { background-color:#f2f2f2 }
-
-  #PUX_23:error {
-    background-color:#ffcaca; 
-    border-color:#cc0000; 
-  }
+  #PUX_28 { left:11px; top:50px; width:auto; height:auto; right:10px; bottom:12px }
 
 `;
 PUX.ScreenSet = {
@@ -531,20 +514,19 @@ PUX.ScreenSet = {
     'MainScreen': {
         Name: 'MainScreen', Id: 'PUX_22',
         Width: 768, Height: 1024,
-        packedGeometry: { "x": 20, "y": 14, "Width": 735, "Height": 246 },
+        packedGeometry: { "x": 20, "y": 19, "Width": 340, "Height": 241 },
         WidgetList: [
-            { "Type": "Container", "Name": "Content", "Classes": "Container", "x": 20, "Width": 341, "y": 19, "Height": 242, "Id": "PUX_31", WidgetList: [
-                    { "Type": "TabStrip", "Name": "TabStrip", "Classes": "TabStrip Container", "Anchoring": "n", "Id": "PUX_24", WidgetList: [
-                            { "Type": "Tab", "Name": "WorkspaceTab", "Classes": "Tab Container", "Id": "PUX_25", WidgetList: [
-                                    { "Type": "Label", "Classes": "Label", "Value": "Workspace", "Id": "PUX_26" },
+            { "Type": "Container", "Name": "Content", "Classes": "Container", "x": 20, "Width": 341, "y": 19, "Height": 242, "Id": "PUX_30", WidgetList: [
+                    { "Type": "TabStrip", "Name": "TabStrip", "Classes": "TabStrip Container", "Anchoring": "n", "Id": "PUX_23", WidgetList: [
+                            { "Type": "Tab", "Name": "WorkspaceTab", "Classes": "Tab Container", "Id": "PUX_24", WidgetList: [
+                                    { "Type": "Label", "Classes": "Label", "Value": "Workspace", "Id": "PUX_25" },
                                 ] },
-                            { "Type": "Tab", "Name": "InterfaceTab", "Classes": "Tab Container", "Id": "PUX_27", WidgetList: [
-                                    { "Type": "Label", "Classes": "Label", "Value": "User Interface", "Id": "PUX_28" },
+                            { "Type": "Tab", "Name": "InterfaceTab", "Classes": "Tab Container", "Id": "PUX_26", WidgetList: [
+                                    { "Type": "Label", "Classes": "Label", "Value": "User Interface", "Id": "PUX_27" },
                                 ] },
                         ] },
-                    { "Type": "Deck", "Name": "Deck", "Classes": "Deck empty Container", "Anchoring": "c", "Id": "PUX_29" },
+                    { "Type": "Deck", "Name": "Deck", "Classes": "Deck empty Container", "Anchoring": "c", "Id": "PUX_28" },
                 ] },
-            { "Type": "Text", "Classes": "", "Value": "Upload", "x": 675, "Width": 81, "y": 14, "Height": 31, "Id": "PUX_23" },
         ],
     },
 };
@@ -597,7 +579,7 @@ PUX.configure({
             DownloadButton: {
                 onClick: () => downloadWorkspace(),
             },
-            UploadButton: { /* nop */},
+            //          UploadButton: { /* nop */ },
             FileInput: {
                 Style: 'border:none',
                 Value: '',
