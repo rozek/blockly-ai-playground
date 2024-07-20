@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" charset="utf-8" style="width:100%">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+  <meta name="apple-mobile-web-app-capable"          content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="format-detection"                      content="telephone=no">
+
+  <style name="mobile-prologue">
+    html {
+      text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      -o-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    html, body {
+      width:99%; height:99%;
+    }
+
+    html { overflow:hidden scroll }
+  </style>
+
+  <style name="white-textured-background">
+    html, body {
+      background-color: white;
+      background-image: url(/common/BinaryTexture_white.jpg);
+      background-repeat:repeat;
+
+      font-family:'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size:14px; font-weight:400; color:black;
+      line-height:150%;
+    }
+
+    * {
+      -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box;
+    }
+  </style>
+
+  <script name="clear-console">
+    if (typeof console.clear === 'function') {
+      console.clear()
+    }
+  </script>
+
+  <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+  <script src="https://unpkg.com/blockly/msg/en.js"></script>
+  <script src="https://rozek.github.io/JS-Interpreter/acorn_interpreter.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "javascript-interface-library":"https://rozek.github.io/javascript-interface-library/dist/javascript-interface-library.esm.js",
+      "htm/preact":                  "https://rozek.github.io/htm/preact/standalone.module.js",
+      "hyperactiv":                  "https://rozek.github.io/hyperactiv/dist/index.mjs",
+      "protoux":                     "https://rozek.github.io/protoux/dist/protoux.modern.js"
+    }
+  }
+  </script>
+  <script name="download"    src="https://rozek.github.io/download/download.min.js"></script>
+  <script name="localforage" src="https://rozek.github.io/localForage/dist/localforage.min.js"></script>
+ </head>
+ <body>
+  <script type="module">
+/*******************************************************************************
+*                                                                              *
+*                               Blockly AI Agent                               *
+*                                                                              *
+*******************************************************************************/
+const { Order, javascriptGenerator } = javascript;
+import { throwError, ValueIsString, ValueIsURL, allowBoolean, allowNumberInRange, allowIntegerInRange, allowCardinal, allowTextline, allowPlainObject, expectListSatisfying, } from 'javascript-interface-library';
+import { html, Component } from 'htm/preact';
+import hyperactiv from 'hyperactiv';
+const { computed } = hyperactiv;
+import { ProtoUX } from 'protoux';
+let PUX = new ProtoUX();
+const Application = Object.assign(PUX.observed, {
+    activeCardIndex: 0,
+    Workspace: undefined,
+    BackupWanted: false,
+    State: 'idle',
+    APIURL: '', APIKey: '', SearXNGURL: '',
+    Input: '', Output: ''
+});
+/**** Blockly Workspace ****/
+class Workspace extends Component {
+    componentDidMount() {
+        const BlocklyWorkspace = Blockly.inject(this.base, BlocklySpecification);
+        restoreWorkspace(BlocklyWorkspace);
+        BlocklyWorkspace.addChangeListener(preserveWorkspace.bind(null, BlocklyWorkspace));
+        Application.Workspace = BlocklyWorkspace;
+    }
+    render() {
+        return html `<div style="
+        display:block; position:absolute;
+        left:0px; top:0px; right:0px; bottom:0px;
+      "/>`;
+    }
+}
+/**** io_clear ****/
+Blockly.Blocks['io_clear'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'io_clear',
+            tooltip: 'clears the output area',
+            helpUrl: '',
+            message0: 'clear',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['io_clear'] = function (Block, Generator) {
+    return `clear()\n`;
+};
+/**** io_print ****/
+Blockly.Blocks['io_print'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'io_print',
+            tooltip: 'writes a given string into the output area',
+            helpUrl: '',
+            message0: 'print %1',
+            args0: [{ type: 'input_value', name: 'text' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['io_print'] = function (Block, Generator) {
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || "''";
+    return `print(${Text})\n`;
+};
+/**** io_println ****/
+Blockly.Blocks['io_println'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'io_println',
+            tooltip: 'writes a given string into the output area and starts a new line',
+            helpUrl: '',
+            message0: 'println %1',
+            args0: [{ type: 'input_value', name: 'text' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['io_println'] = function (Block, Generator) {
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || "''";
+    return `println(${Text})\n`;
+};
+/**** io_readAll ****/
+Blockly.Blocks['io_readAll'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'io_readAll',
+            tooltip: 'reads all characters from the input area',
+            helpUrl: '',
+            message0: 'readAll',
+            output: 'String',
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['io_readAll'] = function (Block, Generator) {
+    return ['readAll()', Order.FUNCTION_CALL];
+};
+/**** ai_answer ****/
+Blockly.Blocks['ai_answer'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ai_answer',
+            tooltip: 'lets the AI answer a given question',
+            helpUrl: '',
+            message0: 'answer %1',
+            args0: [{ type: 'input_value', name: 'prompt', check: 'String' }],
+            output: 'String',
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['ai_answer'] = function (Block, Generator) {
+    let Prompt = Generator.valueToCode(Block, 'prompt', Order.NONE) || "''";
+    return [`answer(${Prompt})`, Order.FUNCTION_CALL];
+};
+/**** Workspace Specification ****/
+const BlocklySpecification = {
+    grid: { spacing: 20, length: 1, color: '#DDDDDD', snap: true },
+    //  media:'...',
+    toolbox: {
+        kind: 'categoryToolbox',
+        contents: [
+            {
+                kind: "category",
+                name: "Logic",
+                contents: [
+                    { kind: "block", type: "controls_if" },
+                    { kind: "block", type: "logic_compare" },
+                    { kind: "block", type: "logic_operation" },
+                    { kind: "block", type: "logic_negate" },
+                    { kind: "block", type: "logic_boolean" },
+                    { kind: "block", type: "logic_null" },
+                    { kind: "block", type: "logic_ternary" }
+                ]
+            }, {
+                kind: "category",
+                name: "Loops",
+                contents: [
+                    { kind: "block", type: "controls_repeat_ext" },
+                    { kind: "block", type: "controls_whileUntil" },
+                    { kind: "block", type: "controls_for" },
+                    { kind: "block", type: "controls_forEach" },
+                    { kind: "block", type: "controls_flow_statements" }
+                ]
+            }, {
+                kind: "category",
+                name: "Math",
+                contents: [
+                    { kind: "block", type: "math_number" },
+                    { kind: "block", type: "math_arithmetic" },
+                    { kind: "block", type: "math_single" },
+                    { kind: "block", type: "math_trig" },
+                    { kind: "block", type: "math_constant" },
+                    { kind: "block", type: "math_number_property" },
+                    { kind: "block", type: "math_round" },
+                    { kind: "block", type: "math_on_list" },
+                    { kind: "block", type: "math_modulo" },
+                    { kind: "block", type: "math_constrain" },
+                    { kind: "block", type: "math_random_int" },
+                    { kind: "block", type: "math_random_float" }
+                ]
+            }, {
+                kind: "category",
+                name: "Text",
+                contents: [
+                    { kind: "block", type: "text" },
+                    { kind: "block", type: "text_join" },
+                    { kind: "block", type: "text_append" },
+                    { kind: "block", type: "text_length" },
+                    { kind: "block", type: "text_isEmpty" },
+                    { kind: "block", type: "text_indexOf" },
+                    { kind: "block", type: "text_charAt" },
+                    { kind: "block", type: "text_getSubstring" },
+                    { kind: "block", type: "text_changeCase" },
+                    { kind: "block", type: "text_trim" },
+                    { kind: "block", type: "text_print" },
+                    { kind: "block", type: "text_prompt_ext" }
+                ]
+            }, {
+                kind: "category",
+                name: "Lists",
+                contents: [
+                    { kind: "block", type: "lists_create_with" },
+                    { kind: "block", type: "lists_repeat" },
+                    { kind: "block", type: "lists_length" },
+                    { kind: "block", type: "lists_isEmpty" },
+                    { kind: "block", type: "lists_indexOf" },
+                    { kind: "block", type: "lists_getIndex" },
+                    { kind: "block", type: "lists_setIndex" },
+                    { kind: "block", type: "lists_getSublist" },
+                    { kind: "block", type: "lists_split" },
+                    { kind: "block", type: "lists_sort" }
+                ]
+            }, {
+                kind: "category",
+                name: "Colour",
+                contents: [
+                    { kind: "block", type: "colour_picker" },
+                    { kind: "block", type: "colour_random" },
+                    { kind: "block", type: "colour_rgb" },
+                    { kind: "block", type: "colour_blend" }
+                ]
+            }, {
+                kind: "category",
+                name: "Input/Output",
+                contents: [
+                    { kind: "block", type: "io_clear" },
+                    { kind: "block", type: "io_print" },
+                    { kind: "block", type: "io_println" },
+                    { kind: "block", type: "io_readAll" }
+                ]
+            }, {
+                kind: "category",
+                name: "AI",
+                contents: [
+                    { kind: "block", type: "ai_answer" },
+                ]
+            }, {
+                kind: "category",
+                name: "Variables",
+                custom: "VARIABLE"
+            }, {
+                kind: "category",
+                name: "Functions",
+                custom: "PROCEDURE"
+            }
+        ]
+    },
+    //  plugins:...,
+};
+/**** external API for the JS-Interpreter ****/
+function externalAPI(Interpreter, global) {
+    Interpreter.setProperty(global, 'clear', Interpreter.createNativeFunction(function clear() {
+        Application.Output = '';
+    }));
+    Interpreter.setProperty(global, 'print', Interpreter.createNativeFunction(function print(Text) {
+        Application.Output += '' + (Text || '');
+    }));
+    Interpreter.setProperty(global, 'println', Interpreter.createNativeFunction(function println(Text) {
+        Application.Output += '' + (Text || '') + '\\n';
+    }));
+    Interpreter.setProperty(global, 'readAll', Interpreter.createNativeFunction(function readAll() {
+        return Application.Input;
+    }));
+    Interpreter.setProperty(global, 'answer', Interpreter.createAsyncFunction(async function answer(Prompt, Callback) {
+        const APIURL = (Application.APIURL || '').trim();
+        if (APIURL === '') {
+            alert('no (or empty) API URL given');
+            return;
+        }
+        const APIKey = (Application.APIKey || '').trim();
+        Prompt = Prompt.trim();
+        if (Prompt === '') {
+            alert('no (or empty) prompt given');
+            return;
+        }
+        const Response = await ChatCompletionOf([
+            'be precise and concise', Prompt
+        ]);
+        Callback(Response);
+    }));
+}
+/**** ChatCompletionOf ****/
+async function ChatCompletionOf(MessageList, OptionSet = {}) {
+    expectListSatisfying('message list', MessageList, ValueIsString);
+    allowPlainObject('option set', OptionSet);
+    if (MessageList.length < 2)
+        return ('InvalidArgument: the given "MessageList" contains less than 2 elements');
+    if (MessageList.length % 2 !== 0)
+        return ('InvalidArgument: the given "MessageList" contains an odd number of elements');
+    allowPlainObject('option set', OptionSet);
+    allowTextline('model option', OptionSet.model);
+    allowNumberInRange('temperature option', OptionSet.temperature, 0, 2, true, true);
+    allowIntegerInRange('top_k option', OptionSet.top_k, 0, 2048);
+    allowNumberInRange('top_p option', OptionSet.top_p, 0, 1, true, true);
+    allowNumberInRange('frequency penalty option', OptionSet.frequency_penalty, 0, 1, true, true);
+    allowNumberInRange('presence penalty option', OptionSet.presence_penalty, -2, 2, true, true);
+    allowCardinal('maximal number of tokens', OptionSet.max_tokens);
+    allowBoolean('citation inclusion option', OptionSet.return_citations);
+    allowBoolean('image inclusion option', OptionSet.return_images);
+    const APIURL = Application.APIURL;
+    const APIKey = Application.APIKey;
+    if (APIKey == null) {
+        return '(no API key given)';
+    }
+    let Messages = [
+        { role: 'system', content: MessageList[0] },
+        { role: 'user', content: MessageList[1] }
+    ];
+    for (let i = 2, l = Messages.length; i < l; i += 2) {
+        Messages.push({ role: 'assistant', content: MessageList[i] }, { role: 'user', content: MessageList[i + 1] });
+    }
+    let RequestBody = {
+        model: 'llama-3-sonar-small-32k-chat',
+        temperature: 0, top_k: 1, max_tokens: 200, stream: false,
+        messages: Messages
+    };
+    ('model temperature top_k top_p frequency_penalty presence_penalty ' +
+        'max_tokens return_citations return_images').split(' ').forEach((Option) => {
+        if (OptionSet[Option] != null) {
+            RequestBody[Option] = OptionSet[Option];
+        }
+    });
+    try {
+        const Response = await fetch(APIURL, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                Authorization: `Bearer ${APIKey}`,
+            },
+            body: JSON.stringify(RequestBody)
+        });
+        return (await Response.json()).choices[0].message.content;
+    }
+    catch (Signal) {
+        throwError('RequestFailure: API request failed with ' + Signal);
+    }
+}
+/**** ProtoUX User Interface ****/
+//let PUX = new ProtoUX()                                 // already done before
+PUX.ImageFolder = './icons/';
+PUX.Style = `  #PUX_1 { left:29px; top:33px; width:242px; height:230px; right:auto; bottom:auto }
+  #PUX_2 { text-align:center }
+  #PUX_20 { left:0px; top:36px; width:auto; height:auto; right:0px; bottom:49px }
+  #PUX_3 { left:9px; top:auto; width:21px; height:21px; right:auto; bottom:15px }
+  #PUX_4 { left:40px; top:auto; width:121px; height:29px; right:auto; bottom:11px }
+
+  #PUX_5 {
+    left:auto; top:auto; width:24px; height:24px; right:38px; bottom:16px; 
+    background-image:url("/images/arrow-down-to-bracket.png"); 
+  }
+
+  #PUX_6 {
+    left:auto; top:auto; width:24px; height:24px; right:9px; bottom:16px; 
+    background-image:url("/images/arrow-up-from-bracket.png"); 
+  }
+
+  #PUX_7 { left:309px; top:33px; width:280px; height:391px; right:auto; bottom:auto }
+  #PUX_19 { text-align:center }
+  #PUX_8 { left:10px; top:10px; width:81px; height:29px; right:auto; bottom:auto }
+  #PUX_9 { left:10px; top:41px; width:81px; height:29px; right:auto; bottom:auto }
+  #PUX_10 { left:130px; top:10px; width:auto; height:29px; right:10px; bottom:auto }
+  #PUX_11 { left:130px; top:41px; width:auto; height:29px; right:10px; bottom:auto }
+  #PUX_12 { left:10px; top:131px; width:81px; height:29px; right:auto; bottom:auto }
+  #PUX_13 { left:auto; top:121px; width:90px; height:29px; right:10px; bottom:auto }
+  #PUX_14 { left:10px; top:81px; width:121px; height:29px; right:auto; bottom:auto }
+  #PUX_15 { left:130px; top:81px; width:auto; height:29px; right:10px; bottom:auto }
+
+  #PUX_16 {
+    left:10px; top:160px; width:auto; height:90px; right:9px; bottom:auto; 
+    border:solid 1px #000000; 
+  }
+
+  #PUX_17 { left:10px; top:261px; width:81px; height:29px; right:auto; bottom:auto }
+
+  #PUX_18 {
+    left:10px; top:290px; width:auto; height:auto; right:9px; bottom:11px; 
+    border:solid 1px #000000; 
+  }
+
+  #PUX_30 {
+    left:20px; top:19px; width:341px; height:242px; right:auto; bottom:auto; 
+    line-height:1.4; 
+  }
+
+  #PUX_23 {
+    left:11px; top:11px; width:auto; height:40px; right:10px; bottom:auto; 
+    background-color:#f8f8f8; 
+    border:dotted 1px #000000; 
+  }
+
+  #PUX_24 {
+    left:0px; top:0px; width:90px; height:40px; right:auto; bottom:auto; 
+    border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
+  }
+
+  #PUX_25 {
+    left:8px; top:8px; width:56px; height:29px; right:auto; bottom:auto; 
+    text-align:center; 
+  }
+
+  #PUX_26 {
+    left:100px; top:0px; width:121px; height:40px; right:auto; bottom:auto; 
+    border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
+  }
+
+  #PUX_27 {
+    left:8px; top:7px; width:103px; height:29px; right:auto; bottom:auto; 
+    text-align:center; 
+  }
+
+  #PUX_28 { left:11px; top:50px; width:auto; height:auto; right:10px; bottom:12px }
+
+  #PUX_22 {
+    left:675px; top:14px; width:81px; height:31px; right:auto; bottom:auto; 
+    border-width:1px; border-color:#333333; 
+    border-radius:4px; 
+    padding:5px 5px 5px 16px;
+    color:#333333; 
+    text-align:center; 
+  }
+
+  #PUX_22:hover { background-color:#f2f2f2 }
+  #PUX_22:focus { background-color:#f2f2f2 }
+
+  #PUX_22:error {
+    background-color:#ffcaca; 
+    border-color:#cc0000; 
+  }
+
+`;
+PUX.ScreenSet = {
+    'Cards': {
+        Name: 'Cards', Id: 'PUX_0',
+        Width: 768, Height: 1024,
+        packedGeometry: { "x": 29, "y": 33, "Width": 559, "Height": 390 },
+        WidgetList: [
+            { "Type": "Card", "Name": "WorkspaceCard", "Classes": "Card Container", "x": 29, "Width": 242, "y": 33, "Height": 230, "Id": "PUX_1", WidgetList: [
+                    { "Type": "Placeholder", "Name": "Workspace", "Classes": "Placeholder empty Container", "Anchoring": "c", "Id": "PUX_20" },
+                    { "Type": "Checkbox", "Name": "BackupCheck", "Classes": "Checkbox", "Anchoring": "sw", "Value": true, "Id": "PUX_3" },
+                    { "Type": "Label", "Classes": "Label", "Anchoring": "sw", "Value": "save in Browser", "Id": "PUX_4" },
+                    { "Type": "Icon", "Name": "DownloadButton", "Classes": "Icon", "Anchoring": "se", "Value": "url(\"/images/arrow-down-to-bracket.png\")", "Color": "black", "Id": "PUX_5" },
+                    { "Type": "Icon", "Name": "UploadButton", "Classes": "Icon", "Anchoring": "se", "Value": "url(\"/images/arrow-up-from-bracket.png\")", "Color": "black", "Id": "PUX_6" },
+                ] },
+            { "Type": "Card", "Name": "InterfaceCard", "Classes": "Card Container", "x": 309, "Width": 280, "y": 33, "Height": 391, "Id": "PUX_7", WidgetList: [
+                    { "Type": "Label", "Classes": "Label", "Value": "API Server:", "Id": "PUX_8" },
+                    { "Type": "Label", "Classes": "Label", "Value": "API Key:", "Id": "PUX_9" },
+                    { "Type": "URLInput", "Name": "APIURLInput", "Classes": "URLInput", "Anchoring": "n", "Placeholder": "Enter URL", "Value": "", "Id": "PUX_10" },
+                    { "Type": "PasswordInput", "Name": "APIKeyInput", "Classes": "PasswordInput", "Anchoring": "n", "Placeholder": "Enter Password", "Value": "", "Id": "PUX_11" },
+                    { "Type": "Label", "Classes": "Label", "Value": "Input:", "Id": "PUX_12" },
+                    { "Type": "Button", "Name": "SubmitButton", "Classes": "vertically-centered Button", "Anchoring": "ne", "Value": "Submit", "Id": "PUX_13" },
+                    { "Type": "Label", "Classes": "Label", "Value": "SearXNG Server:", "Id": "PUX_14" },
+                    { "Type": "URLInput", "Name": "SearXNGURLInput", "Classes": "URLInput", "Anchoring": "n", "Placeholder": "Enter URL", "Value": "", "Id": "PUX_15" },
+                    { "Type": "TextInput", "Name": "InputArea", "Classes": "TextInput no-resize", "Anchoring": "n", "Placeholder": "Enter Text", "Value": "", "Id": "PUX_16" },
+                    { "Type": "Label", "Classes": "Label", "Value": "Output:", "Id": "PUX_17" },
+                    { "Type": "TextInput", "Name": "OutputArea", "Classes": "TextInput no-resize", "Anchoring": "c", "Placeholder": "Enter Text", "Value": "", "Id": "PUX_18" },
+                ] },
+        ],
+    },
+    'MainScreen': {
+        Name: 'MainScreen', Id: 'PUX_21',
+        Width: 768, Height: 1024,
+        packedGeometry: { "x": 20, "y": 14, "Width": 735, "Height": 246 },
+        WidgetList: [
+            { "Type": "Container", "Name": "Content", "Classes": "Container", "x": 20, "Width": 341, "y": 19, "Height": 242, "Id": "PUX_30", WidgetList: [
+                    { "Type": "TabStrip", "Name": "TabStrip", "Classes": "TabStrip Container", "Anchoring": "n", "Id": "PUX_23", WidgetList: [
+                            { "Type": "Tab", "Name": "WorkspaceTab", "Classes": "Tab Container", "Id": "PUX_24", WidgetList: [
+                                    { "Type": "Label", "Classes": "Label", "Value": "Workspace", "Id": "PUX_25" },
+                                ] },
+                            { "Type": "Tab", "Name": "InterfaceTab", "Classes": "Tab Container", "Id": "PUX_26", WidgetList: [
+                                    { "Type": "Label", "Classes": "Label", "Value": "User Interface", "Id": "PUX_27" },
+                                ] },
+                        ] },
+                    { "Type": "Deck", "Name": "Deck", "Classes": "Deck empty Container", "Anchoring": "c", "Id": "PUX_28" },
+                ] },
+            { "Type": "Text", "Classes": "", "Value": "Upload", "x": 675, "Width": 81, "y": 14, "Height": 31, "Id": "PUX_22" },
+        ],
+    },
+};
+PUX.stuff({
+    MainScreen: {
+        Content: {
+            Deck: {
+                from: 'Cards', with: [
+                    'WorkspaceCard', 'InterfaceCard',
+                ],
+            },
+        },
+    }
+});
+const updatedFrom = PUX.updatedFrom;
+PUX.configure({
+    MainScreen: {
+        self: {
+            Style: 'left:0px; top:0px; right:0px; bottom:0px; width:auto; height:auto'
+        },
+        Content: {
+            Style: 'left:0px; top:0px; right:0px; bottom:0px; width:auto; height:auto',
+            TabStrip: {
+                Style: 'background:none; border:none',
+                Value: updatedFrom(() => Application.activeCardIndex),
+                onValueChange: (Event) => Application.activeCardIndex = Event.detail,
+            },
+            Deck: {
+                Style: 'overflow-x:hidden; overflow-y:scroll; overflow:hidden scroll',
+                Value: updatedFrom(() => Application.activeCardIndex),
+            },
+        },
+    },
+    Cards: {
+        WorkspaceCard: {
+            /*
+                        StartButton: {
+                          Value:updatedFrom(() => (Application.State === 'idle' ? 'Start' : 'Stop')),
+                          disabled:false,
+                          onClick: () => startBlocklyProgram(),
+                        },
+            */
+            Workspace: {
+                Substitute: Workspace
+            },
+            BackupCheck: {
+                Value: updatedFrom(() => Application.BackupWanted),
+                onClick: (Event) => Application.BackupWanted = Event.target.checked,
+            },
+            DownloadButton: {
+                onClick: () => downloadWorkspace(),
+            },
+            UploadButton: { /* nop */},
+            FileInput: {
+                Style: 'border:none',
+                Value: '',
+                Placeholder: '',
+                accept: '.json,application/json',
+                onChange: (Event) => uploadWorkspaceFrom(Event.target.files[0]),
+                onDrop: (Event) => uploadWorkspaceFrom(Event.dataTransfer.files[0]),
+            },
+        },
+        InterfaceCard: {
+            APIURLInput: {
+                disabled: updatedFrom(() => Application.State !== 'idle'),
+                Placeholder: '(enter URL of API Server)',
+                Value: updatedFrom(() => Application.APIURL),
+                onInput: (Event) => Application.APIURL = Event.target.value,
+            },
+            APIKeyInput: {
+                disabled: updatedFrom(() => Application.State !== 'idle'),
+                Placeholder: '(enter API Key, if necessary)',
+                Value: updatedFrom(() => Application.APIKey),
+                onInput: (Event) => Application.APIKey = Event.target.value,
+            },
+            SearXNGURLInput: {
+                disabled: updatedFrom(() => Application.State !== 'idle'),
+                Placeholder: '(enter URL of SearXNG Server, if necessary)',
+                Value: updatedFrom(() => Application.SearXNGURL),
+                onInput: (Event) => Application.SearXNGURL = Event.target.value,
+            },
+            SubmitButton: {
+                disabled: updatedFrom(() => (Application.State === 'idle'
+                    ? acceptableURL(Application.APIURL, '') === ''
+                    : false)),
+                onClick: () => submitBlocklyInput(),
+            },
+            InputArea: {
+                Placeholder: '(enter Prompt)',
+                Value: updatedFrom(() => Application.Input),
+                onInput: (Event) => Application.Input = Event.target.value,
+            },
+            OutputArea: {
+                Placeholder: '(Agent Output will be shown here)',
+                Value: updatedFrom(() => Application.Output),
+            },
+        },
+    },
+});
+//  PUX.packScreen('MainScreen')
+PUX.startWithScreen('MainScreen');
+PUX.renderInto(document.body);
+/**** preserveWorkspace ****/
+function preserveWorkspace(BlocklyWorkspace) {
+    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(BlocklyWorkspace));
+    sessionStorage.setItem('blockly-ai-agent', WorkspaceSerialization);
+    if (Application.BackupWanted) {
+        localStorage.setItem('blockly-ai-agent', WorkspaceSerialization);
+    }
+}
+/**** restoreWorkspace ****/
+function restoreWorkspace(BlocklyWorkspace) {
+    const WorkspaceSerialization = (Application.BackupWanted
+        ? localStorage.getItem('blockly-ai-agent')
+        : sessionStorage.getItem('blockly-ai-agent'));
+    if (WorkspaceSerialization != null) {
+        try {
+            Blockly.serialization.workspaces.load(JSON.parse(WorkspaceSerialization), BlocklyWorkspace);
+        }
+        catch (Signal) {
+            console.error('Blockly Workspace Deserialization Error', Signal);
+        }
+    }
+}
+/**** startBlocklyProgram ****/
+function startBlocklyProgram() {
+}
+/**** submitBlocklyInput ****/
+function submitBlocklyInput() {
+    let Code = 'clear()\n' + javascriptGenerator.workspaceToCode(Application.Workspace);
+    console.log('Code', Code);
+    try {
+        let myInterpreter = new Interpreter(Code, externalAPI);
+        function run() {
+            const InterpreterIsWaiting = myInterpreter.run();
+            if (InterpreterIsWaiting) {
+                setTimeout(run, 10);
+            }
+        }
+        run();
+    }
+    catch (Signal) {
+        console.error('Blockly Code Evaluation Error', Signal);
+        window.alert('Blockly Code Evaluation Error\n\n' + Signal);
+    }
+}
+/**** uploadWorkspaceFrom ****/
+function uploadWorkspaceFrom(File) {
+    let Reader = new FileReader();
+    Reader.onabort = function LoadAborted() { window.alert('Upload was aborted'); };
+    Reader.onerror = function LoadFailed() { window.alert('Upload failed'); };
+    Reader.onload = function FileLoaded(Event) {
+        let FileValue = (new TextDecoder()).decode(Reader.result);
+        try {
+            let Serialization = JSON.parse(FileValue);
+            Blockly.serialization.workspaces.load(Serialization, Application.Workspace);
+        }
+        catch (Signal) {
+            console.error('Blockly Workspace Upload failed', Signal);
+            window.alert('Upload failed');
+        }
+    };
+    Reader.readAsArrayBuffer(File);
+}
+/**** downloadWorkspace ****/
+function downloadWorkspace() {
+    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(Application.Workspace));
+    const encodedDownload = (new TextEncoder()).encode(WorkspaceSerialization);
+    const decodedDownload = (new TextDecoder()).decode(encodedDownload);
+    if (WorkspaceSerialization === decodedDownload) {
+        download(encodedDownload, 'Blockly-AI-Agent.json', 'application/json;charset=utf-8');
+    }
+    else {
+        window.alert('Download is not safe');
+    }
+}
+/**** acceptableURL ****/
+function acceptableURL(Value, Default) {
+    return (ValueIsURL(Value) ? Value : Default);
+}
+
+  </script>
+ </body>
+</html>
+
