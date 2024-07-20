@@ -1,6 +1,6 @@
 # blockly-ai-agent #
 
-build your own AI agent using Blockly - even if you are a complete beginner!
+build your own AI agent using Blockly - even if you are a complete beginner! (also suitable for school lessons)
 
 > (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
 
