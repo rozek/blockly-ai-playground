@@ -4,6 +4,8 @@ build your own AI agent using Blockly - even if you are a complete beginner!
 
 > (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
 
+[Live Demo](https://rozek.github.io/blockly-ai-agent/LiveDemo) **Warning: this is currently just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow in the next few days**
+
 ## Overview ##
 
 AI agents are "cool" these days and can be found at many places - but for most of us, they are basically "black boxes" which do not reveal how they work internally.
