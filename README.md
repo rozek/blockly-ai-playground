@@ -1,12 +1,12 @@
-# blockly-ai-agent #
+# blockly-ai-playground #
 
-build your own AI agent using Blockly - even if you are a complete beginner! (also suitable for school lessons)
+experiment with AI and build your own AI agents using Blockly - even if you are a complete beginner! (also suitable for school lessons)
 
 > (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
 
-[Live Demo](https://rozek.github.io/blockly-ai-agent/LiveDemo) **Warning: this is currently just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow in the next few days**
+[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: this is currently just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow in the next few days**
 
-![Live Demo Screenshot](https://rozek.github.io/blockly-ai-agent/LiveDemo/Screenshot.png)
+![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
 ## Overview ##
 
@@ -14,11 +14,11 @@ AI agents are "cool" these days and can be found at many places - but for most o
 
 [Blockly](https://developers.google.com/blockly) is a visual programming environment developed by Google that allows users to create code using drag-and-drop "Lego"-like blocks. It is designed to simplify coding by abstracting away the syntax, making it accessible for beginners and educational purposes.
 
-By combining these two technologies, the "blockly-ai-agent" offers beginners and casual programmers an easy way to play and experiment with their own AI agents!
+By combining these two technologies, the "blockly-ai-playground" offers beginners and casual programmers an easy way to play and experiment with AI and build their own AI agents!
 
 ## Prerequisites ##
 
-"blockly-ai-agent" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on one's computer) and, presumably, many others.
+"blockly-ai-playground" can be used with any AI provider offering an [OpenAI compatible API](https://platform.openai.com/docs/api-reference) - this may be [OpenAI](https://openai.com/) itself, [Perplexity](https://www.perplexity.ai/) (which was used for development), [Ollama](https://ollama.com/) (which runs LLMs locally on one's computer) and, presumably, many others.
 
 As a consequence, you will need
 
