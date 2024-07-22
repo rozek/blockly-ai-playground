@@ -72,6 +72,14 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 (t.b.w.)
 
+![ContextKeys](./Screenshots/wait.png)
+
+![ContextKeys](./Screenshots/alert.png)
+
+![ContextKeys](./Screenshots/confirm.png)
+
+![ContextKeys](./Screenshots/prompt.png)
+
 ## License ##
 
 [MIT License](LICENSE.md)
