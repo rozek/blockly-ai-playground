@@ -44,6 +44,14 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
+![ContextKeys](./Screenshots/clearContext.png)
+
+![ContextKeys](./Screenshots/getFromContext.png)
+
+![ContextKeys](./Screenshots/setInContext.png)
+
+![ContextKeys](./Screenshots/removeFromContext.png)
+
 ### Playground UI ###
 
 (t.b.w.)
