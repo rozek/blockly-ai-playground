@@ -34,6 +34,32 @@ Thus, if you want to use the built-in web search, you should install
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 * [SearXNG](https://docs.searxng.org/admin/installation-docker.html)
 
+## Blocks ###
+
+### Playground Context ###
+
+(t.b.w.)
+
+### Playground UI ###
+
+(t.b.w.)
+
+### AI Basics ###
+
+(t.b.w.)
+
+### AI Mezzanines ###
+
+(t.b.w.)
+
+### AI Tools ###
+
+(t.b.w.)
+
+### Miscellany ###
+
+(t.b.w.)
+
 ## License ##
 
 [MIT License](LICENSE.md)
