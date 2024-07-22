@@ -34,7 +34,9 @@ Thus, if you want to use the built-in web search, you should install
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 * [SearXNG](https://docs.searxng.org/admin/installation-docker.html)
 
-## Blocks ###
+## Custom Blocks ###
+
+Besides common blocks which can be found in many Blockly environments, the "blockly-ai-playground" also provides a set of custom blocks to manage an internal context, a simple (but dynamic) user interface, basic and enhanced functions for AI, auxiliary tools for AI agents and other useful functions.
 
 ### Playground Context ###
 
