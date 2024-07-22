@@ -42,6 +42,8 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 (t.b.w.)
 
+![ContextKeys](./Screenshots/ContextKeys.png)
+
 ### Playground UI ###
 
 (t.b.w.)
