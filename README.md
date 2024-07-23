@@ -56,6 +56,36 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 (t.b.w.)
 
+![ContextKeys](./Screenshots/showWorkspace.png)
+
+![ContextKeys](./Screenshots/showUI.png)
+
+![ContextKeys](./Screenshots/UIElements.png)
+
+![ContextKeys](./Screenshots/UIhasElement.png)
+
+![ContextKeys](./Screenshots/clearUI.png)
+
+![ContextKeys](./Screenshots/removeFromUI.png)
+
+![ContextKeys](./Screenshots/appendTextlineInput.png)
+
+![ContextKeys](./Screenshots/appendPasswordInput.png)
+
+![ContextKeys](./Screenshots/appendURLInput.png)
+
+![ContextKeys](./Screenshots/appendTextInput.png)
+
+![ContextKeys](./Screenshots/appendTextlineOutput.png)
+
+![ContextKeys](./Screenshots/appendNumberOutput.png)
+
+![ContextKeys](./Screenshots/appendTextOutput.png)
+
+![ContextKeys](./Screenshots/appendText.png)
+
+![ContextKeys](./Screenshots/appendFinePrint.png)
+
 ### AI Basics ###
 
 (t.b.w.)
