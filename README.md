@@ -188,7 +188,7 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
-> removes all pendind UI events from the internal queue
+> removes all pending UI events from the internal queue. If there are no pending events, this statement is simply ignored
 
 ![wheneverUIEventOccurredWithin](./Screenshots/wheneverUIEventOccurredWithin.png)
 
