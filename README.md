@@ -60,7 +60,7 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![removeFromContext](./Screenshots/removeFromContext.png)
 
-> removes the given context item
+> removes the given context item. It is safe to remove an item which does not exist
 
 ### Playground UI ###
 
@@ -68,15 +68,27 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![showWorkspace](./Screenshots/showWorkspace.png)
 
+> makes the Blockly workspace visible
+
 ![showUI](./Screenshots/showUI.png)
+
+> makes the user interface visible
 
 ![UIElements](./Screenshots/UIElements.png)
 
+> returns a list with the names of all currently defined user interface elements
+
 ![UIhasElement](./Screenshots/UIhasElement.png)
+
+> returns `true` if the user interface currently contains an element with the given name - (or `false` otherwise
 
 ![clearUI](./Screenshots/clearUI.png)
 
+> clears the user interface (i.e., deletes all currently defined user interface elements)
+
 ![removeFromUI](./Screenshots/removeFromUI.png)
+
+> removes the element with the given name from the user interface. It is safe to remove an element which does not exist
 
 ![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
