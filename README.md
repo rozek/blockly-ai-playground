@@ -220,6 +220,8 @@ The following blocks do not fit into the categories shown before - may may still
 
 ## Examples ##
 
+Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground"
+
 ### Hello, World ###
 
 ![Hello_World](./Examples/Hello_World.png)
@@ -230,7 +232,7 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![Console](./Examples/Console.png)
 
-> this example illustrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
+> this example demonstrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
 
 ### Suspend, Resume, Abort ###
 
