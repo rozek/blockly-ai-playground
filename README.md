@@ -146,6 +146,26 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/prompt.png)
 
+![ContextKeys](./Screenshots/ValueIsNonEmpty.png)
+
+![ContextKeys](./Screenshots/ValueIsNumber.png)
+
+![ContextKeys](./Screenshots/ValueIsNumberInRange.png)
+
+![ContextKeys](./Screenshots/ValueIsInteger.png)
+
+![ContextKeys](./Screenshots/ValueIsIntegerInRange.png)
+
+![ContextKeys](./Screenshots/ValueIsOrdinal.png)
+
+![ContextKeys](./Screenshots/ValueIsCardinal.png)
+
+![ContextKeys](./Screenshots/ValueIsStringMatching.png)
+
+![ContextKeys](./Screenshots/ValueIsURL.png)
+
+![ContextKeys](./Screenshots/ValueIsWikipediaURL.png)
+
 ## Examples ##
 
 (t.b.w.)
