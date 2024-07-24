@@ -216,15 +216,19 @@ The following blocks do not fit into the categories shown before - may may still
 
 ## Examples ##
 
-(t.b.w.)
+### Hello, World ###
 
 ![Hello_World](./Examples/Hello_World.png)
 
 > this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json))
 
+### Console ###
+
 ![Console](./Examples/Console.png)
 
 > this example illustrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
+
+### Suspend, Resume, Abort ###
 
 ![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
 
