@@ -98,6 +98,8 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/isEnabled.png)
 
+returns `true` if an UI element with the given key (exists and) is enabled. If no element with the given key can be found, an exception is thrown and the program aborted.
+
 ### AI Basics ###
 
 (t.b.w.)
