@@ -122,6 +122,14 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
+
+![clearConsole](./Screenshots/clearConsole.png)
+
+![print](./Screenshots/print.png)
+
+![println](./Screenshots/println.png)
+
+
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
 ![wheneverUIEventOccurredWithin](./Screenshots/wheneverUIEventOccurredWithin.png)
