@@ -218,6 +218,14 @@ The following blocks do not fit into the categories shown before - may may still
 
 (t.b.w.)
 
+![Hello_World](./Examples/Hello_World.png)
+
+> this is the typical "Hello, World" example
+
+![Console](./Examples/Console.png)
+
+> this example illustrates all Console functions
+
 ## License ##
 
 [MIT License](LICENSE.md)
