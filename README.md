@@ -188,15 +188,27 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
+> removes all pendind UI events from the internal queue
+
 ![wheneverUIEventOccurredWithin](./Screenshots/wheneverUIEventOccurredWithin.png)
+
+> runs the given statements whenever a new UI event was received. If the given timeout is `0` the loop is exited as soon as no more UI events are pending. If the given timeout is greater than `0` the loop is exited if no event was received within the given number of seconds. With a negative timeout, the loop waits indefinitely for the next UI event
 
 ![wheneverUIEventOccurred](./Screenshots/wheneverUIEventOccurred.png)
 
+> runs the given statements whenever a new UI event was received
+
 ![ButtonWasClicked](./Screenshots/ButtonWasClicked.png)
+
+> returns `true` if the currently processed UI event is a click on a button with the given name - or `false` otherwise
 
 ![InputWasChanged](./Screenshots/InputWasChanged.png)
 
+> returns `true` if the currently processed UI event indicates a new input for the UI element with the given name - or `false` otherwise
+
 ![leaveUIEventLoop](./Screenshots/leaveUIEventLoop.png)
+
+> leaves the current event loop
 
 ### AI Basics ###
 
