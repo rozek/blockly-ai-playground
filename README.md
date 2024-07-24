@@ -204,7 +204,7 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![InputWasChanged](./Screenshots/InputWasChanged.png)
 
-> returns `true` if the currently processed UI event indicates a new input for the UI element with the given name - or `false` otherwise
+> returns `true` if the currently processed UI event indicates that new input for the UI element with the given name was received - or `false` otherwise
 
 ![leaveUIEventLoop](./Screenshots/leaveUIEventLoop.png)
 
