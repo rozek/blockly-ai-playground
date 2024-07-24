@@ -192,11 +192,11 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![wheneverUIEventOccurredWithin](./Screenshots/wheneverUIEventOccurredWithin.png)
 
-> runs the given statements whenever a new UI event was received. If the given timeout is `0` the loop is exited as soon as no more UI events are pending. If the given timeout is greater than `0` the loop is exited if no event was received within the given number of seconds. With a negative timeout, the loop waits indefinitely for the next UI event
+> starts an event loop and runs the given statements whenever a new UI event was received. If the given timeout is `0` the loop is exited as soon as no more UI events are pending. If the given timeout is greater than `0` the loop is exited if no event was received within the given number of seconds. With a negative timeout, the loop waits indefinitely for the next UI event
 
 ![wheneverUIEventOccurred](./Screenshots/wheneverUIEventOccurred.png)
 
-> runs the given statements whenever a new UI event was received
+> starts an event loop and runs the given statements whenever a new UI event was received, waiting indefinitely for new events
 
 ![ButtonWasClicked](./Screenshots/ButtonWasClicked.png)
 
