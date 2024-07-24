@@ -76,6 +76,14 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/appendTextInput.png)
 
+![ContextKeys](./Screenshots/appendCheckbox.png)
+
+![ContextKeys](./Screenshots/appendRadiobuttonGroup.png)
+
+![ContextKeys](./Screenshots/appendDropDown.png)
+
+![ContextKeys](./Screenshots/appendButton.png)
+
 ![ContextKeys](./Screenshots/appendTextlineOutput.png)
 
 ![ContextKeys](./Screenshots/appendNumberOutput.png)
@@ -110,6 +118,10 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 > returns `true` if an UI element with the given key (exists and) is enabled. If no element with the given key can be found, an exception is thrown and the program aborted.
 
+![ContextKeys](./Screenshots/clearChoicesOf.png)
+
+![ContextKeys](./Screenshots/appendChoiceTo.png)
+
 ### AI Basics ###
 
 (t.b.w.)
@@ -133,6 +145,10 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 ![ContextKeys](./Screenshots/confirm.png)
 
 ![ContextKeys](./Screenshots/prompt.png)
+
+## Examples ##
+
+(t.b.w.)
 
 ## License ##
 
