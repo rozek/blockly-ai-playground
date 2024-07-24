@@ -122,13 +122,17 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
-
 ![clearConsole](./Screenshots/clearConsole.png)
+
+> clears the built-in "Console" (see [Console example](#console))
 
 ![print](./Screenshots/print.png)
 
+> appends the given string to the built-in "Console" (see [Console example](#console))
+
 ![println](./Screenshots/println.png)
 
+> appends the given string to the built-in "Console" and starts a new line (see [Console example](#console))
 
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
