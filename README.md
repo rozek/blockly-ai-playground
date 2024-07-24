@@ -168,7 +168,11 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![clearChoicesOf](./Screenshots/clearChoicesOf.png)
 
+> clears all currently defined choices of a radiobutton group or a drop-down element
+
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
+
+> appends the given text to the list of choices for a radiobutton group or a drop-down element
 
 ![clearConsole](./Screenshots/clearConsole.png)
 
