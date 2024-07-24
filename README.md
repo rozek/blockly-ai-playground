@@ -220,11 +220,11 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![Hello_World](./Examples/Hello_World.png)
 
-> this is the typical "Hello, World" example
+> this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json))
 
 ![Console](./Examples/Console.png)
 
-> this example illustrates all Console functions
+> this example illustrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
 
 ## License ##
 
