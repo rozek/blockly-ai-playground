@@ -88,13 +88,23 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/configureUI.png)
 
+> sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options are meaningful (and, thus, relected by the UI), depends on the type of the given UI element
+
 ![ContextKeys](./Screenshots/ConfigurationOf.png)
+
+> returns the current value of a given option for an UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted. The requested option does not have to exist
 
 ![ContextKeys](./Screenshots/EnablingOf.png)
 
+> returns `true` if an UI element with the given key is enabled or `false` otherwise. If no element with the given key can be found, an exception is thrown and the program aborted.
+
 ![ContextKeys](./Screenshots/enable.png)
 
+> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
+
 ![ContextKeys](./Screenshots/disable.png)
+
+> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
 
 ![ContextKeys](./Screenshots/isEnabled.png)
 
