@@ -226,6 +226,10 @@ The following blocks do not fit into the categories shown before - may may still
 
 > this example illustrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
 
+![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
+
+> use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
+
 ## License ##
 
 [MIT License](LICENSE.md)
