@@ -44,83 +44,83 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
-![ContextKeys](./Screenshots/clearContext.png)
+![clearContext](./Screenshots/clearContext.png)
 
-![ContextKeys](./Screenshots/getFromContext.png)
+![getFromContext](./Screenshots/getFromContext.png)
 
-![ContextKeys](./Screenshots/setInContext.png)
+![setInContext](./Screenshots/setInContext.png)
 
-![ContextKeys](./Screenshots/removeFromContext.png)
+![removeFromContext](./Screenshots/removeFromContext.png)
 
 ### Playground UI ###
 
 (t.b.w.)
 
-![ContextKeys](./Screenshots/showWorkspace.png)
+![showWorkspace](./Screenshots/showWorkspace.png)
 
-![ContextKeys](./Screenshots/showUI.png)
+![showUI](./Screenshots/showUI.png)
 
-![ContextKeys](./Screenshots/UIElements.png)
+![UIElements](./Screenshots/UIElements.png)
 
-![ContextKeys](./Screenshots/UIhasElement.png)
+![UIhasElement](./Screenshots/UIhasElement.png)
 
-![ContextKeys](./Screenshots/clearUI.png)
+![clearUI](./Screenshots/clearUI.png)
 
-![ContextKeys](./Screenshots/removeFromUI.png)
+![removeFromUI](./Screenshots/removeFromUI.png)
 
-![ContextKeys](./Screenshots/appendTextlineInput.png)
+![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
-![ContextKeys](./Screenshots/appendPasswordInput.png)
+![appendPasswordInput](./Screenshots/appendPasswordInput.png)
 
-![ContextKeys](./Screenshots/appendURLInput.png)
+![appendURLInput](./Screenshots/appendURLInput.png)
 
-![ContextKeys](./Screenshots/appendTextInput.png)
+![appendTextInput](./Screenshots/appendTextInput.png)
 
-![ContextKeys](./Screenshots/appendCheckbox.png)
+![appendCheckbox](./Screenshots/appendCheckbox.png)
 
-![ContextKeys](./Screenshots/appendRadiobuttonGroup.png)
+![appendRadiobuttonGroup](./Screenshots/appendRadiobuttonGroup.png)
 
-![ContextKeys](./Screenshots/appendDropDown.png)
+![appendDropDown](./Screenshots/appendDropDown.png)
 
-![ContextKeys](./Screenshots/appendButton.png)
+![appendButton](./Screenshots/appendButton.png)
 
-![ContextKeys](./Screenshots/appendTextlineOutput.png)
+![appendTextlineOutput](./Screenshots/appendTextlineOutput.png)
 
-![ContextKeys](./Screenshots/appendNumberOutput.png)
+![appendNumberOutput](./Screenshots/appendNumberOutput.png)
 
-![ContextKeys](./Screenshots/appendTextOutput.png)
+![appendTextOutput](./Screenshots/appendTextOutput.png)
 
-![ContextKeys](./Screenshots/appendText.png)
+![appendText](./Screenshots/appendText.png)
 
-![ContextKeys](./Screenshots/appendFinePrint.png)
+![appendFinePrint](./Screenshots/appendFinePrint.png)
 
-![ContextKeys](./Screenshots/configureUI.png)
+![configureUI](./Screenshots/configureUI.png)
 
 > sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options and option values are meaningful (and, thus, used by the UI), depends on the type of the given UI element
 
-![ContextKeys](./Screenshots/ConfigurationOf.png)
+![ConfigurationOf](./Screenshots/ConfigurationOf.png)
 
 > returns the current value of a given option for an UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted. The requested option does not have to exist
 
-![ContextKeys](./Screenshots/EnablingOf.png)
+![EnablingOf](./Screenshots/EnablingOf.png)
 
 > returns `true` if an UI element with the given key is enabled or `false` otherwise. If no element with the given key can be found, an exception is thrown and the program aborted.
 
-![ContextKeys](./Screenshots/enable.png)
+![enable](./Screenshots/enable.png)
 
 > enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
 
-![ContextKeys](./Screenshots/disable.png)
+![disable](./Screenshots/disable.png)
 
 > disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
 
-![ContextKeys](./Screenshots/isEnabled.png)
+![isEnabled](./Screenshots/isEnabled.png)
 
 > returns `true` if an UI element with the given key (exists and) is enabled. If no element with the given key can be found, an exception is thrown and the program aborted.
 
-![ContextKeys](./Screenshots/clearChoicesOf.png)
+![clearChoicesOf](./Screenshots/clearChoicesOf.png)
 
-![ContextKeys](./Screenshots/appendChoiceTo.png)
+![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
 ### AI Basics ###
 
@@ -138,33 +138,33 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 (t.b.w.)
 
-![ContextKeys](./Screenshots/wait.png)
+![wait](./Screenshots/wait.png)
 
-![ContextKeys](./Screenshots/alert.png)
+![alert](./Screenshots/alert.png)
 
-![ContextKeys](./Screenshots/confirm.png)
+![confirm](./Screenshots/confirm.png)
 
-![ContextKeys](./Screenshots/prompt.png)
+![prompt](./Screenshots/prompt.png)
 
-![ContextKeys](./Screenshots/ValueIsNonEmpty.png)
+![ValueIsNonEmpty](./Screenshots/ValueIsNonEmpty.png)
 
-![ContextKeys](./Screenshots/ValueIsNumber.png)
+![ValueIsNumber](./Screenshots/ValueIsNumber.png)
 
-![ContextKeys](./Screenshots/ValueIsNumberInRange.png)
+![ValueIsNumberInRange](./Screenshots/ValueIsNumberInRange.png)
 
-![ContextKeys](./Screenshots/ValueIsInteger.png)
+![ValueIsInteger](./Screenshots/ValueIsInteger.png)
 
-![ContextKeys](./Screenshots/ValueIsIntegerInRange.png)
+![ValueIsIntegerInRange](./Screenshots/ValueIsIntegerInRange.png)
 
-![ContextKeys](./Screenshots/ValueIsOrdinal.png)
+![ValueIsOrdinal](./Screenshots/ValueIsOrdinal.png)
 
-![ContextKeys](./Screenshots/ValueIsCardinal.png)
+![ValueIsCardinal](./Screenshots/ValueIsCardinal.png)
 
-![ContextKeys](./Screenshots/ValueIsStringMatching.png)
+![ValueIsStringMatching](./Screenshots/ValueIsStringMatching.png)
 
-![ContextKeys](./Screenshots/ValueIsURL.png)
+![ValueIsURL](./Screenshots/ValueIsURL.png)
 
-![ContextKeys](./Screenshots/ValueIsWikipediaURL.png)
+![ValueIsWikipediaURL](./Screenshots/ValueIsWikipediaURL.png)
 
 ## Examples ##
 
