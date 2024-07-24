@@ -152,9 +152,15 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![wait](./Screenshots/wait.png)
 
+> waits for a given number of seconds and continues
+
 ![alert](./Screenshots/alert.png)
 
+> opens a browser "alert" pop-up dialog, displays the given message and continues as soon as the user has closed the dialog
+
 ![confirm](./Screenshots/confirm.png)
+
+> opens a browser "confirmation" pop-up dialog, displays the given message and continues as soon as the user has responded with "ok" or "Cancel". If cancelled, the block returns `false`, otherwise it returns `true`
 
 ![prompt](./Screenshots/prompt.png)
 
@@ -166,17 +172,31 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ValueIsInteger](./Screenshots/ValueIsInteger.png)
 
+> returns `true` if the given value contains an integer number- or `false` otherwise
+
 ![ValueIsIntegerInRange](./Screenshots/ValueIsIntegerInRange.png)
+
+> returns `true` if the given value contains an integer number with a value ranging from the given minimum to the given maximum - or `false` otherwise
 
 ![ValueIsOrdinal](./Screenshots/ValueIsOrdinal.png)
 
+> returns `true` if the given value contains an "ordinal" number (i.e., an integer greater than or equal to 0) - or `false` otherwise
+
 ![ValueIsCardinal](./Screenshots/ValueIsCardinal.png)
+
+> returns `true` if the given value contains a "cardinal" number (i.e., an integer greater than or equal to 1) - or `false` otherwise
 
 ![ValueIsStringMatching](./Screenshots/ValueIsStringMatching.png)
 
+> returns `true` if the given value contains a string that matches a given JavaScript regular expression - or `false` otherwise
+
 ![ValueIsURL](./Screenshots/ValueIsURL.png)
 
+> returns `true` if the given value contains a string that looks like a URL - or `false` otherwise
+
 ![ValueIsWikipediaURL](./Screenshots/ValueIsWikipediaURL.png)
+
+> returns `true` if the given value contains a string that looks like a Wikipedia document URL - or `false` otherwise
 
 ## Examples ##
 
