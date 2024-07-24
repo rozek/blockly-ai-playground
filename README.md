@@ -86,6 +86,16 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/appendFinePrint.png)
 
+![ContextKeys](./Screenshots/configureUI.png)
+
+![ContextKeys](./Screenshots/ConfigurationOf.png)
+
+![ContextKeys](./Screenshots/EnablingOf.png)
+
+![ContextKeys](./Screenshots/enable.png)
+
+![ContextKeys](./Screenshots/disable.png)
+
 ### AI Basics ###
 
 (t.b.w.)
