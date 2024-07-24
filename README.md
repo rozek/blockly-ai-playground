@@ -122,13 +122,17 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
-
 ![clearConsole](./Screenshots/clearConsole.png)
+
+> clears the built-in "Console" (see [Console example](#console))
 
 ![print](./Screenshots/print.png)
 
+> appends the given string to the built-in "Console" (see [Console example](#console))
+
 ![println](./Screenshots/println.png)
 
+> appends the given string to the built-in "Console" and starts a new line (see [Console example](#console))
 
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
@@ -160,7 +164,7 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![wait](./Screenshots/wait.png)
 
-> waits for a given number of seconds and continues
+> waits for a given number of seconds and continues (see [Console example](#console))
 
 ![alert](./Screenshots/alert.png)
 
@@ -216,15 +220,25 @@ The following blocks do not fit into the categories shown before - may may still
 
 ## Examples ##
 
-(t.b.w.)
+Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground"
+
+### Hello, World ###
 
 ![Hello_World](./Examples/Hello_World.png)
 
 > this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json))
 
+### Console ###
+
 ![Console](./Examples/Console.png)
 
-> this example illustrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
+> this example demonstrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
+
+### Suspend, Resume, Abort ###
+
+![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
+
+> use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
 
 ## License ##
 
