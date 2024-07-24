@@ -122,6 +122,18 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
+![appendChoiceTo](./Screenshots/clearPendingUIEvents.png)
+
+![appendChoiceTo](./Screenshots/wheneverUIEventOccurredWithin.png)
+
+![appendChoiceTo](./Screenshots/wheneverUIEventOccurred.png)
+
+![appendChoiceTo](./Screenshots/ButtonWasClicked.png)
+
+![appendChoiceTo](./Screenshots/InputWasChanged.png)
+
+![appendChoiceTo](./Screenshots/leaveUIEventLoop.png)
+
 ### AI Basics ###
 
 (t.b.w.)
