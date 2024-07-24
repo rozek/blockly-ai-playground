@@ -88,7 +88,7 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/configureUI.png)
 
-> sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options are meaningful (and, thus, relected by the UI), depends on the type of the given UI element
+> sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options and option values are meaningful (and, thus, used by the UI), depends on the type of the given UI element
 
 ![ContextKeys](./Screenshots/ConfigurationOf.png)
 
