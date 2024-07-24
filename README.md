@@ -44,13 +44,23 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
+> returns a list with the names of all currently defined context items
+
 ![clearContext](./Screenshots/clearContext.png)
+
+> clears the context (i.e., deletes all currently defined context items)
 
 ![getFromContext](./Screenshots/getFromContext.png)
 
+> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned
+
 ![setInContext](./Screenshots/setInContext.png)
 
+> sets the given context item to the given value. If the addressed item does not exist, it will be created
+
 ![removeFromContext](./Screenshots/removeFromContext.png)
+
+> removes the given context item
 
 ### Playground UI ###
 
