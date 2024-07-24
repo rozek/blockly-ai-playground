@@ -160,7 +160,7 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![wait](./Screenshots/wait.png)
 
-> waits for a given number of seconds and continues
+> waits for a given number of seconds and continues (see [Console example](#console))
 
 ![alert](./Screenshots/alert.png)
 
