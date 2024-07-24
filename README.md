@@ -76,45 +76,71 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![UIElements](./Screenshots/UIElements.png)
 
-> returns a list with the names of all currently defined user interface elements
+> returns a list with the names of all currently defined UI elements
 
 ![UIhasElement](./Screenshots/UIhasElement.png)
 
-> returns `true` if the user interface currently contains an element with the given name - (or `false` otherwise
+> returns `true` if the UI currently contains an element with the given name - (or `false` otherwise
 
 ![clearUI](./Screenshots/clearUI.png)
 
-> clears the user interface (i.e., deletes all currently defined user interface elements)
+> clears the user interface (i.e., deletes all currently defined UI elements)
 
 ![removeFromUI](./Screenshots/removeFromUI.png)
 
-> removes the element with the given name from the user interface. It is safe to remove an element which does not exist
+> removes the element with the given name from the UI. It is safe to remove an element which does not exist
 
 ![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
+> appends a textline input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendPasswordInput](./Screenshots/appendPasswordInput.png)
+
+> appends a password input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![appendURLInput](./Screenshots/appendURLInput.png)
 
+> appends a URL input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendTextInput](./Screenshots/appendTextInput.png)
+
+> appends a (multiline) text input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![appendCheckbox](./Screenshots/appendCheckbox.png)
 
+> appends a checkbox element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendRadiobuttonGroup](./Screenshots/appendRadiobuttonGroup.png)
+
+> appends a radio button group element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![appendDropDown](./Screenshots/appendDropDown.png)
 
+> appends a drop-down element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendButton](./Screenshots/appendButton.png)
+
+> appends a button element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![appendTextlineOutput](./Screenshots/appendTextlineOutput.png)
 
+> appends a textline output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendNumberOutput](./Screenshots/appendNumberOutput.png)
+
+> appends a number output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![appendTextOutput](./Screenshots/appendTextOutput.png)
 
+> appends a (multiline) text output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendText](./Screenshots/appendText.png)
 
+> appends an unlabelled text view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended
+
 ![appendFinePrint](./Screenshots/appendFinePrint.png)
+
+> appends an unlabelled "fine print" view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended
 
 ![configureUI](./Screenshots/configureUI.png)
 
