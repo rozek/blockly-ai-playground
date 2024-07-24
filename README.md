@@ -96,6 +96,8 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![ContextKeys](./Screenshots/disable.png)
 
+![ContextKeys](./Screenshots/isEnabled.png)
+
 ### AI Basics ###
 
 (t.b.w.)
