@@ -148,7 +148,7 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ### Miscellany ###
 
-(t.b.w.)
+The following blocks do not fit into the categories shown before - may may still be helpful when creating agents:
 
 ![wait](./Screenshots/wait.png)
 
@@ -164,15 +164,23 @@ Besides common blocks which can be found in many Blockly environments, the "bloc
 
 ![prompt](./Screenshots/prompt.png)
 
+> opens a browser "prompt" pop-up dialog, displays the given message and continues as soon as the user has entered a response. If cancelled, the block returns an empty string, otherwise it returns the entered string
+
 ![ValueIsNonEmpty](./Screenshots/ValueIsNonEmpty.png)
+
+> returns `true` if the given value contains a string that is neither empty nor contains whitespace only - or `false` otherwise
 
 ![ValueIsNumber](./Screenshots/ValueIsNumber.png)
 
+> returns `true` if the given value contains a number - or `false` otherwise
+
 ![ValueIsNumberInRange](./Screenshots/ValueIsNumberInRange.png)
+
+> returns `true` if the given value contains a number with a value ranging from the given minimum to the given maximum - or `false` otherwise. The additional arguments "withMinimum" and "withMaximum" specify wether the given "minimum" and "maximum" values are themselves part of that range or not
 
 ![ValueIsInteger](./Screenshots/ValueIsInteger.png)
 
-> returns `true` if the given value contains an integer number- or `false` otherwise
+> returns `true` if the given value contains an integer number - or `false` otherwise
 
 ![ValueIsIntegerInRange](./Screenshots/ValueIsIntegerInRange.png)
 
