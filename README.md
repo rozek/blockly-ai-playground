@@ -150,11 +150,11 @@ These two blocks enable or disable specific UI elements.
 
 ![showWorkspace](./Screenshots/showWorkspace.png)
 
-> makes the Blockly workspace visible
+> switches to the playground workspace pane
 
 ![showUI](./Screenshots/showUI.png)
 
-> makes the user interface visible
+> switches to the playground user interface pane
 
 ![UIElements](./Screenshots/enableUI.png)
 
