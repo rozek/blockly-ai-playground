@@ -67,6 +67,8 @@ and
 * `Prompt` - the prompt to be sent to the AI model (preset to `who was Joseph Weizenbaum?`)
 * `Console` - the current contents of the built-in "Console" (initially empty)
 
+#### Context-related Blocks ####
+
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
 > returns a list with the names of all currently defined context items (see [Context example](#context))
@@ -126,6 +128,8 @@ The loop body is executed over and over again - until the loop is exited using t
 #### Enabling ####
 
 (t.b.w.)
+
+#### UI-related Blocks ####
 
 ![showWorkspace](./Screenshots/showWorkspace.png)
 
