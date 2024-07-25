@@ -69,23 +69,23 @@ and
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
-> returns a list with the names of all currently defined context items
+> returns a list with the names of all currently defined context items (see [Context example](#context))
 
 ![clearContext](./Screenshots/clearContext.png)
 
-> clears the context (i.e., deletes all currently defined context items)
+> clears the context (i.e., deletes all currently defined context items) (see [Context example](#context))
 
 ![getFromContext](./Screenshots/getFromContext.png)
 
-> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned
+> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned (see [Context example](#context))
 
 ![setInContext](./Screenshots/setInContext.png)
 
-> sets the given context item to the given value. If the addressed item does not exist, it will be created
+> sets the given context item to the given value. If the addressed item does not exist, it will be created (see [Context example](#context))
 
 ![removeFromContext](./Screenshots/removeFromContext.png)
 
-> removes the given context item. It is safe to remove an item which does not exist
+> removes the given context item. It is safe to remove an item which does not exist (see [Context example](#context))
 
 ### Playground UI ###
 
