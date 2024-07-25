@@ -182,7 +182,7 @@ These two blocks enable or disable specific UI elements.
 
 ![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
-> appends a textline input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a textline input element (based on an [HTML input element of type "text"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern`, `SpellChecking` and `Enabling`
 
 ![appendPasswordInput](./Screenshots/appendPasswordInput.png)
 
