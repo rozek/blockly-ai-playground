@@ -329,6 +329,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 > use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
 
+### Context ###
+
+![Context](./Examples/Context.png)
+
+> this example demonstrates all context functions (see [Blockly workspace file](./Examples/Context.json))
+
 ## License ##
 
 [MIT License](LICENSE.md)
