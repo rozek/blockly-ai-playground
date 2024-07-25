@@ -47,6 +47,9 @@ Some context items are already used internally, these are
 * `APIServer` - the URL (and base path) of the OpenAI-compatible API you plan to use
 * `APIKey` - your API Access Key (if required)
 * `SearXNGServer` - the URL of your SearXNG server (preset to `http://127.0.0.1:8080`)
+
+and the inferencing parameters
+
 * `default_model` - the model to use for completions (no preset, as it highly depends on the configured API Server)
 * `default_max_tokens` - the maximum number of completion tokens to be returned (preset to 2048)
 * `default_temperature` - the "response randomness" setting (0...2, preset to 0)
