@@ -127,6 +127,14 @@ The loop body is executed over and over again - until the loop is exited using t
 
 #### Enabling ####
 
+Often, a programmer wants to prevent buttons to be clicked or new data entered into input fields. Typical situations are
+
+* users should not be able to start inferencing by pressing a "Submit" button before `APIServer`, `APIKey` and `Prompt` were entered (and valid)
+* users should not be able to interact with the UI while an API request is running
+
+This behaviour is achieved by "enabling" or "disabling" either the UI as a whole or specific UI elements only.
+
+
 (t.b.w.)
 
 #### UI-related Blocks ####
