@@ -170,7 +170,7 @@ These two blocks enable or disable specific UI elements.
 
 ![UIhasElement](./Screenshots/UIhasElement.png)
 
-> returns `true` if the UI currently contains an element with the given name - (or `false` otherwise
+> returns `true` if the UI currently contains an element with the given name - or `false` otherwise
 
 ![clearUI](./Screenshots/clearUI.png)
 
@@ -399,6 +399,10 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![Context](./Examples/Context.png)
 
 > this example demonstrates all context functions (see [Blockly workspace file](./Examples/Context.json))
+
+### enabled, disabled ###
+
+> this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
 
 ## License ##
 
