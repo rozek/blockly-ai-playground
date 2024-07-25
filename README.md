@@ -50,7 +50,7 @@ Some context items are already used internally, these are
 * `APIKey` - your API Access Key (if required)
 * `SearXNGServer` - the URL of your SearXNG server (preset to `http://127.0.0.1:8080`)
 
-and the inferencing parameters
+the inferencing parameters
 
 * `default_model` - the model to use for completions (no preset, as it highly depends on the configured API Server)
 * `default_max_tokens` - the maximum number of completion tokens to be returned (preset to 2048)
@@ -59,8 +59,12 @@ and the inferencing parameters
 * `default_top_k` - the "top-k filtering setting" setting (0...2048, preset to 1)
 * `default_presence_penalty` - the "token presence penalty" setting (-2...2, preset to 1)
 * `default_frequency_penalty` - the "token frequency penalty" setting (0..., no preset)
+* `default_SystemTemplate` - the default template for the "system" message in a chat (preset to `Be precise and concise.`)
+* `default_UserTemplate` - the default template for the "user" message in a chat (preset to `{{Prompt}}`)
 
+and
 
+* `Prompt` - the prompt to be sent to the AI model (preset to `who was Joseph Weizenbaum?`)
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
