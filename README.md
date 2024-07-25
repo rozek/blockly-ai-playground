@@ -74,6 +74,11 @@ During development it is sometimes useful to keep settings and values beyond the
 * you use one Blockly program to define APIServer, APIKey or other settings and use these settings in other Blockly programs
 * you save intermediate results in order to avoid having to rerun the steps to compute these results over and over again
 
+![preserveContextItem](./Screenshots/preserveContextItem.png)
+![restoreContextItem](./Screenshots/restoreContextItem.png)
+
+These two blocks provide such a functinoality: use the first block to preserve a given context item and the second to restore it later
+
 #### Context-related Blocks ####
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
