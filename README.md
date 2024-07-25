@@ -67,6 +67,13 @@ and
 * `Prompt` - the prompt to be sent to the AI model (preset to `who was Joseph Weizenbaum?`)
 * `Console` - the current contents of the built-in "Console" (initially empty)
 
+#### Preserve and Restore ####
+
+During development it is sometimes useful to keep settings and values beyond the life-time of a single program. Typical use case are:
+
+* you use one Blockly program to define APIServer, APIKey or other settings and use these settings in other Blockly programs
+* you save intermediate results in order to avoid having to rerun the steps to compute these results over and over again
+
 #### Context-related Blocks ####
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
