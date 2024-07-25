@@ -6,7 +6,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 [Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: this is still just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow until end of this week**
 
-> **Latest News: if you want to try, start with the [basicSettings example](./Examples/basicSettings.json) and enter your `APIServer`, `APIKey` and `default_model` settings. Then use the [PoC example](./Examples/PoC.json) and run your first inferences. So far, it has only been tested with Perplexity AI on a Mac - but you may still play around with the set of already existing blocks!**
+> **Latest News: if you want to try, start with the [basicSettings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings. Then use the [PoC example](#proof-of-concept) and run your first inferences. So far, it has only been tested with Perplexity AI on a Mac - but you may still play around with the set of already existing blocks!**
 
 ![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
@@ -404,7 +404,7 @@ The following blocks do not fit into the categories shown before - may may still
 
 ## Examples ##
 
-Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground"
+Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground". The linked Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
 
 ### Hello, World ###
 
@@ -442,13 +442,13 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 ## AI Examples ##
 
-The following examples actually include AI-related blocks
+The following examples actually include AI-related blocks. As before, the Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
 
-### basic Settings ###
+### Basic Settings ###
 
 ![basicSettings](./Examples/basicSettings.png)
 
-> use this example to enter your basic AI-related settings - they will be stored in the browser's storage and may then be used by other programs without having to re-enter them over and over again
+> use this example to enter your basic AI-related settings - they will be stored in the browser's storage and may then be used by other programs without having to re-enter them over and over again (see [Blockly workspace file](./Examples/basicSettings.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![basicSettings UI](./Examples/basicSettings-UI.png)
 
@@ -458,7 +458,11 @@ The following examples actually include AI-related blocks
 
 ![PoC](./Examples/PoC.png)
 
-> this is the "proof-of-concept" mentioned above - play around as you like!
+> this is the "proof-of-concept" mentioned above - play around as you like! (see [Blockly workspace file](./Examples/PoC.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![PoC-UI](./Examples/PoC-UI.png)
+
+> this is what you may get as the result
 
 ## License ##
 
