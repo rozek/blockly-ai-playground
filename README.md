@@ -186,19 +186,23 @@ These two blocks enable or disable specific UI elements.
 
 ![appendPasswordInput](./Screenshots/appendPasswordInput.png)
 
-> appends a password input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a password input element (based on an [HTML input element of type "password"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+
+![appendNumberInput](./Screenshots/appendNumberInput.png)
+
+> appends a number input element (based on an [HTML input element of type "number"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `Minimum`, `Maximum`, `Stepping` and `Enabling`
 
 ![appendURLInput](./Screenshots/appendURLInput.png)
 
-> appends a URL input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a URL input element (based on an [HTML input element of type "url"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
 
 ![appendTextInput](./Screenshots/appendTextInput.png)
 
-> appends a (multiline) text input element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a (multiline) text input element (based on an [HTML textarea](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `LineWrapping`, `SpellChecking` and `Enabling`
 
 ![appendCheckbox](./Screenshots/appendCheckbox.png)
 
-> appends a checkbox element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a checkbox element (based on an [HTML input element of type "checkbox"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element only supports the option `Enabling`
 
 ![appendRadiobuttonGroup](./Screenshots/appendRadiobuttonGroup.png)
 
