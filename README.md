@@ -158,7 +158,7 @@ These two blocks enable or disable specific UI elements.
 
 ![UIElements](./Screenshots/enableUI.png)
 
-> (re-)enables the playground UI in its entirety
+> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting
 
 ![UIElements](./Screenshots/disableUI.png)
 
