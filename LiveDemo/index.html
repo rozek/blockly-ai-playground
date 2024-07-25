@@ -57,99 +57,2101 @@
     "imports": {
       "javascript-interface-library":"https://rozek.github.io/javascript-interface-library/dist/javascript-interface-library.esm.js",
       "htm/preact":                  "https://rozek.github.io/htm/preact/standalone.module.js",
-      "hyperactiv":                  "https://rozek.github.io/hyperactiv/dist/index.mjs",
-      "protoux":                     "https://rozek.github.io/protoux/dist/protoux.modern.js"
+      "hyperactiv":                  "https://rozek.github.io/hyperactiv/dist/index.mjs"
     }
   }
   </script>
   <script name="download"    src="https://rozek.github.io/download/download.min.js"></script>
   <script name="localforage" src="https://rozek.github.io/localForage/dist/localforage.min.js"></script>
+
+  <style>
+/*******************************************************************************
+*                                                                              *
+*                            Blockly AI Playground                             *
+*                                                                              *
+*******************************************************************************/
+
+  .Playground {
+    display:block; position:relative;
+  }
+
+  .Playground.View {
+    display:flex; position:absolute; flex-flow:column nowrap;
+      justify-content:flex-start; align-items:stretch;
+    left:0px; top:0px; right:0px; bottom:0px;
+    padding:10px;
+  }
+
+  .Playground.Title {
+    font-size:18px; font-weight:bold;
+  }
+
+  .Playground.Strip {
+    display:flex; flex-flow:row nowrap;
+      justify-content:flex-start; align-items:center;
+    padding:10px 0px 4px 0px;
+  }
+
+  .Playground.Gap {
+    display:inline-block;
+    flex:1 0 auto;
+  }
+
+  .Playground.Tab {
+    display:inline-block;
+    border:solid 3px transparent;
+  }
+  .Playground.Tab.active {
+    border-bottom:solid 3px darkgray;
+  }
+
+  .Playground.Button {
+    display:inline-block;
+  }
+
+  .Playground.Arena {
+    flex:1 1 auto;
+    margin:4px 0px 0px 0px;
+  }
+
+  .Playground.Workspace {
+    display:none; position:absolute;
+    left:0px; top:0px; right:0px; bottom:0px;
+  }
+  .Playground.Workspace.active {
+    display:flex; flex-flow:column nowrap;
+      justify-content:flex-start; align-items:stretch;
+  }
+
+  .Playground.Workspace > .Placeholder {
+    flex:1 1 auto;
+  }
+
+  .Playground.FileInput {
+    display:block; position:absolute;
+    left:0px; top:0px; right:0px; bottom:0px;
+  }
+
+  .Playground.UI {
+    display:none; position:absolute;
+    left:0px; top:0px; right:0px; bottom:0px;
+    overflow-x:auto; overflow-y:scroll; overflow:auto scroll;
+  }
+  .Playground.UI.active {
+    display:flex; flex-flow:row wrap;
+      justify-content:flex-start; align-items:flex-start;
+      align-content:flex-start;
+  }
+
+  .Playground.UI.Label {
+    display:inline-block; position:relative;
+    flex:0 0 auto;
+    min-width:180px; height:30px; overflow:visible;
+    padding:0px 4px 2px 0px;
+    font-weight:bold; line-height:30px;
+  }
+
+  .Playground.UI.Element {
+    display:inline-block; position:relative;
+    flex:1 0 auto; min-width:80px; overflow:visible;
+    padding:0px 0px 2px 0px;
+  }
+
+  .Playground.UI.newLine {
+    display:inline-block; position:relative;
+    flex-basis:100%; height:0px; overflow:visible;
+  }
+
+/**** Textline/Password/Number/URL/TextInput ****/
+
+  .Playground.UI.Element.TextlineInput,
+  .Playground.UI.Element.PasswordInput,
+  .Playground.UI.Element.NumberInput,
+  .Playground.UI.Element.URLInput,
+  .Playground.UI.Element.TextInput {
+    top:1px;
+    border:solid 1px #888888; border-radius:2px;
+    background:#e8f0ff;
+    padding:0px 2px 0px 2px;
+  }
+
+  .Playground.UI.Element.TextlineInput,
+  .Playground.UI.Element.PasswordInput,
+  .Playground.UI.Element.NumberInput,
+  .Playground.UI.Element.URLInput {
+    height:28px;
+  }
+
+  .Playground.UI.Element.TextInput {
+    min-height:88px;
+  }
+
+  .Playground.UI.Element.NumberInput {
+    flex:0 0 auto;
+  }
+
+  .Playground.UI.Element.TextlineInput:read-only,
+  .Playground.UI.Element.PasswordInput:read-only,
+  .Playground.UI.Element.NumberInput:read-only,
+  .Playground.UI.Element.URLInput:read-only,
+  .Playground.UI.Element.TextInput:read-only {
+    border:solid 1px #DDDDDD; border-radius:2px;
+    background:#F0F0F0;
+  }
+
+/**** Checkbox, Radiobutton ****/
+
+  .Playground.UI.Element.Checkbox,
+  .Playground.UI.Element.Radiobutton {
+    flex:0 0 auto;
+    top:6px; min-width:0px; margin-left:0px;
+  }
+
+/**** Button ****/
+
+  .Playground.UI.Element.Button {
+    flex:0 0 auto;
+    top:1px; height:28px;
+    border:solid 1px black; border-radius:4px;
+    background:white;
+    font-weight:bold; color:black; text-align:center;
+  }
+
+/**** DropDown ****/
+
+  .Playground.UI.Element.DropDown {
+    flex:0 0 auto;
+    top:1px; height:28px;
+    border:solid 1px #888888; border-radius:2px;
+    background:#e8f0ff;
+    padding:0px 2px 0px 2px;
+  }
+
+/**** Textline/Number/TextOutput ****/
+
+  .Playground.UI.Element.TextlineOutput,
+  .Playground.UI.Element.NumberOutput,
+  .Playground.UI.Element.TextOutput {
+    top:1px;
+    border:solid 1px #DDDDDD; border-radius:2px;
+    background:#F0F0F0;
+    padding:0px 2px 0px 2px;
+  }
+
+  .Playground.UI.Element.TextlineOutput,
+  .Playground.UI.Element.NumberOutput {
+    height:28px;
+  }
+
+  .Playground.UI.Element.TextOutput {
+    min-height:88px;
+  }
+
+  .Playground.UI.Element.NumberOutput {
+    flex:0 0 auto;
+  }
+
+/**** Text/HintView ****/
+
+  .Playground.UI.Element.TextView {
+    top:1px; min-height:28px;
+    font-size:14px; font-weight:normal; line-height:21px;
+  }
+
+  .Playground.UI.Element.FinePrintView {
+    top:1px; min-height:28px;
+    font-size:12px; font-weight:normal; line-height:18px;
+  }
+
+
+  </style>
  </head>
  <body>
   <script type="module">
 /*******************************************************************************
 *                                                                              *
-*                               Blockly AI Agent                               *
+*                            Blockly AI Playground                             *
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { throwError, ValueIsString, ValueIsURL, allowBoolean, allowNumberInRange, allowIntegerInRange, allowCardinal, allowTextline, allowPlainObject, expectListSatisfying, } from 'javascript-interface-library';
-import { html, Component } from 'htm/preact';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
-const { computed } = hyperactiv;
-import { ProtoUX } from 'protoux';
-let PUX = new ProtoUX();
-const Application = Object.assign(PUX.observed, {
-    activeCardIndex: 0,
-    Workspace: undefined,
-    BackupWanted: false,
-    State: 'idle',
-    APIURL: '', APIKey: '', SearXNGURL: '',
-    Input: '', Output: ''
-});
-/**** Blockly Workspace ****/
-class Workspace extends Component {
-    componentDidMount() {
-        const BlocklyWorkspace = Blockly.inject(this.base, BlocklySpecification);
-        restoreWorkspace(BlocklyWorkspace);
-        BlocklyWorkspace.addChangeListener(preserveWorkspace.bind(null, BlocklyWorkspace));
-        Application.Workspace = BlocklyWorkspace;
+const { observe, computed } = hyperactiv;
+/**** throwError - simplifies construction of named errors ****/
+export function throwError(Message) {
+    let Match = /^([$a-zA-Z][$a-zA-Z0-9]*):\s*(\S.+)\s*$/.exec(Message);
+    if (Match == null) {
+        throw new Error(Message);
     }
-    render() {
-        return html `<div style="
-        display:block; position:absolute;
-        left:0px; top:0px; right:0px; bottom:0px;
-      "/>`;
+    else {
+        let namedError = new Error(Match[2]);
+        namedError.name = Match[1];
+        throw namedError;
     }
 }
-/**** io_clear ****/
-Blockly.Blocks['io_clear'] = {
+//------------------------------------------------------------------------------
+//--                 Classification and Validation Functions                  --
+//------------------------------------------------------------------------------
+/**** ValueIsIdentifier ****/
+const SNS_IdentifierPattern = /^[a-z$_][a-z$_0-9]*$/i;
+function ValueIsIdentifier(Value) {
+    return ValueIsStringMatching(Value, SNS_IdentifierPattern);
+}
+/**** allow/expect[ed]Identifier ****/
+const allowIdentifier = ValidatorForClassifier(ValueIsIdentifier, acceptNil, 'note stickers identifier'), allowedIdentifier = allowIdentifier;
+const expectIdentifier = ValidatorForClassifier(ValueIsIdentifier, rejectNil, 'note stickers identifier'), expectedIdentifier = expectIdentifier;
+//------------------------------------------------------------------------------
+//--                               Acceptables                                --
+//------------------------------------------------------------------------------
+/**** acceptableBoolean ****/
+function acceptableBoolean(Value, Default) {
+    return (ValueIsBoolean(Value) ? Value : Default);
+}
+/**** acceptableOptionalBoolean ****/
+function acceptableOptionalBoolean(Value, Default) {
+    return (Value == null
+        ? undefined
+        : ValueIsBoolean(Value) ? Value : Default);
+}
+/**** acceptableNumber ****/
+function acceptableNumber(Value, Default) {
+    return (ValueIsNumber(Value) ? Value : Default);
+}
+/**** acceptableOptionalNumber ****/
+function acceptableOptionalNumber(Value, Default) {
+    return (ValueIsNumber(Value) ? Value : Default);
+}
+/**** acceptableNumberInRange ****/
+function acceptableNumberInRange(Value, Default, minValue = -Infinity, maxValue = Infinity, withMin = false, withMax = false) {
+    return (ValueIsNumberInRange(Value, minValue, maxValue, withMin, withMax) ? Value : Default);
+}
+/**** acceptableOptionalNumberInRange ****/
+function acceptableOptionalNumberInRange(Value, Default, minValue = -Infinity, maxValue = Infinity, withMin = false, withMax = false) {
+    return (ValueIsNumberInRange(Value, minValue, maxValue, withMin, withMax)
+        ? Value
+        : Default);
+}
+/**** acceptableInteger ****/
+function acceptableInteger(Value, Default) {
+    return (ValueIsInteger(Value) ? Value : Default);
+}
+/**** acceptableOptionalInteger ****/
+function acceptableOptionalInteger(Value, Default) {
+    return (ValueIsInteger(Value) ? Value : Default);
+}
+/**** acceptableIntegerInRange ****/
+function acceptableIntegerInRange(Value, Default, minValue = -Infinity, maxValue = Infinity) {
+    return (ValueIsIntegerInRange(Value, minValue, maxValue) ? Value : Default);
+}
+/**** acceptableOptionalIntegerInRange ****/
+function acceptableOptionalIntegerInRange(Value, Default, minValue = -Infinity, maxValue = Infinity) {
+    return (ValueIsIntegerInRange(Value, minValue, maxValue) ? Value : Default);
+}
+/**** acceptableOrdinal ****/
+function acceptableOrdinal(Value, Default) {
+    return (ValueIsOrdinal(Value) ? Value : Default);
+}
+/**** acceptableOptionalOrdinal ****/
+function acceptableOptionalOrdinal(Value, Default) {
+    return (ValueIsOrdinal(Value) ? Value : Default);
+}
+/**** acceptableString ****/
+function acceptableString(Value, Default) {
+    return (ValueIsString(Value) ? Value : Default);
+}
+/**** acceptableOptionalString ****/
+function acceptableOptionalString(Value, Default) {
+    return (ValueIsString(Value) ? Value : Default);
+}
+/**** acceptableNonEmptyString ****/
+function acceptableNonEmptyString(Value, Default) {
+    return (ValueIsString(Value) && (Value.trim() !== '') ? Value : Default);
+}
+/**** acceptableOptionalNonEmptyString ****/
+function acceptableOptionalNonEmptyString(Value, Default) {
+    return (ValueIsString(Value) && (Value.trim() !== '') ? Value : Default);
+}
+/**** acceptableStringMatching ****/
+function acceptableStringMatching(Value, Default, Pattern) {
+    return (ValueIsStringMatching(Value, Pattern) ? Value : Default);
+}
+/**** acceptableOptionalStringMatching ****/
+function acceptableOptionalStringMatching(Value, Default, Pattern) {
+    return (ValueIsStringMatching(Value, Pattern) ? Value : Default);
+}
+/**** acceptableText ****/
+const noCtrlCharsButCRLFTABPattern = /^[^\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\u2028\u2029\uFFF9-\uFFFB]*$/;
+function acceptableText(Value, Default) {
+    return (ValueIsStringMatching(Value, noCtrlCharsButCRLFTABPattern) ? Value : Default);
+}
+/**** acceptableOptionalText ****/
+function acceptableOptionalText(Value, Default) {
+    return (ValueIsText(Value) ? Value : Default);
+}
+/**** acceptableTextline ****/
+function acceptableTextline(Value, Default) {
+    return (ValueIsTextline(Value) ? Value : Default).replace(/[\f\r\n\v\u0085\u2028\u2029].*$/, '...');
+}
+/**** acceptableOptionalTextline ****/
+function acceptableOptionalTextline(Value, Default) {
+    const Result = ValueIsTextline(Value) ? Value : Default;
+    return (Result == null
+        ? undefined
+        : Result.replace(/[\f\r\n\v\u0085\u2028\u2029].*$/, '...'));
+}
+/**** acceptableFunction ****/
+function acceptableFunction(Value, Default) {
+    return (ValueIsFunction(Value) ? Value : Default);
+}
+/**** acceptableOptionalFunction ****/
+function acceptableOptionalFunction(Value, Default) {
+    return (ValueIsFunction(Value) ? Value : Default);
+}
+/**** acceptableList ****/
+function acceptableList(Value, Default) {
+    return (ValueIsList(Value) ? Value : Default);
+}
+/**** acceptableOptionalList ****/
+function acceptableOptionalList(Value, Default) {
+    return (ValueIsList(Value) ? Value : Default);
+}
+/**** acceptableListSatisfying ****/
+function acceptableListSatisfying(Value, Default, Matcher) {
+    return (ValueIsListSatisfying(Value, Matcher) ? Value : Default);
+}
+/**** acceptableOptionalListSatisfying ****/
+function acceptableOptionalListSatisfying(Value, Default, Matcher) {
+    return (ValueIsListSatisfying(Value, Matcher) ? Value : Default);
+}
+/**** acceptableColor ****/
+function acceptableColor(Value, Default) {
+    return (ValueIsColor(Value) ? Value : Default);
+}
+/**** acceptableOptionalColor ****/
+function acceptableOptionalColor(Value, Default) {
+    return (ValueIsColor(Value) ? Value : Default);
+}
+/**** acceptableEMailAddress ****/
+function acceptableEMailAddress(Value, Default) {
+    return (ValueIsEMailAddress(Value) ? Value : Default);
+}
+/**** acceptableURL ****/
+function acceptableURL(Value, Default) {
+    return (ValueIsURL(Value) ? Value : Default);
+}
+//------------------------------------------------------------------------------
+//--                             Playground State                             --
+//------------------------------------------------------------------------------
+let Playground = observe({
+    View: undefined,
+    activeTab: 0,
+    WorkspaceElement: undefined, Workspace: undefined, BackupWanted: false,
+    Interpreter: undefined, InterpreterState: 'idle', pendingInterpreterState: undefined,
+    UI: [], UIEnabling: true,
+    UIEventQueue: [], currentUIEvent: undefined, UIEventTimer: undefined,
+    UIEventHandler: undefined, UIEventHandlerState: undefined,
+}, { deep: false });
+//------------------------------------------------------------------------------
+//--                            Playground Context                            --
+//------------------------------------------------------------------------------
+Playground.Context = observe({}, { deep: false });
+/**** ContextKeys ****/
+function ContextKeys() {
+    return Array.from(Object.keys(Playground.Context)).sort();
+}
+/**** clearContext ****/
+function clearContext() {
+    Object.keys(Playground.Context).forEach((Key) => delete Playground.Context[Key]);
+}
+/**** getFromContext ****/
+function getFromContext(Key) {
+    expectIdentifier('context item key', Key);
+    return Playground.Context[Key];
+}
+/**** setInContext ****/
+function setInContext(Key, Value) {
+    expectIdentifier('context item key', Key);
+    Playground.Context[Key] = Value;
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index >= 0) {
+        rerenderPlayground();
+    }
+}
+/**** removeFromContext ****/
+function removeFromContext(Key) {
+    expectIdentifier('context item key', Key);
+    delete Playground.Context[Key];
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index >= 0) {
+        rerenderPlayground();
+    }
+}
+/**** preserveContextItem ****/
+function preserveContextItem(Key) {
+    expectIdentifier('context item key', Key);
+    localStorage.setItem(Key, '' + (Playground.Context[Key] || ''));
+}
+/**** restoreContextItem ****/
+function restoreContextItem(Key) {
+    expectIdentifier('context item key', Key);
+    Playground.Context[Key] = localStorage.getItem(Key) || '';
+}
+//------------------------------------------------------------------------------
+//--                              Playground UI                               --
+//------------------------------------------------------------------------------
+const PlaygroundUITypes = [
+    'textline-input', 'password-input', 'number-input', 'url-input', 'text-input',
+    'checkbox', 'radiobutton-group', 'dropdown', 'button',
+    'textline-output', 'number-output', 'text-output',
+    'text', 'fineprint',
+];
+const PlaygroundUIEventTypes = ['click', 'input'];
+/**** showWorkspace ****/
+function showWorkspace() {
+    console.log('showWorkspace');
+    Playground.activeTab = 0;
+    rerenderPlayground();
+}
+/**** showUI ****/
+function showUI() {
+    console.log('showUI');
+    Playground.activeTab = 1;
+    rerenderPlayground();
+}
+/**** UIElements ****/
+function UIElements() {
+    return Playground.UI.map((Item, i) => Item.Key);
+}
+/**** UIhasElement ****/
+function UIhasElement(Key) {
+    expectIdentifier('UI element key', Key);
+    return Playground.UI.some((Item) => Item.Key === Key);
+}
+/**** clearUI ****/
+function clearUI() {
+    Playground.UI.length = 0;
+    rerenderPlayground();
+}
+/**** enableUI ****/
+function enableUI() {
+    Playground.UIEnabling = true;
+    rerenderPlayground();
+}
+/**** disableUI ****/
+function disableUI() {
+    Playground.UIEnabling = false;
+    rerenderPlayground();
+}
+/**** appendToUI ****/
+function appendToUI(Key, Label, Type, OptionSet = {}) {
+    expectIdentifier('UI element key', Key);
+    expectTextline('UI element label', Label);
+    expectOneOf('UI element type', Type, PlaygroundUITypes);
+    allowPlainObject('UI element option set', OptionSet);
+    const oldIndex = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (oldIndex >= 0) {
+        Playground.UI.splice(oldIndex, 1);
+    }
+    Playground.UI.push({ Key, Label, Type, OptionSet });
+    rerenderPlayground();
+}
+/**** configureUI ****/
+function configureUI(Key, Option, Value) {
+    expectIdentifier('UI element key', Key);
+    expectIdentifier('UI option name', Option);
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index < 0)
+        throwError('NoSuchUIElement: no UI element named ' + quoted(Key) + ' found');
+    Playground.UI[Index].OptionSet[Option] = Value;
+    rerenderPlayground();
+}
+/**** ConfigurationOf ****/
+function ConfigurationOf(Key, Option) {
+    expectIdentifier('UI element key', Key);
+    expectIdentifier('UI option name', Option);
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index < 0)
+        throwError('NoSuchUIElement: no UI element named ' + quoted(Key) + ' found');
+    return Playground.UI[Index].OptionSet[Option];
+}
+/**** EnablingOf ****/
+function EnablingOf(Key) {
+    expectIdentifier('UI element key', Key);
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index < 0)
+        throwError('NoSuchUIElement: no UI element named ' + quoted(Key) + ' found');
+    if (!Playground.UIEnabled) {
+        return false;
+    }
+    const Candidate = Playground.UI[Index].OptionSet['Enabling'];
+    return (ValueIsBoolean(Candidate) ? Candidate : true);
+}
+/**** setEnablingOf ****/
+function setEnablingOf(Key, Enabling) {
+    expectIdentifier('UI element key', Key);
+    expectBoolean('enabling value', Enabling);
+    configureUI(Key, 'Enabling', Enabling); // keeps code DRY
+}
+/**** enable/disable ****/
+function enable(Key) {
+    configureUI(Key, 'Enabling', true); // keeps code DRY
+}
+function disable(Key) {
+    configureUI(Key, 'Enabling', false); // keeps code DRY
+}
+/**** clearChoicesOf ****/
+function clearChoicesOf(Key) {
+    expectIdentifier('UI element key', Key);
+    configureUI(Key, 'Choices', ''); // keeps code DRY
+}
+/**** appendChoiceTo ****/
+function appendChoiceTo(Key, Choice) {
+    expectIdentifier('UI element key', Key);
+    expectTextline('choice', Choice);
+    let currentChoices = ConfigurationOf(Key, 'Choices');
+    if (!ValueIsText(currentChoices)) {
+        currentChoices = '';
+    }
+    configureUI(Key, 'Choices', (currentChoices + '\n' + Choice).trim());
+}
+/**** removeFromUI ****/
+function removeFromUI(Key) {
+    expectIdentifier('UI element key', Key);
+    const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
+    if (Index >= 0) {
+        Playground.UI.splice(Index, 1);
+    }
+}
+/**** clearConsole ****/
+function clearConsole() {
+    setInContext('Console', '');
+    rerenderPlayground();
+}
+/**** print ****/
+function print(Message) {
+    Message = (Message == null ? '' : '' + Message);
+    if (!UIhasElement('Console')) {
+        appendToUI('Console', 'Console', 'text-output');
+    }
+    setInContext('Console', (getFromContext('Console') || '') + Message);
+    rerenderPlayground();
+}
+/**** println ****/
+function println(Message) {
+    Message = (Message == null ? '' : '' + Message);
+    if (!UIhasElement('Console')) {
+        appendToUI('Console', 'Console', 'text-output');
+    }
+    setInContext('Console', (getFromContext('Console') || '') + Message + '\n');
+    rerenderPlayground();
+}
+/**** enqueueUIEvent ****/
+function enqueueUIEvent(Type, Key) {
+    if (Playground.UIEventHandlerState == null) {
+        return;
+    }
+    if (Playground.UIEventHandlerState === 'waiting') {
+        if (Playground.UIEventTimer != null) {
+            clearTimeout(Playground.UIEventTimer);
+            Playground.UIEventTimer = undefined;
+        }
+        Playground.currentUIEvent = { Type, Key };
+        Playground.UIEventHandlerState = 'busy';
+        const resolve = Playground.UIEventHandler;
+        Playground.UIEventHandler = undefined;
+        return resolve(true);
+    }
+    else {
+        Playground.UIEventQueue.push({ Type, Key });
+    }
+}
+/**** waitForNextUIEvent ****/
+async function waitForNextUIEvent(Timeout) {
+    expectNumber('timeout [s]', Timeout);
+    Timeout = Math.round(Timeout * 1000);
+    Playground.currentUIEvent = undefined;
+    Playground.UIEventHandlerState = 'waiting';
+    return new Promise((resolve) => {
+        if (Timeout === 0) {
+            Playground.currentUIEvent = Playground.UIEventQueue.unshift();
+            Playground.UIEventHandlerState = (Playground.currentUIEvent == null ? undefined : 'busy');
+            return resolve(Playground.currentUIEvent != null);
+        }
+        Playground.UIEventHandler = resolve;
+        if (Timeout > 0) {
+            Playground.UIEventTimer = setTimeout(() => {
+                if (Playground.UIEventHandler === resolve) {
+                    Playground.UIEventHandler = undefined;
+                    return resolve(false);
+                }
+            }, Timeout);
+        }
+    });
+}
+/**** currentUIEvent ****/
+function currentUIEvent() {
+    return Playground.currentUIEvent;
+}
+/**** clearPendingUIEvents ****/
+function clearPendingUIEvents() {
+    Playground.UIEventQueue.length = 0;
+}
+/**** ButtonWasClicked ****/
+function ButtonWasClicked(Key) {
+    const currentEvent = currentUIEvent();
+    return ((currentEvent != null) &&
+        (currentEvent.Type === 'click') && (currentEvent.Key === Key));
+}
+/**** InputWasChanged ****/
+function InputWasChanged(Key) {
+    const currentEvent = currentUIEvent();
+    return ((currentEvent != null) &&
+        (currentEvent.Type === 'input') && (currentEvent.Key === Key));
+}
+/**** leaveUIEventLoop ****/
+function leaveUIEventLoop() {
+    if (Playground.UIEventHandlerState === 'busy') {
+        throw 'leaveUIEventLoop';
+    }
+    else {
+        throwError('InvalidState: not within a running UI event handler');
+    }
+}
+//------------------------------------------------------------------------------
+//--                           Playground AI Basics                           --
+//------------------------------------------------------------------------------
+/**** ChatCompletionFor ****/
+async function ChatCompletionFor(MessageList, OptionSet = {}) {
+    expectListSatisfying('message list', MessageList, ValueIsString);
+    expectPlainObject('option set', OptionSet);
+    if (MessageList.length < 2)
+        throwError('InvalidArgument: the given "MessageList" contains less than 2 elements');
+    if (MessageList.length % 2 !== 0)
+        throwError('InvalidArgument: the given "MessageList" contains an odd number of elements');
+    let APIServer = (OptionSet.APIServer || getFromContext('APIServer') || '').trim();
+    expectURL('APIServer', APIServer);
+    let APIKey = (OptionSet.APIKey || getFromContext('APIKey') || '').trim();
+    if (APIKey === '')
+        throwError('Invalidargument: the given "APIKey" is empty');
+    expectTextline('APIKey', APIKey);
+    let Messages = [
+        { role: 'system', content: MessageList[0] },
+        { role: 'user', content: MessageList[1] }
+    ];
+    for (let i = 2, l = Messages.length; i < l; i += 2) {
+        Messages.push({ role: 'assistant', content: MessageList[i] }, { role: 'user', content: MessageList[i + 1] });
+    }
+    const RequestBody = Object.assign(RequestOptionsFrom(OptionSet, 'default_'), {
+        temperature: 0, top_k: 1, max_tokens: 200, stream: false,
+    });
+    if (RequestBody.model == null)
+        throwError('Missingargument: no AI "model" given');
+    RequestBody.messages = Messages;
+    try {
+        const Response = await fetch(APIServer, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                Authorization: `Bearer ${APIKey}`,
+            },
+            body: JSON.stringify(RequestBody)
+        });
+        return (await Response.json()).choices[0].message.content;
+    }
+    catch (Signal) {
+        throwError('RequestFailure: API request failed with ' + Signal);
+    }
+}
+/**** TextCompletionFor ****/
+async function TextCompletionFor(Prompt, OptionSet = {}) {
+    expectText('prompt', Prompt);
+    const MessageList = [
+        acceptableText(OptionSet.SystemTemplate || getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+        acceptableText(OptionSet.UserTemplate || getFromContext('default_UserTemplate'), '{{Prompt}}')
+            .replace('{{Prompt}}', Prompt),
+    ];
+    return await ChatCompletionFor(MessageList, OptionSet);
+}
+/**** RequestOptionsFrom ****/
+function RequestOptionsFrom(OptionSet, ContextPrefix = 'default_') {
+    const Result = {};
+    ('model temperature top_k top_p frequency_penalty presence_penalty ' +
+        'max_tokens return_citations return_images').split(' ').forEach((Option) => {
+        const Candidate = OptionSet[Option] || getFromContext(ContextPrefix + Option);
+        if (Candidate != null) {
+            Result[Option] = Candidate;
+        }
+    });
+    return Result;
+}
+//------------------------------------------------------------------------------
+//--                         Playground AI Mezzanines                         --
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//--                           Playground AI Tools                            --
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//--                          Playground Miscellany                           --
+//------------------------------------------------------------------------------
+/**** rerenderPlayground ****/
+function rerenderPlayground() {
+    console.log('rerenderPlayground', Playground.InterpreterState);
+    if (Playground.View != null) {
+        Playground.View.rerender();
+    }
+}
+//------------------------------------------------------------------------------
+//--                              JS-Interpreter                              --
+//------------------------------------------------------------------------------
+const JSInterpreterStates = ['idle', 'running', 'suspended'];
+/**** external API ****/
+function externalAPI(Interpreter, global) {
+    /**** ContextKeys ****/
+    Interpreter.setProperty(global, 'ContextKeys', Interpreter.createNativeFunction(function _ContextKeys() {
+        return ContextKeys();
+    }));
+    /**** clearContext ****/
+    Interpreter.setProperty(global, 'clearContext', Interpreter.createNativeFunction(function _clearContext() {
+        clearContext();
+    }));
+    /**** getFromContext ****/
+    Interpreter.setProperty(global, 'getFromContext', Interpreter.createNativeFunction(function _getFromContext(Key) {
+        return getFromContext(Key);
+    }));
+    /**** setInContext ****/
+    Interpreter.setProperty(global, 'setInContext', Interpreter.createNativeFunction(function _setInContext(Key, Value) {
+        setInContext(Key, Value);
+    }));
+    /**** removeFromContext ****/
+    Interpreter.setProperty(global, 'removeFromContext', Interpreter.createNativeFunction(function _removeFromContext(Key) {
+        removeFromContext(Key);
+    }));
+    /**** preserveContextItem ****/
+    Interpreter.setProperty(global, 'preserveContextItem', Interpreter.createNativeFunction(function _preserveContextItem(Key) {
+        preserveContextItem(Key);
+    }));
+    /**** restoreContextItem ****/
+    Interpreter.setProperty(global, 'restoreContextItem', Interpreter.createNativeFunction(function _restoreContextItem(Key) {
+        restoreContextItem(Key);
+    }));
+    /**** showWorkspace ****/
+    Interpreter.setProperty(global, 'showWorkspace', Interpreter.createNativeFunction(function _showWorkspace() {
+        showWorkspace();
+    }));
+    /**** showUI ****/
+    Interpreter.setProperty(global, 'showUI', Interpreter.createNativeFunction(function _showUI() {
+        showUI();
+    }));
+    /**** UIElements ****/
+    Interpreter.setProperty(global, 'UIElements', Interpreter.createNativeFunction(function _UIElements() {
+        return UIElements();
+    }));
+    /**** UIhasElement ****/
+    Interpreter.setProperty(global, 'UIhasElement', Interpreter.createNativeFunction(function _UIhasElement(Key) {
+        return UIhasElement(Key);
+    }));
+    /**** clearUI ****/
+    Interpreter.setProperty(global, 'clearUI', Interpreter.createNativeFunction(function _clearUI() {
+        clearUI();
+    }));
+    /**** enableUI ****/
+    Interpreter.setProperty(global, 'enableUI', Interpreter.createNativeFunction(function _enableUI() {
+        enableUI();
+    }));
+    /**** disableUI ****/
+    Interpreter.setProperty(global, 'disableUI', Interpreter.createNativeFunction(function _disableUI() {
+        disableUI();
+    }));
+    /**** appendToUI ****/
+    Interpreter.setProperty(global, 'appendToUI', Interpreter.createNativeFunction(function _appendToUI(Key, Label, Type, OptionList = []) {
+        appendToUI(Key, Label, Type, SetFromKeyValueList(OptionList));
+    }));
+    /**** appendTextlineInput ****/
+    Interpreter.setProperty(global, 'appendTextlineInput', Interpreter.createNativeFunction(function _appendTextlineInput(Key, Label) {
+        appendToUI(Key, Label, 'textline-input');
+    }));
+    /**** appendPasswordInput ****/
+    Interpreter.setProperty(global, 'appendPasswordInput', Interpreter.createNativeFunction(function _appendPasswordInput(Key, Label) {
+        appendToUI(Key, Label, 'password-input');
+    }));
+    /**** appendNumberInput ****/
+    Interpreter.setProperty(global, 'appendNumberInput', Interpreter.createNativeFunction(function _appendNumberInput(Key, Label) {
+        appendToUI(Key, Label, 'number-input');
+    }));
+    /**** appendURLInput ****/
+    Interpreter.setProperty(global, 'appendURLInput', Interpreter.createNativeFunction(function _appendURLInput(Key, Label) {
+        appendToUI(Key, Label, 'url-input');
+    }));
+    /**** appendTextInput ****/
+    Interpreter.setProperty(global, 'appendTextInput', Interpreter.createNativeFunction(function _appendTextInput(Key, Label) {
+        appendToUI(Key, Label, 'text-input');
+    }));
+    /**** appendCheckbox ****/
+    Interpreter.setProperty(global, 'appendCheckbox', Interpreter.createNativeFunction(function _appendCheckbox(Key, Label) {
+        appendToUI(Key, Label, 'checkbox');
+    }));
+    /**** appendRadiobuttonGroup ****/
+    Interpreter.setProperty(global, 'appendRadiobuttonGroup', Interpreter.createNativeFunction(function _appendRadiobuttonGroup(Key, Label) {
+        appendToUI(Key, Label, 'radiobutton-group');
+    }));
+    /**** appendDropDown ****/
+    Interpreter.setProperty(global, 'appendDropDown', Interpreter.createNativeFunction(function _appendDropDown(Key, Label) {
+        appendToUI(Key, Label, 'dropdown');
+    }));
+    /**** appendButton ****/
+    Interpreter.setProperty(global, 'appendButton', Interpreter.createNativeFunction(function _appendButton(Key, Label) {
+        appendToUI(Key, Label, 'button');
+    }));
+    /**** appendTextlineOutput ****/
+    Interpreter.setProperty(global, 'appendTextlineOutput', Interpreter.createNativeFunction(function _appendTextlineOutput(Key, Label) {
+        appendToUI(Key, Label, 'textline-output', { readonly: true });
+    }));
+    /**** appendNumberOutput ****/
+    Interpreter.setProperty(global, 'appendNumberOutput', Interpreter.createNativeFunction(function _appendNumberOutput(Key, Label) {
+        appendToUI(Key, Label, 'number-output', { readonly: true });
+    }));
+    /**** appendTextOutput ****/
+    Interpreter.setProperty(global, 'appendTextOutput', Interpreter.createNativeFunction(function _appendTextOutput(Key, Label) {
+        appendToUI(Key, Label, 'text-output', { readonly: true });
+    }));
+    /**** appendText ****/
+    Interpreter.setProperty(global, 'appendText', Interpreter.createNativeFunction(function _appendText(Key) {
+        appendToUI(Key, '', 'text');
+    }));
+    /**** appendFinePrint ****/
+    Interpreter.setProperty(global, 'appendFinePrint', Interpreter.createNativeFunction(function _appendFinePrint(Key) {
+        appendToUI(Key, '', 'fineprint');
+    }));
+    /**** configureUI ****/
+    Interpreter.setProperty(global, 'configureUI', Interpreter.createNativeFunction(function _configureUI(Key, Option, Value) {
+        configureUI(Key, Option, Value);
+    }));
+    /**** ConfigurationOf ****/
+    Interpreter.setProperty(global, 'ConfigurationOf', Interpreter.createNativeFunction(function _ConfigurationOf(Key, Option) {
+        return ConfigurationOf(Key, Option);
+    }));
+    /**** EnablingOf ****/
+    Interpreter.setProperty(global, 'EnablingOf', Interpreter.createNativeFunction(function _EnablingOf(Key) {
+        return EnablingOf(Key);
+    }));
+    /**** setEnablingOf ****/
+    Interpreter.setProperty(global, 'setEnablingOf', Interpreter.createNativeFunction(function _setEnablingOf(Key, Value) {
+        setEnablingOf(Key, Value);
+    }));
+    /**** enable/disable ****/
+    Interpreter.setProperty(global, 'enable', Interpreter.createNativeFunction(function _enable(Key) {
+        enable(Key);
+    }));
+    Interpreter.setProperty(global, 'disable', Interpreter.createNativeFunction(function _disable(Key) {
+        disable(Key);
+    }));
+    /**** isEnabled ****/
+    Interpreter.setProperty(global, 'isEnabled', Interpreter.createNativeFunction(function _isEnabled(Key) {
+        return (EnablingOf(Key) === true);
+    }));
+    /**** clearChoicesOf ****/
+    Interpreter.setProperty(global, 'clearChoicesOf', Interpreter.createNativeFunction(function _clearChoicesOf(Key) {
+        clearChoicesOf(Key);
+    }));
+    /**** appendChoiceTo ****/
+    Interpreter.setProperty(global, 'appendChoiceTo', Interpreter.createNativeFunction(function _appendChoiceTo(Key, Choice) {
+        appendChoiceTo(Key, Choice);
+    }));
+    /**** removeFromUI ****/
+    Interpreter.setProperty(global, 'removeFromUI', Interpreter.createNativeFunction(function _removeFromUI(Key) {
+        removeFromUI(Key);
+    }));
+    /**** clearConsole ****/
+    Interpreter.setProperty(global, 'clearConsole', Interpreter.createNativeFunction(function _clearConsole() {
+        clearConsole();
+    }));
+    /**** print ****/
+    Interpreter.setProperty(global, 'print', Interpreter.createNativeFunction(function _print(Message) {
+        print(Message);
+    }));
+    /**** println ****/
+    Interpreter.setProperty(global, 'println', Interpreter.createNativeFunction(function _println(Message) {
+        println(Message);
+    }));
+    /**** waitForNextUIEvent ****/
+    Interpreter.setProperty(global, 'waitForNextUIEvent', Interpreter.createAsyncFunction(async function _waitForNextUIEvent(Timeout, Callback) {
+        let EventReceived = await waitForNextUIEvent(Timeout);
+        Callback(EventReceived);
+    }));
+    /**** UIEventHandlerWasLeft ****/
+    Interpreter.setProperty(global, 'UIEventHandlerWasLeft', Interpreter.createNativeFunction(function _UIEventHandlerWasLeft() {
+        Playground.UIEventHandlerState = undefined;
+    }));
+    /**** clearPendingUIEvents ****/
+    Interpreter.setProperty(global, 'clearPendingUIEvents', Interpreter.createNativeFunction(function _clearPendingUIEvents() {
+        clearPendingUIEvents();
+    }));
+    /**** ButtonWasClicked ****/
+    Interpreter.setProperty(global, 'ButtonWasClicked', Interpreter.createNativeFunction(function _ButtonWasClicked(Key) {
+        return ButtonWasClicked(Key);
+    }));
+    /**** InputWasChanged ****/
+    Interpreter.setProperty(global, 'InputWasChanged', Interpreter.createNativeFunction(function _InputWasChanged(Key) {
+        return InputWasChanged(Key);
+    }));
+    /**** leaveUIEventLoop ****/
+    Interpreter.setProperty(global, 'leaveUIEventLoop', Interpreter.createNativeFunction(function _leaveUIEventLoop() {
+        leaveUIEventLoop();
+    }));
+    /**** ChatCompletionFor ****/
+    Interpreter.setProperty(global, 'ChatCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(MessageList, OptionSet, Callback) {
+        let Response = await ChatCompletionFor(MessageList, OptionSet);
+        Callback(Response);
+    }));
+    /**** TextCompletionFor ****/
+    Interpreter.setProperty(global, 'TextCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(Prompt, OptionSet, Callback) {
+        let Response = await TextCompletionFor(Prompt, OptionSet);
+        Callback(Response);
+    }));
+    /**** wait ****/
+    Interpreter.setProperty(global, 'wait', Interpreter.createAsyncFunction(async function wait(Duration, Callback) {
+        if (ValueIsOrdinal(Duration)) {
+            setTimeout(Callback, Duration);
+        }
+        else {
+            alert('invalid "Duration" given');
+            abortBlocklyProgram();
+        }
+    }));
+    /**** alert ****/
+    Interpreter.setProperty(global, 'alert', Interpreter.createNativeFunction(function alert(Message) {
+        window.alert(Message);
+    }));
+    /**** confirm ****/
+    Interpreter.setProperty(global, 'confirm', Interpreter.createNativeFunction(function confirm(Message) {
+        return window.confirm(Message);
+    }));
+    /**** prompt ****/
+    Interpreter.setProperty(global, 'prompt', Interpreter.createNativeFunction(function prompt(Message, Default) {
+        return (window.prompt(Message, Default) || '');
+    }));
+    /**** ValueIsNotEmpty ****/
+    Interpreter.setProperty(global, 'ValueIsNotEmpty', Interpreter.createNativeFunction(function _ValueIsNotEmpty(Value) {
+        return ValueIsNonEmptyString(Value);
+    }));
+    /**** ValueIsNumber ****/
+    Interpreter.setProperty(global, 'ValueIsNumber', Interpreter.createNativeFunction(function _ValueIsNumber(Value) {
+        return ValueIsNumber(Value);
+    }));
+    /**** ValueIsNumberInRange ****/
+    Interpreter.setProperty(global, 'ValueIsNumberInRange', Interpreter.createNativeFunction(function _ValueIsNumberInRange(Value, Minimum, Maximum, withMinimum, withMaximum) {
+        return ValueIsNumberInRange(Value, Minimum, Maximum, withMinimum, withMaximum);
+    }));
+    /**** ValueIsInteger ****/
+    Interpreter.setProperty(global, 'ValueIsInteger', Interpreter.createNativeFunction(function _ValueIsInteger(Value) {
+        return ValueIsInteger(Value);
+    }));
+    /**** ValueIsIntegerInRange ****/
+    Interpreter.setProperty(global, 'ValueIsIntegerInRange', Interpreter.createNativeFunction(function _ValueIsIntegerInRange(Value, Minimum, Maximum) {
+        return ValueIsIntegerInRange(Value, Minimum, Maximum);
+    }));
+    /**** ValueIsOrdinal ****/
+    Interpreter.setProperty(global, 'ValueIsOrdinal', Interpreter.createNativeFunction(function _ValueIsOrdinal(Value) {
+        return ValueIsOrdinal(Value);
+    }));
+    /**** ValueIsCardinal ****/
+    Interpreter.setProperty(global, 'ValueIsCardinal', Interpreter.createNativeFunction(function _ValueIsCardinal(Value) {
+        return ValueIsCardinal(Value);
+    }));
+    /**** ValueIsStringMatching ****/
+    Interpreter.setProperty(global, 'ValueIsStringMatching', Interpreter.createNativeFunction(function _ValueIsStringMatching(Value, Pattern) {
+        expectNonEmptyString('RegExp pattern', Pattern);
+        return ValueIsStringMatching(Value, new RegExp(Pattern));
+    }));
+    /**** ValueIsURL ****/
+    Interpreter.setProperty(global, 'ValueIsURL', Interpreter.createNativeFunction(function _ValueIsURL(Value) {
+        return ValueIsURL(Value);
+    }));
+    /**** ValueIsWikipediaURL ****/
+    Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
+        return (ValueIsURL(Value) &&
+            /http[s]?:\/\/[^\/]+[.]wikipedia[.]org\/[^\/]+/i.test(Value));
+    }));
+}
+/**** startBlocklyProgram ****/
+function startBlocklyProgram() {
+    if (Playground.InterpreterState !== 'idle') {
+        return;
+    }
+    let Code = 'clearUI();\n' + javascriptGenerator.workspaceToCode(Playground.Workspace);
+    console.log('Code', Code);
+    console.log('Playground', Playground);
+    try {
+        Playground.Interpreter = new Interpreter(Code, externalAPI);
+    }
+    catch (Signal) {
+        console.error('Blockly Code Generation Error', Signal);
+        window.alert('Blockly Code Generation Error\n\n' + Signal);
+    }
+    Object.assign(Playground.Context, {
+        APIServer: undefined, APIKey: undefined, SearXNGServer: 'http:127.0.0.1',
+        default_model: undefined, default_max_tokens: 2048,
+        default_temperature: 0, default_top_p: undefined, default_top_k: 1,
+        default_presence_penalty: undefined, default_frequency_penalty: 1,
+        default_SystemTemplate: 'Be precise and concise.',
+        default_UserTemplate: '{{Prompt}}',
+        Prompt: 'who was Joseph Weizenbaum?',
+        Console: '',
+    });
+    Playground.InterpreterState = 'running';
+    Playground.pendingInterpreterState = undefined;
+    rerenderPlayground();
+    setTimeout(runInterpreter, 0);
+}
+/**** suspendBlocklyProgram ****/
+function suspendBlocklyProgram() {
+    if (Playground.InterpreterState !== 'running') {
+        return;
+    }
+    Playground.pendingInterpreterState = 'suspended';
+    rerenderPlayground();
+}
+/**** resumeBlocklyProgram ****/
+function resumeBlocklyProgram() {
+    if (Playground.InterpreterState !== 'suspended') {
+        return;
+    }
+    Playground.InterpreterState = 'running';
+    Playground.pendingInterpreterState = undefined;
+    rerenderPlayground();
+    setTimeout(runInterpreter, 0);
+}
+/**** abortBlocklyProgram ****/
+function abortBlocklyProgram() {
+    switch (Playground.InterpreterState) {
+        case 'idle': return;
+        case 'running':
+            Playground.pendingInterpreterState = 'idle';
+            break;
+        case 'suspended': Playground.InterpreterState = 'idle';
+    }
+    rerenderPlayground();
+}
+/**** runInterpreter ****/
+function runInterpreter() {
+    if (Playground.pendingInterpreterState != null) { // 'suspended' || 'idle'
+        Playground.InterpreterState = Playground.pendingInterpreterState;
+        Playground.pendingInterpreterState = undefined;
+        rerenderPlayground();
+        return;
+    }
+    try {
+        for (;;) {
+            Playground.Interpreter.step();
+            if (Playground.InterpreterState === 'idle') {
+                return;
+            }
+            if (Playground.pendingInterpreterState != null) { // 'suspended' || 'idle'
+                Playground.InterpreterState = Playground.pendingInterpreterState;
+                Playground.pendingInterpreterState = undefined;
+                rerenderPlayground();
+                return;
+            }
+            switch (Playground.Interpreter.getStatus()) {
+                case Interpreter.Status.DONE:
+                    Playground.InterpreterState = 'idle';
+                    Playground.pendingInterpreterState = undefined;
+                    rerenderPlayground();
+                    return;
+                case Interpreter.Status.STEP:
+                    break;
+                case Interpreter.Status.TASK:
+                case Interpreter.Status.ASYNC:
+                    setTimeout(runInterpreter, 0);
+                    return;
+            }
+        }
+    }
+    catch (Signal) {
+        alert('Blockly Execution Error\n\n' + Signal);
+        Playground.InterpreterState = 'idle';
+        Playground.pendingInterpreterState = undefined;
+        rerenderPlayground();
+    }
+}
+//------------------------------------------------------------------------------
+//--                                Workspace                                 --
+//------------------------------------------------------------------------------
+/**** LineFeed ****/
+Blockly.Blocks['LineFeed'] = {
     init: function () {
         this.jsonInit({
-            type: 'io_clear',
-            tooltip: 'clears the output area',
+            type: 'LineFeed',
+            tooltip: 'represents a line-feed character',
             helpUrl: '',
-            message0: 'clear',
+            message0: 'LineFeed',
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['LineFeed'] = function (Block, Generator) {
+    return [`"\\n"`, Order.FUNCTION_CALL];
+};
+/**** KeyValuePair ****/
+Blockly.Blocks['KeyValuePair'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'KeyValuePair',
+            tooltip: 'creates a list containing a key and a value',
+            helpUrl: '',
+            message0: 'key %1 value %2',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'value' }
+            ],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['KeyValuePair'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`[${Key},${Value}]`, Order.FUNCTION_CALL];
+};
+/**** ContextKeys ****/
+Blockly.Blocks['ContextKeys'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ContextKeys',
+            tooltip: 'produces a list with the keys of all items in the Playground context',
+            helpUrl: '',
+            message0: 'list of context keys',
+            args0: [],
+            output: 'Array',
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['ContextKeys'] = function (Block, Generator) {
+    return [`ContextKeys()`, Order.FUNCTION_CALL];
+};
+/**** clearContext ****/
+Blockly.Blocks['clearContext'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'clearContext',
+            tooltip: 'clears the Playground context',
+            helpUrl: '',
+            message0: 'clear context',
             args0: [],
             previousStatement: null,
             nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['clearContext'] = function (Block, Generator) {
+    return `clearContext();\n`;
+};
+/**** getFromContext ****/
+Blockly.Blocks['getFromContext'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'getFromContext',
+            tooltip: 'retrieves an item from the Playground context',
+            helpUrl: '',
+            message0: 'value of context item %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['getFromContext'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`getFromContext(${Key})`, Order.FUNCTION_CALL];
+};
+/**** setInContext ****/
+Blockly.Blocks['setInContext'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'setInContext',
+            tooltip: 'sets an item in the Playground context',
+            helpUrl: '',
+            message0: 'set context item %1 to %2',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'value' }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['setInContext'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return `setInContext(${Key},${Value});\n`;
+};
+/**** removeFromContext ****/
+Blockly.Blocks['removeFromContext'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'removeFromContext',
+            tooltip: 'removes an item of the Playground context',
+            helpUrl: '',
+            message0: 'remove context item %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['removeFromContext'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `removeFromContext(${Key});\n`;
+};
+/**** preserveContextItem ****/
+Blockly.Blocks['preserveContextItem'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'preserveContextItem',
+            tooltip: 'preserves an item of the Playground context in the Browser Storage',
+            helpUrl: '',
+            message0: 'preserve context item %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['preserveContextItem'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `preserveContextItem(${Key});\n`;
+};
+/**** restoreContextItem ****/
+Blockly.Blocks['restoreContextItem'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'restoreContextItem',
+            tooltip: 'restores an item of the Playground context from the Browser Storage',
+            helpUrl: '',
+            message0: 'restore context item %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['restoreContextItem'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `restoreContextItem(${Key});\n`;
+};
+/**** showWorkspace ****/
+Blockly.Blocks['showWorkspace'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'showWorkspace',
+            tooltip: 'switches to the Playground Workspace',
+            helpUrl: '',
+            message0: 'show workspace',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['showWorkspace'] = function (Block, Generator) {
+    return `showWorkspace();\n`;
+};
+/**** showUI ****/
+Blockly.Blocks['showUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'showUI',
+            tooltip: 'switches to the Playground User Interface',
+            helpUrl: '',
+            message0: 'show UI',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['showUI'] = function (Block, Generator) {
+    return `showUI();\n`;
+};
+/**** UIElements ****/
+Blockly.Blocks['UIElements'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'UIElements',
+            tooltip: 'produces a list with the keys of all Playground User Interface elements',
+            helpUrl: '',
+            message0: 'list of UI element keys',
+            args0: [],
+            output: 'Array',
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['UIElements'] = function (Block, Generator) {
+    return [`UIElements()`, Order.FUNCTION_CALL];
+};
+/**** UIhasElement ****/
+Blockly.Blocks['UIhasElement'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'UIhasElement',
+            tooltip: 'returns true if the Playground User Interface contains an element with the given key',
+            helpUrl: '',
+            message0: 'UI has element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['UIhasElement'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`UIhasElement(${Key})`, Order.FUNCTION_CALL];
+};
+/**** clearUI ****/
+Blockly.Blocks['clearUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'clearUI',
+            tooltip: 'clears the Playground User Interface',
+            helpUrl: '',
+            message0: 'clear UI',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['clearUI'] = function (Block, Generator) {
+    return `clearUI();\n`;
+};
+/**** enableUI ****/
+Blockly.Blocks['enableUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'enableUI',
+            tooltip: 'enables the Playground User Interface as a whole',
+            helpUrl: '',
+            message0: 'enable UI as a whole',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['enableUI'] = function (Block, Generator) {
+    return `enableUI();\n`;
+};
+/**** disableUI ****/
+Blockly.Blocks['disableUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'disableUI',
+            tooltip: 'disables the Playground User Interface as a whole',
+            helpUrl: '',
+            message0: 'disable UI as a whole',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['disableUI'] = function (Block, Generator) {
+    return `disableUI();\n`;
+};
+/**** appendToUI ****/
+Blockly.Blocks['appendToUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendToUI',
+            tooltip: 'appends an element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append UI element %1 type %2 label %3 options %4',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'type', options: [
+                        ['text line input', 'textline-input'],
+                        ['password input', 'password-input'],
+                        ['number input', 'number-input'],
+                        ['URL input', 'url-input'],
+                        ['text input', 'text-input'],
+                        ['text line output', 'textline-output'],
+                        ['number output', 'number-output'],
+                        ['text output', 'text-output'],
+                        ['text view', 'text'],
+                        ['hint view', 'hint'],
+                    ] },
+                { type: 'input_value', name: 'label', check: 'String' },
+                { type: 'input_value', name: 'options', check: 'Array' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
             colour: 60,
             inputsInline: false
         });
     }
 };
-javascriptGenerator.forBlock['io_clear'] = function (Block, Generator) {
-    return `clear()\n`;
+javascriptGenerator.forBlock['appendToUI'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Type = Generator.valueToCode(Block, 'type', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    let OptionList = Generator.valueToCode(Block, 'options', Order.NONE) || '[]';
+    return `appendToUI(${Key},${Label},${Type},${OptionList});\n`;
 };
-/**** io_print ****/
-Blockly.Blocks['io_print'] = {
+/**** appendTextlineInput ****/
+Blockly.Blocks['appendTextlineInput'] = {
     init: function () {
         this.jsonInit({
-            type: 'io_print',
-            tooltip: 'writes a given string into the output area',
+            type: 'appendTextlineInput',
+            tooltip: 'appends a text line input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append text line input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendTextlineInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendTextlineInput(${Key},${Label});\n`;
+};
+/**** appendPasswordInput ****/
+Blockly.Blocks['appendPasswordInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendPasswordInput',
+            tooltip: 'appends a password input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append password input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendPasswordInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendPasswordInput(${Key},${Label});\n`;
+};
+/**** appendNumberInput ****/
+Blockly.Blocks['appendNumberInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendNumberInput',
+            tooltip: 'appends a number input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append number input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendNumberInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendNumberInput(${Key},${Label});\n`;
+};
+/**** appendURLInput ****/
+Blockly.Blocks['appendURLInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendURLInput',
+            tooltip: 'appends a URL input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append URL input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendURLInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendURLInput(${Key},${Label});\n`;
+};
+/**** appendTextInput ****/
+Blockly.Blocks['appendTextInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendTextInput',
+            tooltip: 'appends a text input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append text input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendTextInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendTextInput(${Key},${Label});\n`;
+};
+/**** appendCheckbox ****/
+Blockly.Blocks['appendCheckbox'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendCheckbox',
+            tooltip: 'appends a checkbox element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append checkbox element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendCheckbox'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendCheckbox(${Key},${Label});\n`;
+};
+/**** appendRadiobuttonGroup ****/
+Blockly.Blocks['appendRadiobuttonGroup'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendRadiobuttonGroup',
+            tooltip: 'appends a radiobutton group element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append radiobutton group element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendRadiobuttonGroup'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendRadiobuttonGroup(${Key},${Label});\n`;
+};
+/**** appendDropDown ****/
+Blockly.Blocks['appendDropDown'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendDropDown',
+            tooltip: 'appends a drop-down element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append drop-down element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendDropDown'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendDropDown(${Key},${Label});\n`;
+};
+/**** appendButton ****/
+Blockly.Blocks['appendButton'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendButton',
+            tooltip: 'appends a button element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append button element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendButton'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendButton(${Key},${Label});\n`;
+};
+/**** appendTextlineOutput ****/
+Blockly.Blocks['appendTextlineOutput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendTextlineOutput',
+            tooltip: 'appends a text line output element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append text line output element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendTextlineOutput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendTextlineOutput(${Key},${Label});\n`;
+};
+/**** appendNumberOutput ****/
+Blockly.Blocks['appendNumberOutput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendNumberOutput',
+            tooltip: 'appends a number output element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append number output element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendNumberOutput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendNumberOutput(${Key},${Label});\n`;
+};
+/**** appendTextOutput ****/
+Blockly.Blocks['appendTextOutput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendTextOutput',
+            tooltip: 'appends a text output element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append text output element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendTextOutput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendTextOutput(${Key},${Label});\n`;
+};
+/**** appendText ****/
+Blockly.Blocks['appendText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendText',
+            tooltip: 'appends an unlabelled text view element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append unlabelled text view element %1 to UI',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendText'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `appendText(${Key});\n`;
+};
+/**** appendFinePrint ****/
+Blockly.Blocks['appendFinePrint'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendFinePrint',
+            tooltip: 'appends an unlabelled "fine print" view element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append unlabelled "fine print" view element %1 to UI',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendFinePrint'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `appendFinePrint(${Key});\n`;
+};
+/**** configureUI ****/
+Blockly.Blocks['configureUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'configureUI',
+            tooltip: 'sets an option for an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'configure UI element %1 option %2 value %3',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'option', check: 'String' },
+                { type: 'input_value', name: 'value', check: ['Boolean', 'Number', 'String'] },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['configureUI'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Option = Generator.valueToCode(Block, 'option', Order.NONE) || '""';
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || '[]';
+    return `configureUI(${Key},${Option},${Value});\n`;
+};
+/**** ConfigurationOf ****/
+Blockly.Blocks['ConfigurationOf'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ConfigurationOf',
+            tooltip: 'returns a current option setting of an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'Option %1 of UI element %2',
+            args0: [
+                { type: 'input_value', name: 'option', check: 'String' },
+                { type: 'input_value', name: 'key', check: 'String' }
+            ],
+            output: ['Boolean', 'Number', 'String'],
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ConfigurationOf'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Option = Generator.valueToCode(Block, 'option', Order.NONE) || '""';
+    return [`ConfigurationOf(${Key},${Option})`, Order.FUNCTION_CALL];
+};
+/**** EnablingOf ****/
+Blockly.Blocks['EnablingOf'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'EnablingOf',
+            tooltip: 'returns a current enabling of an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'Enabling of UI element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['EnablingOf'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`EnablingOf(${Key})`, Order.FUNCTION_CALL];
+};
+/**** setEnablingOf ****/
+Blockly.Blocks['setEnablingOf'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'setEnablingOf',
+            tooltip: 'sets an option for an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'set Enabling of UI element %1 to %2',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'value', check: 'Boolean' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['setEnablingOf'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || '[]';
+    return `setEnablingOf(${Key},${Value});\n`;
+};
+/**** enable ****/
+Blockly.Blocks['enable'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'enable',
+            tooltip: 'enables an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'enable UI element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['enable'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `enable(${Key});\n`;
+};
+/**** disable ****/
+Blockly.Blocks['disable'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'disable',
+            tooltip: 'disables an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'disable UI element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['disable'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `disable(${Key});\n`;
+};
+/**** isEnabled ****/
+Blockly.Blocks['isEnabled'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'isEnabled',
+            tooltip: 'checks if an element in the Playground User Interface is enabled',
+            helpUrl: '',
+            message0: 'UI element %1 is enabled',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['isEnabled'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`isEnabled(${Key})`, Order.FUNCTION_CALL];
+};
+/**** clearChoicesOf ****/
+Blockly.Blocks['clearChoicesOf'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'clearChoicesOf',
+            tooltip: 'clears the choices of an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'clear choices of UI element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['clearChoicesOf'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `clearChoicesOf(${Key});\n`;
+};
+/**** appendChoiceTo ****/
+Blockly.Blocks['appendChoiceTo'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendChoiceTo',
+            tooltip: 'appends a choice for an element in the Playground User Interface',
+            helpUrl: '',
+            message0: 'append Choice %2 to UI element %1',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'choice', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendChoiceTo'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Choice = Generator.valueToCode(Block, 'choice', Order.NONE) || '[]';
+    return `appendChoiceTo(${Key},${Choice});\n`;
+};
+/**** removeFromUI ****/
+Blockly.Blocks['removeFromUI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'removeFromUI',
+            tooltip: 'removes an element from the Playground User Interface',
+            helpUrl: '',
+            message0: 'remove UI element %1',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['removeFromUI'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `removeFromUI(${Key});\n`;
+};
+/**** clearConsole ****/
+Blockly.Blocks['clearConsole'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'clearConsole',
+            tooltip: 'clears the Console',
+            helpUrl: '',
+            message0: 'clear Console',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['clearConsole'] = function (Block, Generator) {
+    return `clearConsole();\n`;
+};
+/**** print ****/
+Blockly.Blocks['print'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'print',
+            tooltip: 'appends the given value to the Console',
             helpUrl: '',
             message0: 'print %1',
-            args0: [{ type: 'input_value', name: 'text' }],
+            args0: [{ type: 'input_value', name: 'message' }],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
-            inputsInline: false
+            colour: 60
         });
     }
 };
-javascriptGenerator.forBlock['io_print'] = function (Block, Generator) {
-    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || "''";
-    return `print(${Text})\n`;
+javascriptGenerator.forBlock['print'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return `print(${Message});\n`;
 };
-/**** io_println ****/
-Blockly.Blocks['io_println'] = {
+/**** println ****/
+Blockly.Blocks['println'] = {
     init: function () {
         this.jsonInit({
-            type: 'io_println',
-            tooltip: 'writes a given string into the output area and starts a new line',
+            type: 'println',
+            tooltip: 'appends the given value to the Console and starts a new line',
             helpUrl: '',
             message0: 'println %1',
-            args0: [{ type: 'input_value', name: 'text' }],
+            args0: [{ type: 'input_value', name: 'message' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['println'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return `println(${Message});\n`;
+};
+/**** clearPendingUIEvents ****/
+Blockly.Blocks['clearPendingUIEvents'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'clearPendingUIEvents',
+            tooltip: 'clears all pending Playground User Interface events',
+            helpUrl: '',
+            message0: 'clear pending UI events',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['clearPendingUIEvents'] = function (Block, Generator) {
+    return `clearPendingUIEvents();\n`;
+};
+/**** wheneverUIEventOccuredWithin ****/
+Blockly.Blocks['wheneverUIEventOccuredWithin'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'wheneverUIEventOccuredWithin',
+            tooltip: 'waits for an event from the Playground User Interface within a given timeout and evaluates the given statements',
+            helpUrl: '',
+            message0: 'for every UI event\ndo %1 wait up to %2',
+            args0: [
+                { type: 'input_statement', name: 'body' },
+                { type: 'input_value', name: 'timeout', check: 'Number' }
+            ],
             previousStatement: null,
             nextStatement: null,
             colour: 60,
@@ -157,46 +2159,469 @@ Blockly.Blocks['io_println'] = {
         });
     }
 };
-javascriptGenerator.forBlock['io_println'] = function (Block, Generator) {
-    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || "''";
-    return `println(${Text})\n`;
+javascriptGenerator.forBlock['wheneverUIEventOccuredWithin'] = function (Block, Generator) {
+    let Body = Generator.statementToCode(Block, 'body');
+    let Timeout = Generator.valueToCode(Block, 'timeout', Order.NONE) || 'undefined';
+    return `
+(function () {
+  try {
+    for (;;) {
+      var EventReceived = waitForNextUIEvent(${Timeout})
+      if (! EventReceived) { break }
+
+      ${Body}
+    }
+    UIEventHandlerWasLeft()
+  } catch (Signal) {
+    UIEventHandlerWasLeft()
+    throw Signal
+  }
+})();
+    `;
 };
-/**** io_readAll ****/
-Blockly.Blocks['io_readAll'] = {
+/**** wheneverUIEventOccured ****/
+Blockly.Blocks['wheneverUIEventOccured'] = {
     init: function () {
         this.jsonInit({
-            type: 'io_readAll',
-            tooltip: 'reads all characters from the input area',
+            type: 'wheneverUIEventOccured',
+            tooltip: 'waits for an event from the Playground User Interface and evaluates the given statements',
             helpUrl: '',
-            message0: 'readAll',
-            output: 'String',
+            message0: 'for every UI event\ndo %1',
+            args0: [{ type: 'input_statement', name: 'body' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['wheneverUIEventOccured'] = function (Block, Generator) {
+    let Body = Generator.statementToCode(Block, 'body');
+    return `
+;(function () {
+  try {
+    for (;;) {
+      var EventReceived = waitForNextUIEvent(-1)
+      if (! EventReceived) { break }
+
+      ${Body}
+    }
+    UIEventHandlerWasLeft()
+  } catch (Signal) {
+    UIEventHandlerWasLeft()
+    throw Signal
+  }
+})();
+    `;
+};
+/**** ButtonWasClicked ****/
+Blockly.Blocks['ButtonWasClicked'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ButtonWasClicked',
+            tooltip: 'checks if a button in the Playground User Interface was clicked',
+            helpUrl: '',
+            message0: 'UI button %1 was clicked',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ButtonWasClicked'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`ButtonWasClicked(${Key})`, Order.FUNCTION_CALL];
+};
+/**** InputWasChanged ****/
+Blockly.Blocks['InputWasChanged'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'InputWasChanged',
+            tooltip: 'checks if an element in the Playground User Interface got new input',
+            helpUrl: '',
+            message0: 'UI element %1 got new input',
+            args0: [{ type: 'input_value', name: 'key', check: 'String' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['InputWasChanged'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`InputWasChanged(${Key})`, Order.FUNCTION_CALL];
+};
+/**** leaveUIEventLoop ****/
+Blockly.Blocks['leaveUIEventLoop'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'leaveUIEventLoop',
+            tooltip: 'leaves the current Playground User Interface event loop',
+            helpUrl: '',
+            message0: 'leave UI event loop',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
             colour: 60
         });
     }
 };
-javascriptGenerator.forBlock['io_readAll'] = function (Block, Generator) {
-    return ['readAll()', Order.FUNCTION_CALL];
+javascriptGenerator.forBlock['leaveUIEventLoop'] = function (Block, Generator) {
+    return `leaveUIEventLoop();\n`;
 };
-/**** ai_answer ****/
-Blockly.Blocks['ai_answer'] = {
+/**** ChatCompletionFor ****/
+Blockly.Blocks['ChatCompletionFor'] = {
     init: function () {
         this.jsonInit({
-            type: 'ai_answer',
-            tooltip: 'lets the AI answer a given question',
+            type: 'ChatCompletionFor',
+            tooltip: 'creates a chat completion for the given list of messages',
             helpUrl: '',
-            message0: 'answer %1',
+            message0: 'chat completion for %1',
+            args0: [{ type: 'input_value', name: 'messages', check: 'Array' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ChatCompletionFor'] = function (Block, Generator) {
+    let MessageList = Generator.valueToCode(Block, 'messages', Order.NONE) || '""';
+    return [`ChatCompletionFor(${MessageList})`, Order.FUNCTION_CALL];
+};
+/**** TextCompletionFor ****/
+Blockly.Blocks['TextCompletionFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextCompletionFor',
+            tooltip: 'creates a completion for the given prompt',
+            helpUrl: '',
+            message0: 'text completion for %1',
             args0: [{ type: 'input_value', name: 'prompt', check: 'String' }],
             output: 'String',
-            colour: 60
+            colour: 60,
+            inputsInline: true
         });
     }
 };
-javascriptGenerator.forBlock['ai_answer'] = function (Block, Generator) {
-    let Prompt = Generator.valueToCode(Block, 'prompt', Order.NONE) || "''";
-    return [`answer(${Prompt})`, Order.FUNCTION_CALL];
+javascriptGenerator.forBlock['TextCompletionFor'] = function (Block, Generator) {
+    let Prompt = Generator.valueToCode(Block, 'prompt', Order.NONE) || '""';
+    return [`TextCompletionFor(${Prompt})`, Order.FUNCTION_CALL];
+};
+/**** wait ****/
+Blockly.Blocks['wait'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'wait',
+            tooltip: 'waits for a given number of seconds',
+            helpUrl: '',
+            message0: 'wait %1 second(s)',
+            args0: [{ type: 'input_value', name: 'duration', check: 'Number' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['wait'] = function (Block, Generator) {
+    let Duration = Generator.valueToCode(Block, 'duration', Order.NONE) || '0';
+    Duration = Math.max(0, Math.round(Duration * 1000));
+    return `wait(${Duration});\n`;
+};
+/**** alert ****/
+Blockly.Blocks['alert'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'alert',
+            tooltip: 'displays a given message in a pop-up dialog, halting the program until dismissed',
+            helpUrl: '',
+            message0: 'show %1 in alert dialog',
+            args0: [{ type: 'input_value', name: 'message', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['alert'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return `alert(${Message});\n`;
+};
+/**** confirm ****/
+Blockly.Blocks['confirm'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'confirm',
+            tooltip: 'displays a given message in a pop-up dialog, halting the program until the user confirmed',
+            helpUrl: '',
+            message0: 'confirm %1 in pop-up dialog',
+            args0: [{ type: 'input_value', name: 'message', check: 'String' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['confirm'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return [`confirm(${Message})`, Order.FUNCTION_CALL];
+};
+/**** prompt ****/
+Blockly.Blocks['prompt'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'prompt',
+            tooltip: 'displays a given message in a pop-up dialog, halting the program until the user confirmed',
+            helpUrl: '',
+            message0: 'ask for %1 in pop-up dialog',
+            args0: [{ type: 'input_value', name: 'message', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['prompt'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return [`prompt(${Message})`, Order.FUNCTION_CALL];
+};
+/**** prompt_with_default ****/
+Blockly.Blocks['prompt_with_default'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'prompt_with_default',
+            tooltip: 'displays a given message in a pop-up dialog, halting the program until the user confirmed',
+            helpUrl: '',
+            message0: 'ask for %1 with default %2 in pop-up dialog',
+            args0: [
+                { type: 'input_value', name: 'message', check: 'String' },
+                { type: 'input_value', name: 'default', check: 'String' },
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['prompt_with_default'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    let Default = Generator.valueToCode(Block, 'default', Order.NONE) || '""';
+    return [`prompt(${Message},${Default})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsNotEmpty ****/
+Blockly.Blocks['ValueIsNotEmpty'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsNotEmpty',
+            tooltip: 'returns true if the given value is a non-empty string - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a non-empty string?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsNotEmpty'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsNotEmpty(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsNumber ****/
+Blockly.Blocks['ValueIsNumber'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsNumber',
+            tooltip: 'returns true if the given value is a number - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a number?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsNumber'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsNumber(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsNumberInRange ****/
+Blockly.Blocks['ValueIsNumberInRange'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsNumberInRange',
+            tooltip: 'returns true if the given value is a number within the given range - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a number within %2 and %3 incl. minimum %4 and maximum %5?',
+            args0: [
+                { type: 'input_value', name: 'value' },
+                { type: 'input_value', name: 'minimum', check: 'Number' },
+                { type: 'input_value', name: 'maximum', check: 'Number' },
+                { type: 'input_value', name: 'withMinimum', check: 'Boolean' },
+                { type: 'input_value', name: 'withMaximum', check: 'Boolean' }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsNumberInRange'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    let Minimum = Generator.valueToCode(Block, 'minimum', Order.NONE) || 'undefined';
+    let Maximum = Generator.valueToCode(Block, 'maximum', Order.NONE) || 'undefined';
+    let withMinimum = Generator.valueToCode(Block, 'withMinimum', Order.NONE) || 'undefined';
+    let withMaximum = Generator.valueToCode(Block, 'withMaximum', Order.NONE) || 'undefined';
+    return [`ValueIsNumberInRange(${Value},${Minimum},${Maximum},${withMinimum},${withMaximum})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsInteger ****/
+Blockly.Blocks['ValueIsInteger'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsInteger',
+            tooltip: 'returns true if the given value is an integer - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is an integer?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsInteger'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsInteger(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsIntegerInRange ****/
+Blockly.Blocks['ValueIsIntegerInRange'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsIntegerInRange',
+            tooltip: 'returns true if the given value is an integer within the given range - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is an integer within %2 and %3?',
+            args0: [
+                { type: 'input_value', name: 'value' },
+                { type: 'input_value', name: 'minimum', check: 'Number' },
+                { type: 'input_value', name: 'maximum', check: 'Number' }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsIntegerInRange'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    let Minimum = Generator.valueToCode(Block, 'minimum', Order.NONE) || 'undefined';
+    let Maximum = Generator.valueToCode(Block, 'maximum', Order.NONE) || 'undefined';
+    return [`ValueIsIntegerInRange(${Value},${Minimum},${Maximum})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsOrdinal ****/
+Blockly.Blocks['ValueIsOrdinal'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsOrdinal',
+            tooltip: 'returns true if the given value is an ordinal number - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is an ordinal number?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsOrdinal'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsOrdinal(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsCardinal ****/
+Blockly.Blocks['ValueIsCardinal'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsCardinal',
+            tooltip: 'returns true if the given value is a cardinal number - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a cardinal number?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsCardinal'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsCardinal(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsStringMatching ****/
+Blockly.Blocks['ValueIsStringMatching'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsStringMatching',
+            tooltip: 'returns true if the given value is a string matchign a given RegExp pattern - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a string matching %2?',
+            args0: [
+                { type: 'input_value', name: 'value' },
+                { type: 'input_value', name: 'pattern', check: 'String' }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsStringMatching'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    let Pattern = Generator.valueToCode(Block, 'pattern', Order.NONE) || 'undefined';
+    return [`ValueIsStringMatching(${Value},${Pattern})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsURL ****/
+Blockly.Blocks['ValueIsURL'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsURL',
+            tooltip: 'returns true if the given value is a string containing a URL - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a string with a URL?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsURL'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsURL(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsWikipediaURL ****/
+Blockly.Blocks['ValueIsWikipediaURL'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsWikipediaURL',
+            tooltip: 'returns true if the given value is a string containing a Wikipedia URL - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a string with a Wikipedia URL?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsWikipediaURL'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsWikipediaURL(${Value})`, Order.FUNCTION_CALL];
 };
 /**** Workspace Specification ****/
-const BlocklySpecification = {
+const WorkspaceSpecification = {
     grid: { spacing: 20, length: 1, color: '#DDDDDD', snap: true },
     //  media:'...',
     toolbox: {
@@ -246,6 +2671,7 @@ const BlocklySpecification = {
                 name: "Text",
                 contents: [
                     { kind: "block", type: "text" },
+                    { kind: "block", type: "LineFeed" },
                     { kind: "block", type: "text_join" },
                     { kind: "block", type: "text_append" },
                     { kind: "block", type: "text_length" },
@@ -255,8 +2681,8 @@ const BlocklySpecification = {
                     { kind: "block", type: "text_getSubstring" },
                     { kind: "block", type: "text_changeCase" },
                     { kind: "block", type: "text_trim" },
-                    { kind: "block", type: "text_print" },
-                    { kind: "block", type: "text_prompt_ext" }
+                    //            {kind:"block", type:"text_print"},
+                    //            {kind:"block", type:"text_prompt_ext"}
                 ]
             }, {
                 kind: "category",
@@ -271,24 +2697,109 @@ const BlocklySpecification = {
                     { kind: "block", type: "lists_setIndex" },
                     { kind: "block", type: "lists_getSublist" },
                     { kind: "block", type: "lists_split" },
-                    { kind: "block", type: "lists_sort" }
+                    { kind: "block", type: "lists_sort" },
+                    //            {kind:"block", type:"KeyValuePair"}
+                ]
+            },
+            {
+                kind: "category",
+                name: "Context",
+                contents: [
+                    { kind: "block", type: "ContextKeys" },
+                    { kind: "block", type: "clearContext" },
+                    { kind: "block", type: "getFromContext" },
+                    { kind: "block", type: "setInContext" },
+                    { kind: "block", type: "removeFromContext" },
+                    { kind: "block", type: "preserveContextItem" },
+                    { kind: "block", type: "restoreContextItem" },
                 ]
             }, {
                 kind: "category",
-                name: "Input/Output",
+                name: "User Interface",
                 contents: [
-                    { kind: "block", type: "io_clear" },
-                    { kind: "block", type: "io_print" },
-                    { kind: "block", type: "io_println" },
-                    { kind: "block", type: "io_readAll" }
+                    { kind: "block", type: "showWorkspace" },
+                    { kind: "block", type: "showUI" },
+                    { kind: "block", type: "UIElements" },
+                    { kind: "block", type: "UIhasElement" },
+                    { kind: "block", type: "clearUI" },
+                    { kind: "block", type: "enableUI" },
+                    { kind: "block", type: "disableUI" },
+                    //            {kind:"block", type:"appendToUI"},
+                    { kind: "block", type: "removeFromUI" },
+                    { kind: "block", type: "appendTextlineInput" },
+                    { kind: "block", type: "appendPasswordInput" },
+                    { kind: "block", type: "appendNumberInput" },
+                    { kind: "block", type: "appendURLInput" },
+                    { kind: "block", type: "appendTextInput" },
+                    { kind: "block", type: "appendCheckbox" },
+                    { kind: "block", type: "appendRadiobuttonGroup" },
+                    { kind: "block", type: "appendDropDown" },
+                    { kind: "block", type: "appendButton" },
+                    { kind: "block", type: "appendTextlineOutput" },
+                    { kind: "block", type: "appendNumberOutput" },
+                    { kind: "block", type: "appendTextOutput" },
+                    { kind: "block", type: "appendText" },
+                    { kind: "block", type: "appendFinePrint" },
+                    { kind: "block", type: "configureUI" },
+                    { kind: "block", type: "ConfigurationOf" },
+                    { kind: "block", type: "EnablingOf" },
+                    { kind: "block", type: "setEnablingOf" },
+                    { kind: "block", type: "enable" },
+                    { kind: "block", type: "disable" },
+                    { kind: "block", type: "isEnabled" },
+                    { kind: "block", type: "clearChoicesOf" },
+                    { kind: "block", type: "appendChoiceTo" },
+                    { kind: "block", type: "clearConsole" },
+                    { kind: "block", type: "print" },
+                    { kind: "block", type: "println" },
+                    { kind: "block", type: "clearPendingUIEvents" },
+                    { kind: "block", type: "wheneverUIEventOccuredWithin" },
+                    { kind: "block", type: "wheneverUIEventOccured" },
+                    { kind: "block", type: "ButtonWasClicked" },
+                    { kind: "block", type: "InputWasChanged" },
+                    { kind: "block", type: "leaveUIEventLoop" },
                 ]
             }, {
                 kind: "category",
-                name: "AI",
+                name: "AI Basics",
                 contents: [
-                    { kind: "block", type: "ai_answer" },
+                    { kind: "block", type: "ChatCompletionFor" },
+                    { kind: "block", type: "TextCompletionFor" },
                 ]
+                /*
+                        },{
+                          kind:"category",
+                          name:"AI Mezzanines",
+                          contents:[
+                          ]
+                        },{
+                          kind:"category",
+                          name:"AI Tools",
+                          contents:[
+                          ]
+                */
             }, {
+                kind: "category",
+                name: "Miscellany",
+                contents: [
+                    { kind: "block", type: "wait" },
+                    { kind: "block", type: "alert" },
+                    { kind: "block", type: "confirm" },
+                    { kind: "block", type: "prompt" },
+                    { kind: "block", type: "prompt_with_default" },
+                    { kind: "block", type: "ValueIsNotEmpty" },
+                    { kind: "block", type: "ValueIsNumber" },
+                    { kind: "block", type: "ValueIsNumberInRange" },
+                    { kind: "block", type: "ValueIsInteger" },
+                    { kind: "block", type: "ValueIsIntegerInRange" },
+                    { kind: "block", type: "ValueIsOrdinal" },
+                    { kind: "block", type: "ValueIsCardinal" },
+                    { kind: "block", type: "ValueIsStringMatching" },
+                    { kind: "block", type: "ValueIsURL" },
+                    { kind: "block", type: "ValueIsWikipediaURL" },
+                ]
+            },
+            {
                 kind: "category",
                 name: "Variables",
                 custom: "VARIABLE"
@@ -301,366 +2812,655 @@ const BlocklySpecification = {
     },
     //  plugins:...,
 };
-/**** external API for the JS-Interpreter ****/
-function externalAPI(Interpreter, global) {
-    Interpreter.setProperty(global, 'clear', Interpreter.createNativeFunction(function clear() {
-        Application.Output = '';
-    }));
-    Interpreter.setProperty(global, 'print', Interpreter.createNativeFunction(function print(Text) {
-        Application.Output += '' + (Text || '');
-    }));
-    Interpreter.setProperty(global, 'println', Interpreter.createNativeFunction(function println(Text) {
-        Application.Output += '' + (Text || '') + '\\n';
-    }));
-    Interpreter.setProperty(global, 'readAll', Interpreter.createNativeFunction(function readAll() {
-        return Application.Input;
-    }));
-    Interpreter.setProperty(global, 'answer', Interpreter.createAsyncFunction(async function answer(Prompt, Callback) {
-        const APIURL = (Application.APIURL || '').trim();
-        if (APIURL === '') {
-            alert('no (or empty) API URL given');
-            return;
-        }
-        const APIKey = (Application.APIKey || '').trim();
-        Prompt = Prompt.trim();
-        if (Prompt === '') {
-            alert('no (or empty) prompt given');
-            return;
-        }
-        const Response = await ChatCompletionOf([
-            'be precise and concise', Prompt
-        ]);
-        Callback(Response);
-    }));
-}
-/**** ChatCompletionOf ****/
-async function ChatCompletionOf(MessageList, OptionSet = {}) {
-    expectListSatisfying('message list', MessageList, ValueIsString);
-    allowPlainObject('option set', OptionSet);
-    if (MessageList.length < 2)
-        return ('InvalidArgument: the given "MessageList" contains less than 2 elements');
-    if (MessageList.length % 2 !== 0)
-        return ('InvalidArgument: the given "MessageList" contains an odd number of elements');
-    allowPlainObject('option set', OptionSet);
-    allowTextline('model option', OptionSet.model);
-    allowNumberInRange('temperature option', OptionSet.temperature, 0, 2, true, true);
-    allowIntegerInRange('top_k option', OptionSet.top_k, 0, 2048);
-    allowNumberInRange('top_p option', OptionSet.top_p, 0, 1, true, true);
-    allowNumberInRange('frequency penalty option', OptionSet.frequency_penalty, 0, 1, true, true);
-    allowNumberInRange('presence penalty option', OptionSet.presence_penalty, -2, 2, true, true);
-    allowCardinal('maximal number of tokens', OptionSet.max_tokens);
-    allowBoolean('citation inclusion option', OptionSet.return_citations);
-    allowBoolean('image inclusion option', OptionSet.return_images);
-    const APIURL = Application.APIURL;
-    const APIKey = Application.APIKey;
-    if (APIKey == null) {
-        return '(no API key given)';
-    }
-    let Messages = [
-        { role: 'system', content: MessageList[0] },
-        { role: 'user', content: MessageList[1] }
-    ];
-    for (let i = 2, l = Messages.length; i < l; i += 2) {
-        Messages.push({ role: 'assistant', content: MessageList[i] }, { role: 'user', content: MessageList[i + 1] });
-    }
-    let RequestBody = {
-        model: 'llama-3-sonar-small-32k-chat',
-        temperature: 0, top_k: 1, max_tokens: 200, stream: false,
-        messages: Messages
-    };
-    ('model temperature top_k top_p frequency_penalty presence_penalty ' +
-        'max_tokens return_citations return_images').split(' ').forEach((Option) => {
-        if (OptionSet[Option] != null) {
-            RequestBody[Option] = OptionSet[Option];
-        }
-    });
-    try {
-        const Response = await fetch(APIURL, {
-            method: 'POST',
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                Authorization: `Bearer ${APIKey}`,
-            },
-            body: JSON.stringify(RequestBody)
+//------------------------------------------------------------------------------
+//--                              PlaygroundView                              --
+//------------------------------------------------------------------------------
+class PlaygroundView extends Component {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "state", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: { Value: 0 }
         });
-        return (await Response.json()).choices[0].message.content;
     }
-    catch (Signal) {
-        throwError('RequestFailure: API request failed with ' + Signal);
+    rerender() {
+        this.setState({ Value: this.state.Value + 1 });
+    }
+    componentDidMount() {
+        Playground.View = this;
+        Playground.WorkspaceElement = this.base.querySelector('.Playground.Workspace > .Placeholder');
+        const Workspace = Blockly.inject(Playground.WorkspaceElement, WorkspaceSpecification);
+        restoreWorkspace();
+        Workspace.addChangeListener(preserveWorkspace);
+        Playground.Workspace = Workspace;
+    }
+    render() {
+        const { activeTab } = Playground;
+        console.log('PlaygroundView', Playground.InterpreterState);
+        return html `<div class="Playground View">
+        <div class="Playground Title">Blockly AI Playground</div>
+        <div class="Playground Strip">
+          <div class="Playground Tab ${activeTab === 0 ? 'active' : ''}"
+            onClick=${() => { Playground.activeTab = 0; this.rerender(); }}
+          >Workspace</>
+            <div style="display:inline-block; width:10px"/>
+          <div class="Playground Tab ${activeTab === 1 ? 'active' : ''}"
+            onClick=${() => { Playground.activeTab = 1; this.rerender(); }}
+          >User Interface</>
+            <div class="Playground Gap"/>
+          <button class="Playground Button" style="width:80px"
+            disabled=${Playground.pendingInterpreterState != null}
+            onClick=${() => {
+            switch (Playground.InterpreterState) {
+                case 'idle':
+                    startBlocklyProgram();
+                    break;
+                case 'running':
+                    suspendBlocklyProgram();
+                    break;
+                case 'suspended':
+                    resumeBlocklyProgram();
+                    break;
+            }
+        }}
+          >${Playground.InterpreterState === 'idle' ? 'Start' :
+            Playground.InterpreterState === 'running' ? 'Suspend' : 'Resume'}</>
+            <div style="display:inline-block; width:10px"/>
+          <button class="Playground Button" style="width:80px"
+            disabled=${Playground.InterpreterState === 'idle'}
+            onClick=${abortBlocklyProgram}
+          >Abort</>
+        </>
+        <div class="Playground Arena">
+          <div class="Playground Workspace ${activeTab === 0 ? 'active' : ''}">
+            <div class="Placeholder"/>
+            <div class="Playground Strip">
+              <input type="checkbox"
+                checked=${Playground.BackupWanted}
+                onClick=${(Event) => updatePlaygroundBackup(Event.target.checked)}
+              />
+              <span>save Workspace in Browser</span>
+                <div class="Playground Gap"/>
+              <div style="display:inline-block; position:relative">
+                <button class="Playground Button" style="width:80px; pointer-events:none"
+                >Upload</>
+                <label class="Playground FileInput">
+                  <input type="file" class="Playground FileInput" style="display:none"
+                    accept=".json,application/json"
+                    onChange=${(Event) => uploadWorkspaceFrom(Event.target.files[0])}
+                  />
+                </>
+              </>
+                <div style="display:inline-block; width:10px"/>
+              <button class="Playground Button" style="width:80px"
+                onClick=${downloadWorkspace}
+              >Download</>
+            </>
+          </>
+          <div class="Playground UI ${activeTab === 1 ? 'active' : ''}">
+            ${Playground.UI.map((Item) => html `<${PlaygroundUIItemView} Item=${Item}/>`)}
+          </>
+        </>
+      </>`;
     }
 }
-/**** ProtoUX User Interface ****/
-//let PUX = new ProtoUX()                                 // already done before
-PUX.ImageFolder = './icons/';
-PUX.Style = `  #PUX_1 { left:29px; top:33px; width:242px; height:230px; right:auto; bottom:auto }
-  #PUX_2 { text-align:center }
-  #PUX_20 { left:0px; top:36px; width:auto; height:auto; right:0px; bottom:49px }
-  #PUX_3 { left:9px; top:auto; width:21px; height:21px; right:auto; bottom:15px }
-  #PUX_4 { left:40px; top:auto; width:121px; height:29px; right:auto; bottom:11px }
-
-  #PUX_5 {
-    left:auto; top:auto; width:24px; height:24px; right:38px; bottom:16px; 
-    background-image:url("/images/arrow-down-to-bracket.png"); 
-  }
-
-  #PUX_6 {
-    left:auto; top:auto; width:24px; height:24px; right:9px; bottom:16px; 
-    background-image:url("/images/arrow-up-from-bracket.png"); 
-  }
-
-  #PUX_21 {
-    left:auto; top:auto; width:24px; height:24px; right:9px; bottom:16px; 
-    border-radius:0px; 
-    line-height:1.4; 
-  }
-
-  #PUX_7 { left:309px; top:33px; width:280px; height:391px; right:auto; bottom:auto }
-  #PUX_19 { text-align:center }
-  #PUX_8 { left:10px; top:10px; width:81px; height:29px; right:auto; bottom:auto }
-  #PUX_9 { left:10px; top:41px; width:81px; height:29px; right:auto; bottom:auto }
-  #PUX_10 { left:130px; top:10px; width:auto; height:29px; right:10px; bottom:auto }
-  #PUX_11 { left:130px; top:41px; width:auto; height:29px; right:10px; bottom:auto }
-  #PUX_12 { left:10px; top:131px; width:81px; height:29px; right:auto; bottom:auto }
-  #PUX_13 { left:auto; top:121px; width:90px; height:29px; right:10px; bottom:auto }
-  #PUX_14 { left:10px; top:81px; width:121px; height:29px; right:auto; bottom:auto }
-  #PUX_15 { left:130px; top:81px; width:auto; height:29px; right:10px; bottom:auto }
-
-  #PUX_16 {
-    left:10px; top:160px; width:auto; height:90px; right:9px; bottom:auto; 
-    border:solid 1px #000000; 
-  }
-
-  #PUX_17 { left:10px; top:261px; width:81px; height:29px; right:auto; bottom:auto }
-
-  #PUX_18 {
-    left:10px; top:290px; width:auto; height:auto; right:9px; bottom:11px; 
-    border:solid 1px #000000; 
-  }
-
-  #PUX_30 {
-    left:20px; top:19px; width:341px; height:242px; right:auto; bottom:auto; 
-    line-height:1.4; 
-  }
-
-  #PUX_23 {
-    left:11px; top:11px; width:auto; height:40px; right:10px; bottom:auto; 
-    background-color:#f8f8f8; 
-    border:dotted 1px #000000; 
-  }
-
-  #PUX_24 {
-    left:0px; top:0px; width:90px; height:40px; right:auto; bottom:auto; 
-    border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
-  }
-
-  #PUX_25 {
-    left:8px; top:8px; width:56px; height:29px; right:auto; bottom:auto; 
-    text-align:center; 
-  }
-
-  #PUX_26 {
-    left:100px; top:0px; width:121px; height:40px; right:auto; bottom:auto; 
-    border-color:rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); 
-  }
-
-  #PUX_27 {
-    left:8px; top:7px; width:103px; height:29px; right:auto; bottom:auto; 
-    text-align:center; 
-  }
-
-  #PUX_28 { left:11px; top:50px; width:auto; height:auto; right:10px; bottom:12px }
-
-`;
-PUX.ScreenSet = {
-    'Cards': {
-        Name: 'Cards', Id: 'PUX_0',
-        Width: 768, Height: 1024,
-        packedGeometry: { "x": 29, "y": 33, "Width": 559, "Height": 390 },
-        WidgetList: [
-            { "Type": "Card", "Name": "WorkspaceCard", "Classes": "Card Container", "x": 29, "Width": 242, "y": 33, "Height": 230, "Id": "PUX_1", WidgetList: [
-                    { "Type": "Placeholder", "Name": "Workspace", "Classes": "Placeholder empty Container", "Anchoring": "c", "Id": "PUX_20" },
-                    { "Type": "Checkbox", "Name": "BackupCheck", "Classes": "Checkbox", "Anchoring": "sw", "Value": true, "Id": "PUX_3" },
-                    { "Type": "Label", "Classes": "Label", "Anchoring": "sw", "Value": "save in Browser", "Id": "PUX_4" },
-                    { "Type": "Icon", "Name": "DownloadButton", "Classes": "Icon", "Anchoring": "se", "Value": "url(\"/images/arrow-down-to-bracket.png\")", "Color": "black", "Id": "PUX_5" },
-                    { "Type": "Icon", "Name": "UploadButton", "Classes": "Icon", "Anchoring": "se", "Value": "url(\"/images/arrow-up-from-bracket.png\")", "Color": "black", "Id": "PUX_6" },
-                    { "Type": "FileInput", "Name": "FileInput", "Classes": "FileInput", "Anchoring": "se", "Placeholder": "", "Id": "PUX_21" },
-                ] },
-            { "Type": "Card", "Name": "InterfaceCard", "Classes": "Card Container", "x": 309, "Width": 280, "y": 33, "Height": 391, "Id": "PUX_7", WidgetList: [
-                    { "Type": "Label", "Classes": "Label", "Value": "API Server:", "Id": "PUX_8" },
-                    { "Type": "Label", "Classes": "Label", "Value": "API Key:", "Id": "PUX_9" },
-                    { "Type": "URLInput", "Name": "APIURLInput", "Classes": "URLInput", "Anchoring": "n", "Placeholder": "Enter URL", "Value": "", "Id": "PUX_10" },
-                    { "Type": "PasswordInput", "Name": "APIKeyInput", "Classes": "PasswordInput", "Anchoring": "n", "Placeholder": "Enter Password", "Value": "", "Id": "PUX_11" },
-                    { "Type": "Label", "Classes": "Label", "Value": "Input:", "Id": "PUX_12" },
-                    { "Type": "Button", "Name": "SubmitButton", "Classes": "vertically-centered Button", "Anchoring": "ne", "Value": "Submit", "Id": "PUX_13" },
-                    { "Type": "Label", "Classes": "Label", "Value": "SearXNG Server:", "Id": "PUX_14" },
-                    { "Type": "URLInput", "Name": "SearXNGURLInput", "Classes": "URLInput", "Anchoring": "n", "Placeholder": "Enter URL", "Value": "", "Id": "PUX_15" },
-                    { "Type": "TextInput", "Name": "InputArea", "Classes": "TextInput no-resize", "Anchoring": "n", "Placeholder": "Enter Text", "Value": "", "Id": "PUX_16" },
-                    { "Type": "Label", "Classes": "Label", "Value": "Output:", "Id": "PUX_17" },
-                    { "Type": "TextInput", "Name": "OutputArea", "Classes": "TextInput no-resize", "Anchoring": "c", "Placeholder": "Enter Text", "Value": "", "Id": "PUX_18" },
-                ] },
-        ],
-    },
-    'MainScreen': {
-        Name: 'MainScreen', Id: 'PUX_22',
-        Width: 768, Height: 1024,
-        packedGeometry: { "x": 20, "y": 19, "Width": 340, "Height": 241 },
-        WidgetList: [
-            { "Type": "Container", "Name": "Content", "Classes": "Container", "x": 20, "Width": 341, "y": 19, "Height": 242, "Id": "PUX_30", WidgetList: [
-                    { "Type": "TabStrip", "Name": "TabStrip", "Classes": "TabStrip Container", "Anchoring": "n", "Id": "PUX_23", WidgetList: [
-                            { "Type": "Tab", "Name": "WorkspaceTab", "Classes": "Tab Container", "Id": "PUX_24", WidgetList: [
-                                    { "Type": "Label", "Classes": "Label", "Value": "Workspace", "Id": "PUX_25" },
-                                ] },
-                            { "Type": "Tab", "Name": "InterfaceTab", "Classes": "Tab Container", "Id": "PUX_26", WidgetList: [
-                                    { "Type": "Label", "Classes": "Label", "Value": "User Interface", "Id": "PUX_27" },
-                                ] },
-                        ] },
-                    { "Type": "Deck", "Name": "Deck", "Classes": "Deck empty Container", "Anchoring": "c", "Id": "PUX_28" },
-                ] },
-        ],
-    },
-};
-PUX.stuff({
-    MainScreen: {
-        Content: {
-            Deck: {
-                from: 'Cards', with: [
-                    'WorkspaceCard', 'InterfaceCard',
-                ],
-            },
-        },
+/**** PlaygroundUIItemView ****/
+class PlaygroundUIItemView extends Component {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "state", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: { Value: 0 }
+        });
+        Object.defineProperty(this, "View", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
     }
-});
-const updatedFrom = PUX.updatedFrom;
-PUX.configure({
-    MainScreen: {
-        self: {
-            Style: 'left:0px; top:0px; right:0px; bottom:0px; width:auto; height:auto'
-        },
-        Content: {
-            Style: 'left:0px; top:0px; right:0px; bottom:0px; width:auto; height:auto',
-            TabStrip: {
-                Style: 'background:none; border:none',
-                Value: updatedFrom(() => Application.activeCardIndex),
-                onValueChange: (Event) => Application.activeCardIndex = Event.detail,
-            },
-            Deck: {
-                Style: 'overflow-x:hidden; overflow-y:scroll; overflow:hidden scroll',
-                Value: updatedFrom(() => Application.activeCardIndex),
-            },
-        },
-    },
-    Cards: {
-        WorkspaceCard: {
-            /*
-                        StartButton: {
-                          Value:updatedFrom(() => (Application.State === 'idle' ? 'Start' : 'Stop')),
-                          disabled:false,
-                          onClick: () => startBlocklyProgram(),
-                        },
-            */
-            Workspace: {
-                Substitute: Workspace
-            },
-            BackupCheck: {
-                Value: updatedFrom(() => Application.BackupWanted),
-                onClick: (Event) => Application.BackupWanted = Event.target.checked,
-            },
-            DownloadButton: {
-                onClick: () => downloadWorkspace(),
-            },
-            //          UploadButton: { /* nop */ },
-            FileInput: {
-                Style: 'border:none',
-                Value: '',
-                Placeholder: '',
-                accept: '.json,application/json',
-                onChange: (Event) => uploadWorkspaceFrom(Event.target.files[0]),
-                onDrop: (Event) => uploadWorkspaceFrom(Event.dataTransfer.files[0]),
-            },
-        },
-        InterfaceCard: {
-            APIURLInput: {
-                disabled: updatedFrom(() => Application.State !== 'idle'),
-                Placeholder: '(enter URL of API Server)',
-                Value: updatedFrom(() => Application.APIURL),
-                onInput: (Event) => Application.APIURL = Event.target.value,
-            },
-            APIKeyInput: {
-                disabled: updatedFrom(() => Application.State !== 'idle'),
-                Placeholder: '(enter API Key, if necessary)',
-                Value: updatedFrom(() => Application.APIKey),
-                onInput: (Event) => Application.APIKey = Event.target.value,
-            },
-            SearXNGURLInput: {
-                disabled: updatedFrom(() => Application.State !== 'idle'),
-                Placeholder: '(enter URL of SearXNG Server, if necessary)',
-                Value: updatedFrom(() => Application.SearXNGURL),
-                onInput: (Event) => Application.SearXNGURL = Event.target.value,
-            },
-            SubmitButton: {
-                disabled: updatedFrom(() => (Application.State === 'idle'
-                    ? acceptableURL(Application.APIURL, '') === ''
-                    : false)),
-                onClick: () => submitBlocklyInput(),
-            },
-            InputArea: {
-                Placeholder: '(enter Prompt)',
-                Value: updatedFrom(() => Application.Input),
-                onInput: (Event) => Application.Input = Event.target.value,
-            },
-            OutputArea: {
-                Placeholder: '(Agent Output will be shown here)',
-                Value: updatedFrom(() => Application.Output),
-            },
-        },
-    },
-});
-//  PUX.packScreen('MainScreen')
-PUX.startWithScreen('MainScreen');
-PUX.renderInto(document.body);
+    rerender() {
+        this.setState({ Value: this.state.Value + 1 });
+    }
+    componentDidMount() {
+        this.View = this.base;
+    }
+    componentWillUnmount() {
+        this.View = undefined;
+    }
+    render(PropSet) {
+        const { Item } = PropSet;
+        switch (Item.Type) {
+            case 'textline-input': return html `<${TextlineInputItem} Item=${Item}/>`;
+            case 'password-input': return html `<${PasswordInputItem} Item=${Item}/>`;
+            case 'number-input': return html `<${NumberInputItem} Item=${Item}/>`;
+            case 'url-input': return html `<${URLInputItem} Item=${Item}/>`;
+            case 'text-input': return html `<${TextInputItem} Item=${Item}/>`;
+            case 'checkbox': return html `<${CheckboxItem} Item=${Item}/>`;
+            case 'radiobutton-group': return html `<${RadiobuttonGroupItem} Item=${Item}/>`;
+            case 'dropdown': return html `<${DropDownItem} Item=${Item}/>`;
+            case 'button': return html `<${ButtonItem} Item=${Item}/>`;
+            case 'textline-output': return html `<${TextlineOutputItem} Item=${Item}/>`;
+            case 'number-output': return html `<${NumberOutputItem} Item=${Item}/>`;
+            case 'text-output': return html `<${TextOutputItem} Item=${Item}/>`;
+            case 'text': return html `<${TextViewItem} Item=${Item}/>`;
+            case 'fineprint': return html `<${FinePrintViewItem} Item=${Item}/>`;
+            default: throwError('InvalidArgument: missing or invalid "Item.Type"');
+        }
+        return undefined;
+    }
+}
+/**** TextlineInputItem ****/
+class TextlineInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
+        const SpellChecking = acceptableOptionalBoolean(OptionSet.SpellChecking);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsTextline);
+        if (document.activeElement !== my.View) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        let SuggestionList = '', SuggestionId;
+        if ((Suggestions != null) && (Suggestions.length > 0)) {
+            SuggestionId = Key + '-Suggestions';
+            SuggestionList = html `<datalist id=${SuggestionId}>
+          ${Suggestions.map((Value) => html `<option value=${Value}></option>`)}
+        </datalist>`;
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="text" class="Playground UI Element TextlineInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          pattern=${Pattern} spellcheck=${SpellChecking}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+          list=${SuggestionId}
+        />${SuggestionList}
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** PasswordInputItem ****/
+class PasswordInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        if (document.activeElement !== my.View) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="password" class="Playground UI Element PasswordInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          pattern=${Pattern}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+        />
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** NumberInputItem ****/
+class NumberInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const Minimum = acceptableOptionalNumber(OptionSet.Minimum);
+        const Stepping = acceptableOptionalNumberInRange(OptionSet.Stepping, undefined, 0);
+        const Maximum = acceptableOptionalNumber(OptionSet.Maximum);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsNumber);
+        if (document.activeElement !== my.View) {
+            const Candidate = getFromContext(Key);
+            my.ValueToShow = acceptableNumber(ValueIsString(Candidate) ? parseFloat(Candidate) : Candidate, 0);
+        }
+        let SuggestionList = '', SuggestionId;
+        if ((Suggestions != null) && (Suggestions.length > 0)) {
+            SuggestionId = Key + '-Suggestions';
+            SuggestionList = html `<datalist id=${SuggestionId}>
+          ${Suggestions.map((Value) => html `<option value=${Value}></option>`)}
+        </datalist>`;
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, parseFloat(Event.target.value));
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="number" class="Playground UI Element NumberInput"
+          value=${my.ValueToShow} min=${Minimum} max=${Maximum} step=${Stepping}
+          readOnly=${readonly} placeholder=${Placeholder}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+          list=${SuggestionId}
+        />${SuggestionList}
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** URLInputItem ****/
+class URLInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsURL);
+        if (document.activeElement !== my.View) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        let SuggestionList = '', SuggestionId;
+        if ((Suggestions != null) && (Suggestions.length > 0)) {
+            SuggestionId = Key + '-Suggestions';
+            SuggestionList = html `<datalist id=${SuggestionId}>
+          ${Suggestions.map((Value) => html `<option value=${Value}></option>`)}
+        </datalist>`;
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="url" class="Playground UI Element URLInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          pattern=${Pattern}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+          list=${SuggestionId}
+        />${SuggestionList}
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** TextInputItem ****/
+class TextInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const LineWrapping = acceptableOptionalBoolean(OptionSet.LineWrapping);
+        const SpellChecking = acceptableOptionalBoolean(OptionSet.SpellChecking);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        if (document.activeElement !== my.View) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <textarea class="Playground UI Element TextInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          spellcheck=${SpellChecking} style="${LineWrapping == true
+            ? 'white-space:pre; overflow-wrap:break-word; hyphens:auto'
+            : undefined}"
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+        />
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** CheckboxItem ****/
+class CheckboxItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        let ValueToShow = acceptableBoolean(getFromContext(Key), false);
+        function onClick(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.checked);
+            enqueueUIEvent('input', Key);
+        }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="checkbox" class="Playground UI Element Checkbox"
+          checked=${ValueToShow}
+          disabled=${Enabling == false} onClick=${onClick}
+        />
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** RadiobuttonGroupItem ****/
+class RadiobuttonGroupItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Choices = acceptableText(OptionSet.Choices, '').split('\n')
+            .map((Choice) => Choice.trim())
+            .filter((Choice) => Choice !== '');
+        const GroupName = Key + '-Group';
+        let selectedIndex = acceptableOrdinal(getFromContext(Key), -1);
+        function onClick(Event, Index) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Index);
+            enqueueUIEvent('input', Key);
+        }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="radio" class="Playground UI Element Radiobutton"
+          name=${GroupName} checked=${selectedIndex === 0}
+          disabled=${Enabling == false} onClick=${(Event) => onClick(Event, 0)}
+        />
+        <span style="margin-left:4px; line-height:30px">${Choices[0]}</span>
+        <div class="Playground UI newLine"/>
+        ${Choices.slice(1).map((Choice, Index) => html `
+          <div class="Playground UI Label"/>
+          <input type="radio" class="Playground UI Element Radiobutton"
+            name=${GroupName} checked=${selectedIndex === (Index + 1)}
+            disabled=${Enabling == false} onClick=${(Event) => onClick(Event, Index + 1)}
+          />
+          <span style="margin-left:4px; line-height:30px">${Choice}</span>
+          <div class="Playground UI newLine"/>
+        `)}
+      `;
+    }
+}
+/**** DropDownItem ****/
+class DropDownItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Choices = acceptableText(OptionSet.Choices, '').split('\n')
+            .map((Choice) => Choice.trim())
+            .filter((Choice) => Choice !== '');
+        let selectedIndex = acceptableOrdinal(getFromContext(Key), -1);
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.selectedIndex);
+            enqueueUIEvent('input', Key);
+        }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <select class="Playground UI Element DropDown"
+          disabled=${Enabling == false} onInput=${onInput}
+        >
+        ${Choices.map((Choice, Index) => html `
+          <option selected=${Index === selectedIndex}>${Choice}</>
+        `)}
+        </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** ButtonItem ****/
+class ButtonItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        let ValueToShow = acceptableTextline(getFromContext(Key), 'Button');
+        function onClick(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            enqueueUIEvent('click', Key);
+        }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <button class="Playground UI Element Button"
+          disabled=${Enabling == false} onClick=${onClick}
+        >${ValueToShow}</>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** TextlineOutputItem ****/
+class TextlineOutputItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        let ValueToShow = acceptableTextline(getFromContext(Key), '');
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="text" class="Playground UI Element TextlineOutput"
+          value=${ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly placeholder=${Placeholder}
+          disabled=${Enabling == false}
+        />
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** NumberOutputItem ****/
+class NumberOutputItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const Minimum = acceptableOptionalNumber(OptionSet.Minimum);
+        const Stepping = acceptableOptionalNumberInRange(OptionSet.Stepping, undefined, 0);
+        const Maximum = acceptableOptionalNumber(OptionSet.Maximum);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const Candidate = getFromContext(Key);
+        let ValueToShow = acceptableNumber(ValueIsString(Candidate) ? parseFloat(Candidate) : Candidate, 0);
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="number" class="Playground UI Element NumberOutput"
+          value=${ValueToShow} min=${Minimum} max=${Maximum} step=${Stepping}
+          readOnly placeholder=${Placeholder}
+          disabled=${Enabling == false}
+        />
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** TextOutputItem ****/
+class TextOutputItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const LineWrapping = acceptableOptionalBoolean(OptionSet.LineWrapping);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        let ValueToShow = acceptableText(getFromContext(Key), '');
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <textarea class="Playground UI Element TextOutput"
+          minlength=${minLength} maxlength=${maxLength}
+          readOnly placeholder=${Placeholder}
+          style="${LineWrapping == true
+            ? 'white-space:pre; overflow-wrap:break-word; hyphens:auto'
+            : undefined}"
+          disabled=${Enabling == false}
+        >${ValueToShow}</>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** TextViewItem ****/
+class TextViewItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const Key = Item.Key;
+        let ValueToShow = acceptableText(getFromContext(Key), '');
+        return html `
+        <div class="Playground UI Element TextView">
+          ${ValueToShow}
+        </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** FinePrintViewItem ****/
+class FinePrintViewItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const Key = Item.Key;
+        let ValueToShow = acceptableText(getFromContext(Key), '');
+        return html `
+        <div class="Playground UI Element FinePrintView">
+          ${ValueToShow}
+        </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
 /**** preserveWorkspace ****/
-function preserveWorkspace(BlocklyWorkspace) {
-    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(BlocklyWorkspace));
-    sessionStorage.setItem('blockly-ai-agent', WorkspaceSerialization);
-    if (Application.BackupWanted) {
-        localStorage.setItem('blockly-ai-agent', WorkspaceSerialization);
+function preserveWorkspace() {
+    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(Playground.Workspace));
+    sessionStorage.setItem('blockly-ai-playground', WorkspaceSerialization);
+    if (Playground.BackupWanted) {
+        localStorage.setItem('blockly-ai-playground', WorkspaceSerialization);
     }
 }
 /**** restoreWorkspace ****/
-function restoreWorkspace(BlocklyWorkspace) {
-    const WorkspaceSerialization = (Application.BackupWanted
-        ? localStorage.getItem('blockly-ai-agent')
-        : sessionStorage.getItem('blockly-ai-agent'));
-    if (WorkspaceSerialization != null) {
+function restoreWorkspace() {
+    const WorkspaceSerialization = (Playground.BackupWanted
+        ? localStorage.getItem('blockly-ai-playground')
+        : sessionStorage.getItem('blockly-ai-playground')) || '{}';
+    if (WorkspaceSerialization.trim() !== '{}') {
         try {
-            Blockly.serialization.workspaces.load(JSON.parse(WorkspaceSerialization), BlocklyWorkspace);
+            Blockly.serialization.workspaces.load(JSON.parse(WorkspaceSerialization), Playground.Workspace);
         }
         catch (Signal) {
             console.error('Blockly Workspace Deserialization Error', Signal);
         }
     }
 }
-/**** startBlocklyProgram ****/
-function startBlocklyProgram() {
-}
-/**** submitBlocklyInput ****/
-function submitBlocklyInput() {
-    let Code = 'clear()\n' + javascriptGenerator.workspaceToCode(Application.Workspace);
-    console.log('Code', Code);
-    try {
-        let myInterpreter = new Interpreter(Code, externalAPI);
-        function run() {
-            const InterpreterIsWaiting = myInterpreter.run();
-            if (InterpreterIsWaiting) {
-                setTimeout(run, 10);
-            }
-        }
-        run();
+/**** updatePlaygroundBackup ****/
+Playground.BackupWanted = localStorage.getItem('blockly-ai-playground_wants_backup');
+function updatePlaygroundBackup(BackupWanted) {
+    Playground.BackupWanted = BackupWanted;
+    if (BackupWanted) {
+        localStorage.setItem('blockly-ai-playground_wants_backup', 'true');
+        preserveWorkspace();
     }
-    catch (Signal) {
-        console.error('Blockly Code Evaluation Error', Signal);
-        window.alert('Blockly Code Evaluation Error\n\n' + Signal);
+    else {
+        localStorage.removeItem('blockly-ai-playground_wants_backup');
+        localStorage.removeItem('blockly-ai-playground');
     }
 }
 /**** uploadWorkspaceFrom ****/
@@ -672,31 +3472,46 @@ function uploadWorkspaceFrom(File) {
         let FileValue = (new TextDecoder()).decode(Reader.result);
         try {
             let Serialization = JSON.parse(FileValue);
-            Blockly.serialization.workspaces.load(Serialization, Application.Workspace);
+            Blockly.serialization.workspaces.load(Serialization, Playground.Workspace);
         }
         catch (Signal) {
             console.error('Blockly Workspace Upload failed', Signal);
-            window.alert('Upload failed');
+            window.alert('Upload failed\n\n' + Signal);
         }
     };
     Reader.readAsArrayBuffer(File);
 }
 /**** downloadWorkspace ****/
 function downloadWorkspace() {
-    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(Application.Workspace));
+    const WorkspaceSerialization = JSON.stringify(Blockly.serialization.workspaces.save(Playground.Workspace));
     const encodedDownload = (new TextEncoder()).encode(WorkspaceSerialization);
     const decodedDownload = (new TextDecoder()).decode(encodedDownload);
     if (WorkspaceSerialization === decodedDownload) {
-        download(encodedDownload, 'Blockly-AI-Agent.json', 'application/json;charset=utf-8');
+        download(encodedDownload, 'Blockly-AI-Playground.json', 'application/json;charset=utf-8');
     }
     else {
         window.alert('Download is not safe');
     }
 }
-/**** acceptableURL ****/
-function acceptableURL(Value, Default) {
-    return (ValueIsURL(Value) ? Value : Default);
+function SetFromKeyValueList(List) {
+    console.log('List', List);
+    expectListSatisfying('key value list', List, ValueIsKeyValuePair);
+    const Result = {};
+    List.forEach((Pair) => Result[Pair[0]] = Pair[1]);
+    return Result;
 }
+/**** ValueIsKeyValuePair ****/
+function ValueIsKeyValuePair(Value) {
+    return (ValueIsList(Value) && (Value.length === 2) &&
+        ValueIsIdentifier(Value[0]));
+}
+/**** consume/consumingEvent ****/
+function consumeEvent(Event) {
+    Event.stopPropagation();
+    Event.preventDefault();
+}
+const consumingEvent = consumeEvent;
+render(html `<${PlaygroundView}/>`, document.body);
 
   </script>
  </body>
