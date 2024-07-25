@@ -125,6 +125,8 @@ Both blocks are typically placed into the condition field of an "if-then" block 
 
 The loop body is executed over and over again - until the loop is exited using the block shown above.
 
+A Blockly program may contain several event loops - but only one of them may be running at the same tine.
+
 #### Enabling ####
 
 Often, a programmer wants to prevent buttons to be clicked or new data entered into input fields. Typical situations are
