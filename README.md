@@ -98,6 +98,14 @@ Every UI element has a unique "name" which is bound to a context item with the s
 
 This concept makes UI programming super easy.
 
+#### Event Loop ####
+
+Often, a program has to react on user inputs. In the simplest way, this just means to present a few input fields to the user (e.g., to enter `APIServer`, `APIKey` and a `Prompt`) and start inferencing as soon as the user has pressed a button. In the meantime, the UI may also be used to inform the user about the validity of any inputs while (s)he is entering them.
+
+This is achieved by an "event loop".
+
+#### Enabling ####
+
 (t.b.w.)
 
 ![showWorkspace](./Screenshots/showWorkspace.png)
