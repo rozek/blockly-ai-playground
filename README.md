@@ -107,7 +107,21 @@ This is achieved by an "event loop".
 ![showWorkspace](./Screenshots/wheneverUIEventOccurredWithin.png)
 ![showWorkspace](./Screenshots/wheneverUIEventOccurred.png)
 
-The core of any event loop is one of the blocks shown above
+The core of any event loop is one of the blocks shown above. Each of them waits for incoming UI "events" (which indicate that the user has entered some data or clicked on a button) and then executes a sequence of inner blocks (the so called "loop body").
+
+![showWorkspace](./Screenshots/ButtonWasClicked.png)
+![showWorkspace](./Screenshots/InputWasChanged.png)
+
+Within the loop body you may now check what the user actually did and react accordingly - this is what the two blocks shown above are good for:
+
+* the first one returns `true` if a button with the given name was pressed and
+* the second one returns `true` if the user entered new data into an input element with the given name
+
+Both blocks are typically placed into the condition field of an "if-then" block to run the "then" clause only if the given button was pressed or the given input element received new data.
+
+![showWorkspace](./Screenshots/leaveUIEventLoop.png)
+
+The loop body is executed over and over again - until the loop is exited using the block shown above.
 
 #### Enabling ####
 
