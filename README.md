@@ -77,7 +77,7 @@ During development it is sometimes useful to keep settings and values beyond the
 ![preserveContextItem](./Screenshots/preserveContextItem.png)
 ![restoreContextItem](./Screenshots/restoreContextItem.png)
 
-These two blocks provide such a functinoality: use the first block to preserve a given context item and the second to restore it later
+These two blocks provide such a functionality: use the first block to preserve a given context item and the second to restore it later
 
 #### Context-related Blocks ####
 
