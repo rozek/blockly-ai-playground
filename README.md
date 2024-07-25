@@ -440,6 +440,26 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 > this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
 
+## AI Examples ##
+
+The following examples actually include AI-related blocks
+
+### basic Settings ###
+
+![basicSettings](./Examples/basicSettings.png)
+
+> use this example to enter your basic AI-related settings - they will be stored in the browser's storage and may then be used by other programs without having to re-enter them over and over again
+
+![basicSettings UI](./Examples/basicSettings-UI.png)
+
+> as a hint, here are the settings used by the author himself
+
+### Proof-of-Concept ###
+
+![PoC](./Examples/PoC.png)
+
+> this is the "proof-of-concept" mentioned above - play around as you like!
+
 ## License ##
 
 [MIT License](LICENSE.md)
