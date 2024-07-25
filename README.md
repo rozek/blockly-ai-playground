@@ -100,9 +100,14 @@ This concept makes UI programming super easy.
 
 #### Event Loop ####
 
-Often, a program has to react on user inputs. In the simplest way, this just means to present a few input fields to the user (e.g., to enter `APIServer`, `APIKey` and a `Prompt`) and start inferencing as soon as the user has pressed a button. In the meantime, the UI may also be used to inform the user about the validity of any inputs while (s)he is entering them.
+Often, a program has to react on user inputs. In the simplest way, this just means to present a few input fields to the user (e.g., to enter `APIServer`, `APIKey` and a `Prompt`) and to start inferencing as soon as the user has pressed a button. In the meantime, the UI may also be used to inform the user about the validity of any inputs while (s)he is entering them.
 
 This is achieved by an "event loop".
+
+![showWorkspace](./Screenshots/wheneverUIEventOccurredWithin.png)
+![showWorkspace](./Screenshots/wheneverUIEventOccurred.png)
+
+The core of any event loop is one of the blocks shown above
 
 #### Enabling ####
 
