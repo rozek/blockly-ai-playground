@@ -69,25 +69,42 @@ and
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
-> returns a list with the names of all currently defined context items
+> returns a list with the names of all currently defined context items (see [Context example](#context))
 
 ![clearContext](./Screenshots/clearContext.png)
 
-> clears the context (i.e., deletes all currently defined context items)
+> clears the context (i.e., deletes all currently defined context items) (see [Context example](#context))
 
 ![getFromContext](./Screenshots/getFromContext.png)
 
-> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned
+> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned (see [Context example](#context))
 
 ![setInContext](./Screenshots/setInContext.png)
 
-> sets the given context item to the given value. If the addressed item does not exist, it will be created
+> sets the given context item to the given value. If the addressed item does not exist, it will be created (see [Context example](#context))
 
 ![removeFromContext](./Screenshots/removeFromContext.png)
 
-> removes the given context item. It is safe to remove an item which does not exist
+> removes the given context item. It is safe to remove an item which does not exist (see [Context example](#context))
 
 ### Playground UI ###
+
+The playground also manages a programmable reactive "user interface" (aka "UI"). The playground UI is basically a vertical list of user interface "elements", often preceeded by a "label".
+
+Every UI element has a unique "name" which is bound to a context item with the same name. As a consequence,
+
+* changing the value of a context item automatically updates the contents of a bound UI element and
+* entering data into a UI element automatically updates the assciated context item
+
+This concept makes UI programming super easy.
+
+#### Event Loop ####
+
+Often, a program has to react on user inputs. In the simplest way, this just means to present a few input fields to the user (e.g., to enter `APIServer`, `APIKey` and a `Prompt`) and start inferencing as soon as the user has pressed a button. In the meantime, the UI may also be used to inform the user about the validity of any inputs while (s)he is entering them.
+
+This is achieved by an "event loop".
+
+#### Enabling ####
 
 (t.b.w.)
 
