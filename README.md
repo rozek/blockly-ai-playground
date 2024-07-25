@@ -158,11 +158,11 @@ These two blocks enable or disable specific UI elements.
 
 ![UIElements](./Screenshots/enableUI.png)
 
-> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting
+> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting (see [associated example](#enabled-disabled))
 
 ![UIElements](./Screenshots/disableUI.png)
 
-> disables the playground UI in its entirety
+> disables the playground UI in its entirety (see [associated example](#enabled-disabled))
 
 ![UIElements](./Screenshots/UIElements.png)
 
@@ -246,11 +246,11 @@ These two blocks enable or disable specific UI elements.
 
 ![enable](./Screenshots/enable.png)
 
-> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
+> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enabled-disabled))
 
 ![disable](./Screenshots/disable.png)
 
-> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted.
+> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enabled-disabled))
 
 ![isEnabled](./Screenshots/isEnabled.png)
 
