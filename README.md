@@ -89,6 +89,14 @@ and
 
 > removes the given context item. It is safe to remove an item which does not exist (see [Context example](#context))
 
+![preserveContextItem](./Screenshots/preserveContextItem.png)
+
+> preserves the given context item (as a string) in the Browser Storage. If the addressed item does not exist, an empty string will be preserved (see [preserve_restore example](#preserve-restore))
+
+![restoreContextItem](./Screenshots/restoreContextItem.png)
+
+> restores the given context item (as a string) from the Browser Storage. If the addressed item was not preserved before, the context item will be set to an empty string (see [preserve_restore example](#preserve-restore))
+
 ### Playground UI ###
 
 The playground also manages a programmable reactive "user interface" (aka "UI"). The playground UI is basically a vertical list of user interface "elements", often preceeded by a "label".
@@ -406,7 +414,13 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 ![Context](./Examples/Context.png)
 
-> this example demonstrates all context functions (see [Blockly workspace file](./Examples/Context.json))
+> this example demonstrates all local context functions (see [Blockly workspace file](./Examples/Context.json))
+
+### preserve, restore ###
+
+![preserve_restore](./Examples/preserve_restore.png)
+
+> this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
 
 ### enabled, disabled ###
 
