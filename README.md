@@ -213,6 +213,8 @@ These two blocks enable or disable specific UI elements.
 ![appendDropDown](./Screenshots/appendDropDown.png)
 
 > appends a drop-down element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+>
+> After adding a new DropDown to the UI, you still have to define the entries from which the user may select. This can be done using the "append Choice" block - one per selectable entry. The context item associated with the DropDown will then contain the (0-based) index of the currently selected entry
 
 ![appendButton](./Screenshots/appendButton.png)
 
