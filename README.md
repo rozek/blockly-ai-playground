@@ -136,8 +136,15 @@ Often, a programmer wants to prevent buttons to be clicked or new data entered i
 
 This behaviour is achieved by "enabling" or "disabling" either the UI as a whole or specific UI elements only.
 
+![UIElements](./Screenshots/enableUI.png)
+![UIElements](./Screenshots/disableUI.png)
 
-(t.b.w.)
+The two blocks shown above enable or disable the playground UI in its entirety. Disabling the whole UI disables all UI elements, while "enabling" the whole UI means that the enabling of every UI element depends on its own setting (i.e., elements may still be individually disabled)
+
+![UIElements](./Screenshots/enable.png)
+![UIElements](./Screenshots/disable.png)
+
+These two blocks enable or disable specific UI elements.
 
 #### UI-related Blocks ####
 
@@ -148,6 +155,14 @@ This behaviour is achieved by "enabling" or "disabling" either the UI as a whole
 ![showUI](./Screenshots/showUI.png)
 
 > makes the user interface visible
+
+![UIElements](./Screenshots/enableUI.png)
+
+> (re-)enables the playground UI in its entirety
+
+![UIElements](./Screenshots/disableUI.png)
+
+> disables the playground UI in its entirety
 
 ![UIElements](./Screenshots/UIElements.png)
 
