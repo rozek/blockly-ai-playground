@@ -89,6 +89,15 @@ and
 
 ### Playground UI ###
 
+The playground also manages a programmable reactive "user interface" (aka "UI"). The playground UI is basically a vertical list of user interface "elements", often preceeded by a "label".
+
+Every UI element has a unique "name" which is bound to a context item with the same name. As a consequence,
+
+* changing the value of a context item automatically updates the contents of a bound UI element and
+* entering data into a UI element automatically updates the assciated context item
+
+This concept makes UI programming super easy.
+
 (t.b.w.)
 
 ![showWorkspace](./Screenshots/showWorkspace.png)
