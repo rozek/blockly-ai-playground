@@ -84,31 +84,31 @@ These two blocks provide such a functionality: use the first block to preserve a
 
 ![ContextKeys](./Screenshots/ContextKeys.png)
 
-> returns a list with the names of all currently defined context items (see [Context example](#context))
+> returns a list with the names of all currently defined context items (see [related example](#context))
 
 ![clearContext](./Screenshots/clearContext.png)
 
-> clears the context (i.e., deletes all currently defined context items) (see [Context example](#context))
+> clears the context (i.e., deletes all currently defined context items) (see [related example](#context))
 
 ![getFromContext](./Screenshots/getFromContext.png)
 
-> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned (see [Context example](#context))
+> returns the current value of a given context item. If the requested item does not exist, `undefined` is returned (see [related example](#context))
 
 ![setInContext](./Screenshots/setInContext.png)
 
-> sets the given context item to the given value. If the addressed item does not exist, it will be created (see [Context example](#context))
+> sets the given context item to the given value. If the addressed item does not exist, it will be created (see [related example](#context))
 
 ![removeFromContext](./Screenshots/removeFromContext.png)
 
-> removes the given context item. It is safe to remove an item which does not exist (see [Context example](#context))
+> removes the given context item. It is safe to remove an item which does not exist (see [related example](#context))
 
 ![preserveContextItem](./Screenshots/preserveContextItem.png)
 
-> preserves the given context item (as a string) in the Browser Storage. If the addressed item does not exist, an empty string will be preserved (see [preserve_restore example](#preserve-restore))
+> preserves the given context item (as a string) in the Browser Storage. If the addressed item does not exist, an empty string will be preserved (see [related example](#preserve-restore))
 
 ![restoreContextItem](./Screenshots/restoreContextItem.png)
 
-> restores the given context item (as a string) from the Browser Storage. If the addressed item was not preserved before, the context item will be set to an empty string (see [preserve_restore example](#preserve-and-restore))
+> restores the given context item (as a string) from the Browser Storage. If the addressed item was not preserved before, the context item will be set to an empty string (see [related example](#preserve-and-restore))
 
 ### Playground UI ###
 
@@ -179,11 +179,11 @@ These two blocks enable or disable specific UI elements.
 
 ![UIElements](./Screenshots/enableUI.png)
 
-> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting (see [associated example](#enable-and-disable))
+> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting (see [related example](#enable-and-disable))
 
 ![UIElements](./Screenshots/disableUI.png)
 
-> disables the playground UI in its entirety (see [associated example](#enable-and-disable))
+> disables the playground UI in its entirety (see [related example](#enable-and-disable))
 
 ![UIElements](./Screenshots/UIElements.png)
 
@@ -275,11 +275,11 @@ These two blocks enable or disable specific UI elements.
 
 ![enable](./Screenshots/enable.png)
 
-> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enable-and-disable))
+> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [related example](#enable-and-disable))
 
 ![disable](./Screenshots/disable.png)
 
-> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enable-and-disable))
+> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [related example](#enable-and-disable))
 
 ![isEnabled](./Screenshots/isEnabled.png)
 
@@ -295,15 +295,15 @@ These two blocks enable or disable specific UI elements.
 
 ![clearConsole](./Screenshots/clearConsole.png)
 
-> clears the built-in "Console" (see [Console example](#console))
+> clears the built-in "Console" (see [related example](#console))
 
 ![print](./Screenshots/print.png)
 
-> appends the given string to the built-in "Console" (see [Console example](#console))
+> appends the given string to the built-in "Console" (see [related example](#console))
 
 ![println](./Screenshots/println.png)
 
-> appends the given string to the built-in "Console" and starts a new line (see [Console example](#console))
+> appends the given string to the built-in "Console" and starts a new line (see [related example](#console))
 
 ![clearPendingUIEvents](./Screenshots/clearPendingUIEvents.png)
 
