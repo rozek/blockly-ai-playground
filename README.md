@@ -229,7 +229,7 @@ These two blocks enable or disable specific UI elements.
 
 > appends a radio button group element (based on an [HTML input elements of type "radio"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended.
 >
-> Radiobutton groups are a bit special as they contain a whole group of radio buttons, each with its own label. As a consequence, after appending a new radio button group element, you will have to define a list of radio buttons using the "append Choice" block - and the value of the whole group (i.e., the associated context item) is the (0-based) index of the currently checked radio button (or `-1` if no button is checked)
+> Radiobutton groups are a bit special as they contain a whole group of radio buttons, each with its own label. As a consequence, after appending a new radio button group element, you will have to define a list of radio buttons using the "append Choice" block - and the value of the whole group (i.e., the associated context item) is the (0-based) index of the currently checked radio button (or `-1` if no button is checked) (see [related example](#radiobutton-group))
 
 ![appendDropDown](./Screenshots/appendDropDown.png)
 
@@ -450,6 +450,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![preserve_restore](./Examples/preserve_restore.png)
 
 > this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
+
+### Radiobutton Group ###
+
+![RadiobuttonGroup](./Examples/RadiobuttonGroup.png)
+
+> this example illustrates how to use a radiobutton group (see [Blockly workspace file](./Examples/RadiobuttonGroup.json))
 
 ### Output Elements ###
 
