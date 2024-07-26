@@ -339,7 +339,7 @@ The following blocks perform basic AI functions
 
 > performs a chat completion for the given list of messages and returns the string created by the LLM. The message list must consist of an initial "system" message, a "user" message and (optionally) a sequence of "assistant" and "user" messages. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_`
 
-![TextCompletionForOptionPrefix](./Screenshots/TextCompletionForOptionPrefix.png)
+![TextCompletionForWithOptionPrefix](./Screenshots/TextCompletionForWithOptionPrefix.png)
 ![TextCompletionFor](./Screenshots/TextCompletionFor.png)
 
 > performs a text completion for the given prompt. This prompt is used to generate a system and a user message which are then used to generate a "chat completion". The "system" is generated from the `SystemTemplate` context item, the "user" message from  `UserTemplate`. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_`.  
