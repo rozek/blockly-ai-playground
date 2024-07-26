@@ -203,7 +203,7 @@ These two blocks enable or disable specific UI elements.
 
 ![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
-> appends a textline input element (based on an [HTML input element of type "text"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern`, `SpellChecking` and `Enabling`
+> appends a textline input element (based on an [HTML input element of type "text"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern`, `SpellChecking` and `Enabling` (see [related example](#textline-input))
 
 ![appendPasswordInput](./Screenshots/appendPasswordInput.png)
 
@@ -450,6 +450,13 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![preserve_restore](./Examples/preserve_restore.png)
 
 > this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
+
+### Textline Input ###
+
+![TextlineInput](./Examples/TextlineInput.png)
+
+> this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json))
+
 
 ### Radiobutton Group ###
 
