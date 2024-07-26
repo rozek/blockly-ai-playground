@@ -109,7 +109,7 @@ These two blocks provide such a functionality: use the first block to preserve a
 
 ![restoreContextItem](./Screenshots/restoreContextItem.png)
 
-> restores the given context item (as a string) from the Browser Storage. If the addressed item was not preserved before, the context item will be set to an empty string (see [preserve_restore example](#preserve-restore))
+> restores the given context item (as a string) from the Browser Storage. If the addressed item was not preserved before, the context item will be set to an empty string (see [preserve_restore example](#preserve-and-restore))
 
 ### Playground UI ###
 
@@ -180,11 +180,11 @@ These two blocks enable or disable specific UI elements.
 
 ![UIElements](./Screenshots/enableUI.png)
 
-> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting (see [associated example](#enabled-disabled))
+> (re-)enables the playground UI in its entirety. Please note that "enabling the whole UI" only means that the UI is no longer disabled in its entirety and every UI element is now enabled or disabled depending on its own setting (see [associated example](#enable-and-disable))
 
 ![UIElements](./Screenshots/disableUI.png)
 
-> disables the playground UI in its entirety (see [associated example](#enabled-disabled))
+> disables the playground UI in its entirety (see [associated example](#enable-and-disable))
 
 ![UIElements](./Screenshots/UIElements.png)
 
@@ -276,11 +276,11 @@ These two blocks enable or disable specific UI elements.
 
 ![enable](./Screenshots/enable.png)
 
-> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enabled-disabled))
+> enables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enable-and-disable))
 
 ![disable](./Screenshots/disable.png)
 
-> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enabled-disabled))
+> disables the UI element with the given key. If no element with the given key can be found, an exception is thrown and the program aborted (see [associated example](#enable-and-disable))
 
 ![isEnabled](./Screenshots/isEnabled.png)
 
@@ -440,15 +440,15 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 > this example demonstrates all local context functions (see [Blockly workspace file](./Examples/Context.json))
 
-### preserve, restore ###
+### preserve and restore ###
 
 ![preserve_restore](./Examples/preserve_restore.png)
 
 > this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
 
-### enabled, disabled ###
+### enable and disable ###
 
-![enabled_disabled](./Examples/enabled_disabled.png)
+![enable_disable](./Examples/enable_disable.png)
 
 > this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
 
