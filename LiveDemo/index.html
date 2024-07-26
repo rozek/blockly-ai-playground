@@ -57,7 +57,8 @@
     "imports": {
       "javascript-interface-library":"https://rozek.github.io/javascript-interface-library/dist/javascript-interface-library.esm.js",
       "htm/preact":                  "https://rozek.github.io/htm/preact/standalone.module.js",
-      "hyperactiv":                  "https://rozek.github.io/hyperactiv/dist/index.mjs"
+      "hyperactiv":                  "https://rozek.github.io/hyperactiv/dist/index.mjs",
+      "html-to-text":                "https://cdn.jsdelivr.net/npm/html-to-text@9.0.5/+esm"
     }
   }
   </script>
@@ -274,10 +275,11 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
+import { htmlToText } from 'html-to-text';
 /**** throwError - simplifies construction of named errors ****/
 export function throwError(Message) {
     let Match = /^([$a-zA-Z][$a-zA-Z0-9]*):\s*(\S.+)\s*$/.exec(Message);
@@ -451,6 +453,7 @@ let Playground = observe({
     UI: [], UIEnabling: true,
     UIEventQueue: [], currentUIEvent: undefined, UIEventTimer: undefined,
     UIEventHandler: undefined, UIEventHandlerState: undefined,
+    thrownException: undefined,
 }, { deep: false });
 //------------------------------------------------------------------------------
 //--                            Playground Context                            --
@@ -509,13 +512,11 @@ const PlaygroundUITypes = [
 const PlaygroundUIEventTypes = ['click', 'input'];
 /**** showWorkspace ****/
 function showWorkspace() {
-    console.log('showWorkspace');
     Playground.activeTab = 0;
     rerenderPlayground();
 }
 /**** showUI ****/
 function showUI() {
-    console.log('showUI');
     Playground.activeTab = 1;
     rerenderPlayground();
 }
@@ -670,6 +671,8 @@ function enqueueUIEvent(Type, Key) {
 async function waitForNextUIEvent(Timeout) {
     expectNumber('timeout [s]', Timeout);
     Timeout = Math.round(Timeout * 1000);
+    if (Playground.UIEventHandlerState != null)
+        throwError('InvalidState: nested event loop detected');
     Playground.currentUIEvent = undefined;
     Playground.UIEventHandlerState = 'waiting';
     return new Promise((resolve) => {
@@ -782,6 +785,41 @@ function RequestOptionsFrom(ContextPrefix = 'default_') {
 //------------------------------------------------------------------------------
 //--                           Playground AI Tools                            --
 //------------------------------------------------------------------------------
+/**** ValueIsWikipediaPageName ****/
+function ValueIsWikipediaPageName(Value) {
+    if (!ValueIsNonEmptyString(Value)) {
+        return false;
+    }
+    Value = Value.trim();
+    if ((Value[0].toUpperCase() !== Value[0]) ||
+        /[#<>\[\]|{}_\x00-\x1F\x7F\uFFFD]|~~~|%[0-9a-f]{2}/i.test(Value) ||
+        /^:|^\.\.?$|^\.?\.\/|\/\.\.?\/|\/\.\.?$/.test(Value) ||
+        /&#?[a-zA-Z0-9]+;/.test(Value) // HTML character codes
+    ) {
+        return false;
+    }
+    Value = encodeURIComponent(Value.replace(/\s+/g, '_'));
+    const UTF8Bytes = new TextEncoder().encode(Value);
+    return (UTF8Bytes.length <= 255);
+}
+/**** HTMLtoText ****/
+function HTMLtoText(HTML, Options) {
+    expectText('HTML text', HTML);
+    if (Options == null) {
+        Options = {
+            wordwrap: 80,
+            selectors: [
+                { selector: 'h1', options: { uppercase: false } },
+                { selector: 'h2', options: { uppercase: false } },
+                { selector: 'h3', options: { uppercase: false } },
+                { selector: 'h4', options: { uppercase: false } },
+                { selector: 'h5', options: { uppercase: false } },
+                { selector: 'h6', options: { uppercase: false } },
+            ]
+        };
+    }
+    return htmlToText(HTML, Options);
+}
 //------------------------------------------------------------------------------
 //--                          Playground Miscellany                           --
 //------------------------------------------------------------------------------
@@ -967,8 +1005,14 @@ function externalAPI(Interpreter, global) {
     }));
     /**** waitForNextUIEvent ****/
     Interpreter.setProperty(global, 'waitForNextUIEvent', Interpreter.createAsyncFunction(async function _waitForNextUIEvent(Timeout, Callback) {
-        let EventReceived = await waitForNextUIEvent(Timeout);
-        Callback(EventReceived);
+        try {
+            let EventReceived = await waitForNextUIEvent(Timeout);
+            Callback(EventReceived);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
     }));
     /**** UIEventHandlerWasLeft ****/
     Interpreter.setProperty(global, 'UIEventHandlerWasLeft', Interpreter.createNativeFunction(function _UIEventHandlerWasLeft() {
@@ -992,33 +1036,247 @@ function externalAPI(Interpreter, global) {
     }));
     /**** ChatCompletionFor ****/
     Interpreter.setProperty(global, 'ChatCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(MessageList, OptionPrefix, Callback) {
-        allowIdentifier('option prefix', OptionPrefix);
-        const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
-        let Response = await ChatCompletionFor(MessageList, OptionSet);
-        Callback(Response);
+        try {
+            allowIdentifier('option prefix', OptionPrefix);
+            const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
+            let Response = await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
     }));
     /**** TextCompletionFor ****/
-    Interpreter.setProperty(global, 'TextCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(Prompt, OptionPrefix, Callback) {
-        expectText('prompt', Prompt);
-        allowIdentifier('option prefix', OptionPrefix);
-        const MessageList = [
-            acceptableText(getFromContext((OptionPrefix || 'default_') + 'SystemTemplate') ||
-                getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-            acceptableText(getFromContext((OptionPrefix || 'default_') + 'UserTemplate') ||
-                getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Prompt}}', Prompt),
-        ];
-        const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
-        let Response = await await ChatCompletionFor(MessageList, OptionSet);
-        Callback(Response);
+    Interpreter.setProperty(global, 'TextCompletionFor', Interpreter.createAsyncFunction(async function _TextCompletionFor(Prompt, OptionPrefix, Callback) {
+        try {
+            expectText('prompt', Prompt);
+            allowIdentifier('option prefix', OptionPrefix);
+            const MessageList = [
+                acceptableText(getFromContext((OptionPrefix || 'default_') + 'SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext((OptionPrefix || 'default_') + 'UserTemplate') ||
+                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Prompt}}', Prompt),
+            ];
+            const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** ValueIsURL ****/
+    Interpreter.setProperty(global, 'ValueIsURL', Interpreter.createNativeFunction(function _ValueIsURL(Value) {
+        return ValueIsURL(Value);
+    }));
+    /**** ValueIsWikipediaURL ****/
+    Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
+        return (ValueIsURL(Value) &&
+            /http[s]?:\/\/[^\/]+[.]wikipedia[.]org\/[^\/]+/i.test(Value));
+    }));
+    /**** ValueIsWikipediaPageName ****/
+    Interpreter.setProperty(global, 'ValueIsWikipediaPageName', Interpreter.createNativeFunction(function _ValueIsWikipediaPageName(Value) {
+        return ValueIsWikipediaPageName(Value);
+    }));
+    /**** JSONinText ****/
+    Interpreter.setProperty(global, 'JSONinText', Interpreter.createNativeFunction(function _JSONinText(Text) {
+        expectText('text', Text);
+        function IndexOfClosingBracketAfter(StartIndex) {
+            let Nesting = 1, inString = false, escaped = false;
+            for (let i = StartIndex + 1, l = Text.length; i < l; i++) {
+                if (escaped) {
+                    escaped = false;
+                    continue;
+                }
+                switch (Text[i]) {
+                    case '\\':
+                        escaped = true;
+                        break;
+                    case '"':
+                        if (!escaped) {
+                            inString = !inString;
+                        }
+                        ;
+                        break;
+                    case '{':
+                        if (!inString) {
+                            Nesting++;
+                        }
+                        ;
+                        break;
+                    case '}': if (!inString) {
+                        Nesting--;
+                        if (Nesting === 0) {
+                            return i;
+                        }
+                    }
+                } // escaping '{' or '}' makes no sense and will crash JSON.parse below
+            }
+            return -1;
+        }
+        const JSONStart = Text.indexOf('{');
+        if (JSONStart < 0) {
+            return undefined;
+        }
+        const JSONEnd = IndexOfClosingBracketAfter(JSONStart);
+        if (JSONEnd < 0) {
+            return undefined;
+        }
+        const JSONString = Text.slice(JSONStart, JSONEnd + 1);
+        try {
+            return JSON.parse(JSONString);
+        }
+        catch (Signal) {
+            return undefined;
+        }
+    }));
+    /**** HTMLtoText ****/
+    Interpreter.setProperty(global, 'HTMLtoText', Interpreter.createNativeFunction(function _HTMLtoText(HTML) {
+        return HTMLtoText(HTML);
+    }));
+    /**** TextOfWebDocument ****/
+    Interpreter.setProperty(global, 'TextOfWebDocument', Interpreter.createAsyncFunction(async function _TextOfWebDocument(URL, Callback) {
+        try {
+            expectURL('document URL', URL);
+            const Response = await fetch(URL); // may fail!
+            Callback(HTMLtoText(await Response.text()));
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** TextOfWikipediaArticle ****/
+    Interpreter.setProperty(global, 'TextOfWikipediaArticle', Interpreter.createAsyncFunction(async function _TextOfWikipediaArticle(PageName, Callback) {
+        try {
+            if (!ValueIsWikipediaPageName(PageName))
+                throwError('InvalidArgument: the given argument is no Wikipedia page name');
+            const RequestParameters = new URLSearchParams({
+                action: 'query',
+                format: 'json',
+                prop: 'extracts',
+                titles: PageName,
+                //          explaintext:    '1',
+                //          exsectionformat:'plain',
+                origin: '*'
+            });
+            const HTMLtoTextOptions = {
+                wordwrap: 80,
+                selectors: [
+                    { selector: 'h1', options: { uppercase: false } },
+                    { selector: 'h2', options: { uppercase: false } },
+                    { selector: 'h3', options: { uppercase: false } },
+                    { selector: 'h4', options: { uppercase: false } },
+                    { selector: 'h5', options: { uppercase: false } },
+                    { selector: 'h6', options: { uppercase: false } },
+                ]
+            };
+            const Response = await fetch(// may fail!
+            `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
+            const PageList = (await Response.json()).query.pages;
+            const PageKey = Object.keys(PageList)[0];
+            Callback(HTMLtoText(PageList[PageKey].extract, HTMLtoTextOptions));
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** TextOfWikipediaArticleForAI ****/
+    Interpreter.setProperty(global, 'TextOfWikipediaArticleForAI', Interpreter.createAsyncFunction(async function _TextOfWikipediaArticleForAI(PageName, Callback) {
+        try {
+            if (!ValueIsWikipediaPageName(PageName))
+                throwError('InvalidArgument: the given argument is no Wikipedia page name');
+            const RequestParameters = new URLSearchParams({
+                action: 'query',
+                format: 'json',
+                prop: 'extracts',
+                titles: PageName,
+                //          explaintext:    '1',
+                //          exsectionformat:'plain',
+                origin: '*'
+            });
+            const HTMLtoTextOptions = {
+                wordwrap: 80,
+                selectors: [
+                    { selector: 'h1', options: { uppercase: false } },
+                    { selector: 'h2', options: { uppercase: false } },
+                    { selector: 'h3', options: { uppercase: false } },
+                    { selector: 'h4', options: { uppercase: false } },
+                    { selector: 'h5', options: { uppercase: false } },
+                    { selector: 'h6', options: { uppercase: false } },
+                ]
+            };
+            const Response = await fetch(// may fail!
+            `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
+            const PageList = (await Response.json()).query.pages;
+            const PageKey = Object.keys(PageList)[0];
+            function TextWithoutSection(Text, Heading) {
+                let Pattern = new RegExp('(?:^|\\n\\n\\n)' + Heading + '(?:(?!(?:^|\\n{3}))[\\s\\S])*', 'i');
+                return Text.replace(Pattern, '');
+            }
+            let Text = HTMLtoText(PageList[PageKey].extract, HTMLtoTextOptions);
+            Text = TextWithoutSection(Text, 'See also');
+            Text = TextWithoutSection(Text, 'References');
+            Text = TextWithoutSection(Text, 'External Links');
+            Callback(Text);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** WebSearch ****/
+    Interpreter.setProperty(global, 'WebSearch', Interpreter.createAsyncFunction(async function _WebSearch(SearchPhrase, Callback) {
+        try {
+            expectNonEmptyString('search phrase', SearchPhrase);
+            const ServerURL = getFromContext('SearXNGServer');
+            if (!ValueIsURL(ServerURL))
+                throwError('MissingContextItem: no or invalid "SearXNGServer" context item found');
+            const ScoreThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+            if (!ValueIsNumberInRange(ScoreThreshold, 0, 10, true, true))
+                throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
+            const Parameters = new URLSearchParams({
+                q: SearchPhrase, format: 'json', categories: 'general'
+            });
+            const Response = await fetch(`${ServerURL}/search?${Parameters}`); // may fail!
+            const Result = (await Response.json()).results
+                .filter((Result) => Result.score >= ScoreThreshold)
+                .map((Result) => Result.url);
+            Callback(Result);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** WikipediaSearch ****/
+    Interpreter.setProperty(global, 'WikipediaSearch', Interpreter.createAsyncFunction(async function _WikipediaSearch(SearchPhrase, Callback) {
+        try {
+            expectNonEmptyString('Wikipedia search phrase', SearchPhrase);
+            const Response = await fetch(// may fail!
+            'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' +
+                encodeURIComponent(SearchPhrase) +
+                '&format=json&srlimit=20&inprop=url&origin=*');
+            const TitleList = (await Response.json()).query.search.map((SearchResult) => SearchResult.title);
+            Callback(TitleList);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
     }));
     /**** wait ****/
     Interpreter.setProperty(global, 'wait', Interpreter.createAsyncFunction(async function wait(Duration, Callback) {
-        if (ValueIsOrdinal(Duration)) {
+        try {
+            expectOrdinal('Duration', Duration);
             setTimeout(Callback, Duration);
         }
-        else {
-            alert('invalid "Duration" given');
-            abortBlocklyProgram();
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
         }
     }));
     /**** alert ****/
@@ -1066,15 +1324,6 @@ function externalAPI(Interpreter, global) {
         expectNonEmptyString('RegExp pattern', Pattern);
         return ValueIsStringMatching(Value, new RegExp(Pattern));
     }));
-    /**** ValueIsURL ****/
-    Interpreter.setProperty(global, 'ValueIsURL', Interpreter.createNativeFunction(function _ValueIsURL(Value) {
-        return ValueIsURL(Value);
-    }));
-    /**** ValueIsWikipediaURL ****/
-    Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
-        return (ValueIsURL(Value) &&
-            /http[s]?:\/\/[^\/]+[.]wikipedia[.]org\/[^\/]+/i.test(Value));
-    }));
 }
 /**** startBlocklyProgram ****/
 function startBlocklyProgram() {
@@ -1093,7 +1342,7 @@ function startBlocklyProgram() {
     }
     Object.assign(Playground.Context, {
         APIServer: undefined, APIKey: undefined,
-        SearXNGServer: 'http:127.0.0.1/search',
+        SearXNGServer: 'http:127.0.0.1/search', SearXNGScoreThreshold: 2,
         default_model: undefined, default_max_tokens: 2048,
         default_temperature: 0, default_top_p: undefined, default_top_k: 1,
         default_presence_penalty: undefined, default_frequency_penalty: 1,
@@ -1103,6 +1352,7 @@ function startBlocklyProgram() {
     });
     Playground.InterpreterState = 'running';
     Playground.pendingInterpreterState = undefined;
+    Playground.thrownException = undefined;
     rerenderPlayground();
     setTimeout(runInterpreter, 0);
 }
@@ -1121,6 +1371,7 @@ function resumeBlocklyProgram() {
     }
     Playground.InterpreterState = 'running';
     Playground.pendingInterpreterState = undefined;
+    Playground.thrownException = undefined;
     rerenderPlayground();
     setTimeout(runInterpreter, 0);
 }
@@ -1148,6 +1399,9 @@ function runInterpreter() {
             Playground.Interpreter.step();
             if (Playground.InterpreterState === 'idle') {
                 return;
+            }
+            if (Playground.thrownException != null) {
+                throw Playground.thrownException;
             }
             if (Playground.pendingInterpreterState != null) { // 'suspended' || 'idle'
                 Playground.InterpreterState = Playground.pendingInterpreterState;
@@ -2355,6 +2609,196 @@ javascriptGenerator.forBlock['TextCompletionForWithOptionPrefix'] = function (Bl
     let Prefix = Generator.valueToCode(Block, 'prefix', Order.NONE) || '""';
     return [`TextCompletionFor(${Prompt},${Prefix})`, Order.FUNCTION_CALL];
 };
+/**** ValueIsURL ****/
+Blockly.Blocks['ValueIsURL'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsURL',
+            tooltip: 'returns true if the given value is a string containing a URL - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a URL?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsURL'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsURL(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsWikipediaURL ****/
+Blockly.Blocks['ValueIsWikipediaURL'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsWikipediaURL',
+            tooltip: 'returns true if the given value is a string containing a Wikipedia URL - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a Wikipedia URL?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsWikipediaURL'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsWikipediaURL(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsWikipediaPageName ****/
+Blockly.Blocks['ValueIsWikipediaPageName'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsWikipediaPageName',
+            tooltip: 'returns true if the given value is a string containing a Wikipedia page name - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a Wikipedia page name?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsWikipediaPageName'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsWikipediaPageName(${Value})`, Order.FUNCTION_CALL];
+};
+/**** JSONinText ****/
+Blockly.Blocks['JSONinText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'JSONinText',
+            tooltip: 'returns the first JSON object found in a given string (or undefined)',
+            helpUrl: '',
+            message0: 'JSON object in %1',
+            args0: [{ type: 'input_value', name: 'text', check: 'String' }],
+            output: ['Boolean', 'Number', 'String', 'Object', 'Array'],
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['JSONinText'] = function (Block, Generator) {
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`JSONinText(${Text})`, Order.FUNCTION_CALL];
+};
+/**** HTMLtoText ****/
+Blockly.Blocks['HTMLtoText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'HTMLtoText',
+            tooltip: 'converts the given HTML into plain formatted text',
+            helpUrl: '',
+            message0: 'HTML %1 as text',
+            args0: [{ type: 'input_value', name: 'html', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['HTMLtoText'] = function (Block, Generator) {
+    let HTML = Generator.valueToCode(Block, 'html', Order.NONE) || '""';
+    return [`HTMLtoText(${HTML})`, Order.FUNCTION_CALL];
+};
+/**** TextOfWebDocument ****/
+Blockly.Blocks['TextOfWebDocument'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextOfWebDocument',
+            tooltip: 'loads a text document from the web and returns its contents',
+            helpUrl: '',
+            message0: 'text of web document %1',
+            args0: [{ type: 'input_value', name: 'url', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['TextOfWebDocument'] = function (Block, Generator) {
+    let URL = Generator.valueToCode(Block, 'url', Order.NONE) || '""';
+    return [`TextOfWebDocument(${URL})`, Order.FUNCTION_CALL];
+};
+/**** TextOfWikipediaArticle ****/
+Blockly.Blocks['TextOfWikipediaArticle'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextOfWikipediaArticle',
+            tooltip: 'loads a Wikipedia article with a given page name and returns its contents',
+            helpUrl: '',
+            message0: 'text of Wikipedia article %1',
+            args0: [{ type: 'input_value', name: 'pagename', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['TextOfWikipediaArticle'] = function (Block, Generator) {
+    let PageName = Generator.valueToCode(Block, 'pagename', Order.NONE) || '""';
+    return [`TextOfWikipediaArticle(${PageName})`, Order.FUNCTION_CALL];
+};
+/**** TextOfWikipediaArticleForAI ****/
+Blockly.Blocks['TextOfWikipediaArticleForAI'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextOfWikipediaArticleForAI',
+            tooltip: 'loads a Wikipedia article with a given page name and returns its contents ready for AI',
+            helpUrl: '',
+            message0: 'text of Wikipedia article %1 for AI',
+            args0: [{ type: 'input_value', name: 'pagename', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['TextOfWikipediaArticleForAI'] = function (Block, Generator) {
+    let PageName = Generator.valueToCode(Block, 'pagename', Order.NONE) || '""';
+    return [`TextOfWikipediaArticleForAI(${PageName})`, Order.FUNCTION_CALL];
+};
+/**** WebSearch ****/
+Blockly.Blocks['WebSearch'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'WebSearch',
+            tooltip: 'searches the web and returns a list with URLs of found documents',
+            helpUrl: '',
+            message0: 'result of web search for %1',
+            args0: [{ type: 'input_value', name: 'searchphrase', check: 'String' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['WebSearch'] = function (Block, Generator) {
+    let SearchPhrase = Generator.valueToCode(Block, 'searchphrase', Order.NONE) || '""';
+    return [`WebSearch(${SearchPhrase})`, Order.FUNCTION_CALL];
+};
+/**** WikipediaSearch ****/
+Blockly.Blocks['WikipediaSearch'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'WikipediaSearch',
+            tooltip: 'searches Wikipedia and returns a list with the names of found documents',
+            helpUrl: '',
+            message0: 'result of Wikipedia search for %1',
+            args0: [{ type: 'input_value', name: 'searchphrase', check: 'String' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['WikipediaSearch'] = function (Block, Generator) {
+    let SearchPhrase = Generator.valueToCode(Block, 'searchphrase', Order.NONE) || '""';
+    return [`WikipediaSearch(${SearchPhrase})`, Order.FUNCTION_CALL];
+};
 /**** wait ****/
 Blockly.Blocks['wait'] = {
     init: function () {
@@ -2629,44 +3073,6 @@ javascriptGenerator.forBlock['ValueIsStringMatching'] = function (Block, Generat
     let Pattern = Generator.valueToCode(Block, 'pattern', Order.NONE) || 'undefined';
     return [`ValueIsStringMatching(${Value},${Pattern})`, Order.FUNCTION_CALL];
 };
-/**** ValueIsURL ****/
-Blockly.Blocks['ValueIsURL'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'ValueIsURL',
-            tooltip: 'returns true if the given value is a string containing a URL - or false otherwise',
-            helpUrl: '',
-            message0: 'value %1 is a string with a URL?',
-            args0: [{ type: 'input_value', name: 'value' }],
-            output: 'Boolean',
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['ValueIsURL'] = function (Block, Generator) {
-    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsURL(${Value})`, Order.FUNCTION_CALL];
-};
-/**** ValueIsWikipediaURL ****/
-Blockly.Blocks['ValueIsWikipediaURL'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'ValueIsWikipediaURL',
-            tooltip: 'returns true if the given value is a string containing a Wikipedia URL - or false otherwise',
-            helpUrl: '',
-            message0: 'value %1 is a string with a Wikipedia URL?',
-            args0: [{ type: 'input_value', name: 'value' }],
-            output: 'Boolean',
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['ValueIsWikipediaURL'] = function (Block, Generator) {
-    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsWikipediaURL(${Value})`, Order.FUNCTION_CALL];
-};
 /**** Workspace Specification ****/
 const WorkspaceSpecification = {
     grid: { spacing: 20, length: 1, color: '#DDDDDD', snap: true },
@@ -2821,12 +3227,21 @@ const WorkspaceSpecification = {
                           name:"AI Mezzanines",
                           contents:[
                           ]
-                        },{
-                          kind:"category",
-                          name:"AI Tools",
-                          contents:[
-                          ]
                 */
+            }, {
+                kind: "category",
+                name: "AI Tools",
+                contents: [
+                    { kind: "block", type: "ValueIsWikipediaURL" },
+                    { kind: "block", type: "ValueIsWikipediaPageName" },
+                    { kind: "block", type: "JSONinText" },
+                    { kind: "block", type: "HTMLtoText" },
+                    { kind: "block", type: "TextOfWebDocument" },
+                    { kind: "block", type: "TextOfWikipediaArticle" },
+                    { kind: "block", type: "TextOfWikipediaArticleForAI" },
+                    { kind: "block", type: "WebSearch" },
+                    { kind: "block", type: "WikipediaSearch" },
+                ]
             }, {
                 kind: "category",
                 name: "Miscellany",
@@ -2845,7 +3260,6 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "ValueIsCardinal" },
                     { kind: "block", type: "ValueIsStringMatching" },
                     { kind: "block", type: "ValueIsURL" },
-                    { kind: "block", type: "ValueIsWikipediaURL" },
                 ]
             },
             {
