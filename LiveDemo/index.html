@@ -742,12 +742,11 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
     for (let i = 2, l = Messages.length; i < l; i += 2) {
         Messages.push({ role: 'assistant', content: MessageList[i] }, { role: 'user', content: MessageList[i + 1] });
     }
-    const RequestBody = Object.assign(RequestOptionsFrom(OptionSet, 'default_'), {
-        temperature: 0, top_k: 1, max_tokens: 200, stream: false,
-    });
+    const RequestBody = Object.assign({
+        messages: Messages, temperature: 0, top_k: 1, max_tokens: 200, stream: false
+    }, OptionSet);
     if (RequestBody.model == null)
         throwError('Missingargument: no AI "model" given');
-    RequestBody.messages = Messages;
     try {
         const Response = await fetch(APIServer, {
             method: 'POST',
@@ -764,22 +763,13 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
         throwError('RequestFailure: API request failed with ' + Signal);
     }
 }
-/**** TextCompletionFor ****/
-async function TextCompletionFor(Prompt, OptionSet = {}) {
-    expectText('prompt', Prompt);
-    const MessageList = [
-        acceptableText(OptionSet.SystemTemplate || getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-        acceptableText(OptionSet.UserTemplate || getFromContext('default_UserTemplate'), '{{Prompt}}')
-            .replace('{{Prompt}}', Prompt),
-    ];
-    return await ChatCompletionFor(MessageList, OptionSet);
-}
 /**** RequestOptionsFrom ****/
-function RequestOptionsFrom(OptionSet, ContextPrefix = 'default_') {
+function RequestOptionsFrom(ContextPrefix = 'default_') {
     const Result = {};
     ('model temperature top_k top_p frequency_penalty presence_penalty ' +
         'max_tokens return_citations return_images').split(' ').forEach((Option) => {
-        const Candidate = OptionSet[Option] || getFromContext(ContextPrefix + Option);
+        const Candidate = (getFromContext(ContextPrefix + Option) ||
+            getFromContext('default_' + Option));
         if (Candidate != null) {
             Result[Option] = Candidate;
         }
@@ -1001,13 +991,24 @@ function externalAPI(Interpreter, global) {
         leaveUIEventLoop();
     }));
     /**** ChatCompletionFor ****/
-    Interpreter.setProperty(global, 'ChatCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(MessageList, OptionSet, Callback) {
+    Interpreter.setProperty(global, 'ChatCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(MessageList, OptionPrefix, Callback) {
+        allowIdentifier('option prefix', OptionPrefix);
+        const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
         let Response = await ChatCompletionFor(MessageList, OptionSet);
         Callback(Response);
     }));
     /**** TextCompletionFor ****/
-    Interpreter.setProperty(global, 'TextCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(Prompt, OptionSet, Callback) {
-        let Response = await TextCompletionFor(Prompt, OptionSet);
+    Interpreter.setProperty(global, 'TextCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(Prompt, OptionPrefix, Callback) {
+        expectText('prompt', Prompt);
+        allowIdentifier('option prefix', OptionPrefix);
+        const MessageList = [
+            acceptableText(getFromContext((OptionPrefix || 'default_') + 'SystemTemplate') ||
+                getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+            acceptableText(getFromContext((OptionPrefix || 'default_') + 'UserTemplate') ||
+                getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Prompt}}', Prompt),
+        ];
+        const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
+        let Response = await await ChatCompletionFor(MessageList, OptionSet);
         Callback(Response);
     }));
     /**** wait ****/
@@ -1091,13 +1092,13 @@ function startBlocklyProgram() {
         window.alert('Blockly Code Generation Error\n\n' + Signal);
     }
     Object.assign(Playground.Context, {
-        APIServer: undefined, APIKey: undefined, SearXNGServer: 'http:127.0.0.1',
+        APIServer: undefined, APIKey: undefined,
+        SearXNGServer: 'http:127.0.0.1/search',
         default_model: undefined, default_max_tokens: 2048,
         default_temperature: 0, default_top_p: undefined, default_top_k: 1,
         default_presence_penalty: undefined, default_frequency_penalty: 1,
         default_SystemTemplate: 'Be precise and concise.',
         default_UserTemplate: '{{Prompt}}',
-        Prompt: 'who was Joseph Weizenbaum?',
         Console: '',
     });
     Playground.InterpreterState = 'running';
@@ -2286,8 +2287,31 @@ Blockly.Blocks['ChatCompletionFor'] = {
     }
 };
 javascriptGenerator.forBlock['ChatCompletionFor'] = function (Block, Generator) {
-    let MessageList = Generator.valueToCode(Block, 'messages', Order.NONE) || '""';
-    return [`ChatCompletionFor(${MessageList})`, Order.FUNCTION_CALL];
+    let MessageList = Generator.valueToCode(Block, 'messages', Order.NONE) || '[]';
+    return [`ChatCompletionFor(${MessageList},'default_')`, Order.FUNCTION_CALL];
+};
+/**** ChatCompletionForWithOptionPrefix ****/
+Blockly.Blocks['ChatCompletionForWithOptionPrefix'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ChatCompletionForWithOptionPrefix',
+            tooltip: 'creates a chat completion for the given list of messages',
+            helpUrl: '',
+            message0: 'chat completion for %1 with option prefix %2',
+            args0: [
+                { type: 'input_value', name: 'messages', check: 'Array' },
+                { type: 'input_value', name: 'prefix', check: 'String' },
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['ChatCompletionForWithOptionPrefix'] = function (Block, Generator) {
+    let MessageList = Generator.valueToCode(Block, 'messages', Order.NONE) || '[]';
+    let OptionPrefix = Generator.valueToCode(Block, 'prefix', Order.NONE) || '""';
+    return [`ChatCompletionFor(${MessageList}),${OptionPrefix}`, Order.FUNCTION_CALL];
 };
 /**** TextCompletionFor ****/
 Blockly.Blocks['TextCompletionFor'] = {
@@ -2306,7 +2330,30 @@ Blockly.Blocks['TextCompletionFor'] = {
 };
 javascriptGenerator.forBlock['TextCompletionFor'] = function (Block, Generator) {
     let Prompt = Generator.valueToCode(Block, 'prompt', Order.NONE) || '""';
-    return [`TextCompletionFor(${Prompt})`, Order.FUNCTION_CALL];
+    return [`TextCompletionFor(${Prompt},'default_')`, Order.FUNCTION_CALL];
+};
+/**** TextCompletionForWithOptionPrefix ****/
+Blockly.Blocks['TextCompletionForWithOptionPrefix'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextCompletionForWithOptionPrefix',
+            tooltip: 'creates a completion for the given prompt',
+            helpUrl: '',
+            message0: 'text completion for %1 with option prefix %2',
+            args0: [
+                { type: 'input_value', name: 'prompt', check: 'String' },
+                { type: 'input_value', name: 'prefix', check: 'String' },
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: false
+        });
+    }
+};
+javascriptGenerator.forBlock['TextCompletionForWithOptionPrefix'] = function (Block, Generator) {
+    let Prompt = Generator.valueToCode(Block, 'prompt', Order.NONE) || '""';
+    let Prefix = Generator.valueToCode(Block, 'prefix', Order.NONE) || '""';
+    return [`TextCompletionFor(${Prompt},${Prefix})`, Order.FUNCTION_CALL];
 };
 /**** wait ****/
 Blockly.Blocks['wait'] = {
@@ -2764,7 +2811,9 @@ const WorkspaceSpecification = {
                 name: "AI Basics",
                 contents: [
                     { kind: "block", type: "ChatCompletionFor" },
+                    { kind: "block", type: "ChatCompletionForWithOptionPrefix" },
                     { kind: "block", type: "TextCompletionFor" },
+                    { kind: "block", type: "TextCompletionForWithOptionPrefix" },
                 ]
                 /*
                         },{
