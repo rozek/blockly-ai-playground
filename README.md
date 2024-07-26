@@ -243,23 +243,23 @@ These two blocks enable or disable specific UI elements.
 
 ![appendTextlineOutput](./Screenshots/appendTextlineOutput.png)
 
-> appends a textline output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a textline output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
 ![appendNumberOutput](./Screenshots/appendNumberOutput.png)
 
-> appends a number output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a number output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
 ![appendTextOutput](./Screenshots/appendTextOutput.png)
 
-> appends a (multiline) text output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a (multiline) text output element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
 ![appendText](./Screenshots/appendText.png)
 
-> appends an unlabelled text view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends an unlabelled text view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
 ![appendFinePrint](./Screenshots/appendFinePrint.png)
 
-> appends an unlabelled "fine print" view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends an unlabelled "fine print" view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
 ![configureUI](./Screenshots/configureUI.png)
 
@@ -319,7 +319,7 @@ These two blocks enable or disable specific UI elements.
 
 ![ButtonWasClicked](./Screenshots/ButtonWasClicked.png)
 
-> returns `true` if the currently processed UI event is a click on a button with the given name - or `false` otherwise (see related [example](#button-clicks))
+> returns `true` if the currently processed UI event is a click on a button with the given name - or `false` otherwise (see [related example](#button-clicks))
 
 ![InputWasChanged](./Screenshots/InputWasChanged.png)
 
@@ -450,6 +450,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![preserve_restore](./Examples/preserve_restore.png)
 
 > this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
+
+### Output Elements ###
+
+![OutputElements](./Examples/OutputElements.png)
+
+> this example shows all output elements of the playground UI (see [Blockly workspace file](./Examples/OutputElements.json))
 
 ### enable and disable ###
 
