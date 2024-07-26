@@ -671,8 +671,11 @@ function enqueueUIEvent(Type, Key) {
 async function waitForNextUIEvent(Timeout) {
     expectNumber('timeout [s]', Timeout);
     Timeout = Math.round(Timeout * 1000);
-    if (Playground.UIEventHandlerState != null)
-        throwError('InvalidState: nested event loop detected');
+    /*
+        if (Playground.UIEventHandlerState != null) throwError(
+          'InvalidState: nested event loop detected'
+        )
+    */
     Playground.currentUIEvent = undefined;
     Playground.UIEventHandlerState = 'waiting';
     return new Promise((resolve) => {
