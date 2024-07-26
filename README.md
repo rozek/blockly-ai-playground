@@ -66,7 +66,6 @@ the inferencing parameters
 
 and
 
-* `Prompt` - the prompt to be sent to the AI model (preset to `who was Joseph Weizenbaum?`)
 * `Console` - the current contents of the built-in "Console" (initially empty)
 
 #### Preserve and Restore ####
