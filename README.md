@@ -448,6 +448,8 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 ### enabled, disabled ###
 
+![enabled_disabled](./Examples/enabled_disabled.png)
+
 > this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
 
 ## AI Examples ##
