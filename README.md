@@ -319,7 +319,7 @@ These two blocks enable or disable specific UI elements.
 
 ![ButtonWasClicked](./Screenshots/ButtonWasClicked.png)
 
-> returns `true` if the currently processed UI event is a click on a button with the given name - or `false` otherwise
+> returns `true` if the currently processed UI event is a click on a button with the given name - or `false` otherwise (see related [example](#button-clicks))
 
 ![InputWasChanged](./Screenshots/InputWasChanged.png)
 
@@ -425,7 +425,7 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 ![Alert_Confirm_Prompt](./Examples/Alert_Confirm_Prompt.png)
 
-> if you do not want to implement a "real" user interface (with an event loop), it may already be sufficient to use the browser's built-in pop-up dialogs `alert`, `confirm` and `prompt` - for simple use cases, at least. This example demonstrates how to use them
+> if you do not want to implement a "real" user interface (with an event loop), it may already be sufficient to use the browser's built-in pop-up dialogs `alert`, `confirm` and `prompt` - for simple use cases, at least. This example demonstrates how to use them (see [Blockly workspace file](./Examples/Alert_Confirm_Prompt.json))
 
 ### Console ###
 
@@ -456,6 +456,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![enable_disable](./Examples/enable_disable.png)
 
 > this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
+
+### Button Clicks ###
+
+![ButtonWasClicked](./Examples/ButtonWasClicked.png)
+
+> this example demonstrates how to react on a button click (see [Blockly workspace file](./Examples/ButtonWasClicked.json))
 
 ## AI Examples ##
 
