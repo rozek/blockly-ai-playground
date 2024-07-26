@@ -361,15 +361,15 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![alert](./Screenshots/alert.png)
 
-> opens a browser "alert" pop-up dialog, displays the given message and continues as soon as the user has closed the dialog
+> opens a browser "alert" pop-up dialog, displays the given message and continues as soon as the user has closed the dialog (see related [example](#alert-confirm-prompt))
 
 ![confirm](./Screenshots/confirm.png)
 
-> opens a browser "confirmation" pop-up dialog, displays the given message and continues as soon as the user has responded with "ok" or "Cancel". If cancelled, the block returns `false`, otherwise it returns `true`
+> opens a browser "confirmation" pop-up dialog, displays the given message and continues as soon as the user has responded with "ok" or "Cancel". If cancelled, the block returns `false`, otherwise it returns `true` (see related [example](#alert-confirm-prompt))
 
 ![prompt](./Screenshots/prompt.png)
 
-> opens a browser "prompt" pop-up dialog, displays the given message and continues as soon as the user has entered a response. If cancelled, the block returns an empty string, otherwise it returns the entered string
+> opens a browser "prompt" pop-up dialog, displays the given message and continues as soon as the user has entered a response. If cancelled, the block returns an empty string, otherwise it returns the entered string (see related [example](#alert-confirm-prompt))
 
 ![ValueIsNonEmpty](./Screenshots/ValueIsNonEmpty.png)
 
@@ -420,6 +420,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![Hello_World](./Examples/Hello_World.png)
 
 > this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json))
+
+### Alert, Confirm, Prompt ###
+
+![Alert_Confirm_Prompt](./Examples/Alert_Confirm_Prompt.png)
+
+> if you do not want to implement a "real" user interface (with an event loop), it may already be sufficient to use the browser's built-in pop-up dialogs `alert`, `confirm` and `prompt` - for simple use cases, at least. This example demonstrates how to use them
 
 ### Console ###
 
