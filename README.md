@@ -349,7 +349,7 @@ The following blocks perform basic AI functions
 
 ### AI Support ###
 
-The following blocks have been made to support building AI agents.
+The following blocks have been made to support the creation of AI agents.
 
 ![ValueIsWikipediaURL](./Screenshots/ValueIsWikipediaURL.png)
 
@@ -373,7 +373,7 @@ The following blocks have been made to support building AI agents.
 
 ![WebSearch](./Screenshots/WebSearch.png)
 
-> searches the web for documents related to a given search phrase and returns a list with the URLs of the first found documents. The search request is sent to to the SearXNG server specified in context item `SearXNGServer` and found documents are only listed if they have a score greater than or equal to the threshold specified in context item `SearXNGScoreThreshold` (a number in the range 0...10 which defaults to 2)
+> searches the web for documents related to a given search phrase and returns a list with the URLs of the first found documents. The search request is sent to the SearXNG server specified in context item `SearXNGServer`, but found documents are only listed if they have a score greater than or equal to the threshold specified in context item `SearXNGScoreThreshold` (a number in the range 0...10 which defaults to 2)
 
 ![WikipediaSearch](./Screenshots/WikipediaSearch.png)
 
