@@ -347,9 +347,37 @@ The following blocks perform basic AI functions
 
 (t.b.w.)
 
-### AI Tools ###
+### AI Support ###
 
-(t.b.w.)
+The following blocks have been made to support building AI agents.
+
+![ValueIsWikipediaURL](./Screenshots/ValueIsWikipediaURL.png)
+
+> returns `true` if the given value is a string containing a Wikipedia URL - or `false` otherwise
+
+![ValueIsWikipediaPageName](./Screenshots/ValueIsWikipediaPageName.png)
+
+> returns `true` if the given value is a string containing a Wikipedia page name - or `false` otherwise
+
+![HTMLtoText](./Screenshots/HTMLtoText.png)
+
+> converts the given HTML into formatted text
+
+![JSONinText](./Screenshots/JSONinText.png)
+
+> returns the first JSON object found in a given text - or `undefined` if no such JSON specification could be found (or the specification was incorrect)
+
+![TextOfWikipediaArticle](./Screenshots/TextOfWikipediaArticle.png)
+
+> fetches the (english) Wikipedia article with the given page name and returns its contents as plain text
+
+![WebSearch](./Screenshots/WebSearch.png)
+
+> searches the web for documents related to a given search phrase and returns a list with the URLs of the first found documents. The search request is sent to to the SearXNG server specified in context item `SearXNGServer` and found documents are only listed if they have a score greater than or equal to the threshold specified in context item `SearXNGScoreThreshold` (a number in the range 0...10 which defaults to 2)
+
+![WikipediaSearch](./Screenshots/WikipediaSearch.png)
+
+> searches the (english) Wikipedia for articles related to a given search phrase and returns a list with the Wikipedia page names of the first found articles
 
 ### Miscellany ###
 
