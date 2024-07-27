@@ -345,6 +345,8 @@ The following blocks perform basic AI functions
 
 ### AI Mezzanines ###
 
+The following blocks internally use AI requests themselves to perform some tasks which are often found in AI agents:
+
 (t.b.w.)
 
 ### AI Support ###
