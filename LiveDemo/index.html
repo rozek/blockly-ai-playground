@@ -783,9 +783,6 @@ function RequestOptionsFrom(ContextPrefix = 'default_') {
     return Result;
 }
 //------------------------------------------------------------------------------
-//--                         Playground AI Mezzanines                         --
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 //--                           Playground AI Tools                            --
 //------------------------------------------------------------------------------
 /**** ValueIsWikipediaPageName ****/
@@ -1070,9 +1067,24 @@ function externalAPI(Interpreter, global) {
             Callback(null);
         }
     }));
-    /**** ValueIsURL ****/
-    Interpreter.setProperty(global, 'ValueIsURL', Interpreter.createNativeFunction(function _ValueIsURL(Value) {
-        return ValueIsURL(Value);
+    /**** SummaryOfText ****/
+    Interpreter.setProperty(global, 'SummaryOfText', Interpreter.createAsyncFunction(async function _SummaryOfText(Text, Callback) {
+        try {
+            expectText('text to summarize', Text);
+            const MessageList = [
+                acceptableText(getFromContext('Summary_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('Summary_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToSummarize}}', Text),
+            ];
+            const OptionSet = RequestOptionsFrom('Summary_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
     }));
     /**** ValueIsWikipediaURL ****/
     Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
@@ -1283,6 +1295,10 @@ function externalAPI(Interpreter, global) {
         expectNonEmptyString('RegExp pattern', Pattern);
         return ValueIsStringMatching(Value, new RegExp(Pattern));
     }));
+    /**** ValueIsURL ****/
+    Interpreter.setProperty(global, 'ValueIsURL', Interpreter.createNativeFunction(function _ValueIsURL(Value) {
+        return ValueIsURL(Value);
+    }));
 }
 /**** startBlocklyProgram ****/
 function startBlocklyProgram() {
@@ -1307,6 +1323,16 @@ function startBlocklyProgram() {
         default_presence_penalty: undefined, default_frequency_penalty: 1,
         default_SystemTemplate: 'Be precise and concise.',
         default_UserTemplate: '{{Prompt}}',
+        Summary_model: undefined, Summary_max_tokens: 1024,
+        Summary_temperature: 0, Summary_top_p: undefined, Summary_top_k: 1,
+        Summary_presence_penalty: undefined, Summary_frequency_penalty: 1,
+        Summary_SystemTemplate: 'Be precise and concise.',
+        Summary_UserTemplate: `Your task is to provide a concise and precise summary of the following text, capturing its key points and main ideas. The summary should be clear, accurate, and significantly shorter than the original text.
+
+Text to summarize:
+{{TextToSummarize}}
+
+Please provide a concise summary of the above text in no more than 3-4 sentences.`,
         Console: '',
     });
     Playground.InterpreterState = 'running';
@@ -2568,24 +2594,24 @@ javascriptGenerator.forBlock['TextCompletionForWithOptionPrefix'] = function (Bl
     let Prefix = Generator.valueToCode(Block, 'prefix', Order.NONE) || '""';
     return [`TextCompletionFor(${Prompt},${Prefix})`, Order.FUNCTION_CALL];
 };
-/**** ValueIsURL ****/
-Blockly.Blocks['ValueIsURL'] = {
+/**** SummaryOfText ****/
+Blockly.Blocks['SummaryOfText'] = {
     init: function () {
         this.jsonInit({
-            type: 'ValueIsURL',
-            tooltip: 'returns true if the given value is a string containing a URL - or false otherwise',
+            type: 'SummaryOfText',
+            tooltip: 'creates a summary of the given text',
             helpUrl: '',
-            message0: 'value %1 is a URL?',
-            args0: [{ type: 'input_value', name: 'value' }],
-            output: 'Boolean',
+            message0: 'summary of %1',
+            args0: [{ type: 'input_value', name: 'text', check: 'String' }],
+            output: 'String',
             colour: 60,
             inputsInline: true
         });
     }
 };
-javascriptGenerator.forBlock['ValueIsURL'] = function (Block, Generator) {
-    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsURL(${Value})`, Order.FUNCTION_CALL];
+javascriptGenerator.forBlock['SummaryOfText'] = function (Block, Generator) {
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`SummaryOfText(${Text})`, Order.FUNCTION_CALL];
 };
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
@@ -3013,6 +3039,25 @@ javascriptGenerator.forBlock['ValueIsStringMatching'] = function (Block, Generat
     let Pattern = Generator.valueToCode(Block, 'pattern', Order.NONE) || 'undefined';
     return [`ValueIsStringMatching(${Value},${Pattern})`, Order.FUNCTION_CALL];
 };
+/**** ValueIsURL ****/
+Blockly.Blocks['ValueIsURL'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsURL',
+            tooltip: 'returns true if the given value is a string containing a URL - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a URL?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsURL'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsURL(${Value})`, Order.FUNCTION_CALL];
+};
 /**** Workspace Specification ****/
 const WorkspaceSpecification = {
     grid: { spacing: 20, length: 1, color: '#DDDDDD', snap: true },
@@ -3161,16 +3206,15 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "TextCompletionFor" },
                     { kind: "block", type: "TextCompletionForWithOptionPrefix" },
                 ]
-                /*
-                        },{
-                          kind:"category",
-                          name:"AI Mezzanines",
-                          contents:[
-                          ]
-                */
             }, {
                 kind: "category",
-                name: "AI Tools",
+                name: "AI Mezzanines",
+                contents: [
+                    { kind: "block", type: "SummaryOfText" },
+                ]
+            }, {
+                kind: "category",
+                name: "AI Support",
                 contents: [
                     { kind: "block", type: "ValueIsWikipediaURL" },
                     { kind: "block", type: "ValueIsWikipediaPageName" },
@@ -3588,7 +3632,7 @@ class TextInputItem extends PlaygroundUIItemView {
         const SpellChecking = acceptableOptionalBoolean(OptionSet.SpellChecking);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
         if (document.activeElement !== my.View) {
-            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+            my.ValueToShow = acceptableText(getFromContext(Key), '');
         }
         function onInput(Event) {
             if (Enabling == false) {
