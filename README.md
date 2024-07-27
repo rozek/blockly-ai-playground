@@ -68,6 +68,9 @@ and
 
 * `Console` - the current contents of the built-in "Console" (initially empty)
 
+In addition to the items listed above, "AI Mezzanine" blocks provide their own context items in order to allow customization of their internal API calls. To find these items, simply replace the `default` prefix of the inferencing parameter items by the prefix for the given mezzanine (e.g., 'summary_max_tokens' specifies the token generation limit for text summarization). If any mezzanine-specific context item is removed (or empty) the related default setting is used instead.
+
+
 #### Preserve and Restore ####
 
 During development it is sometimes useful to keep settings and values beyond the life-time of a single program. Typical use case are:
