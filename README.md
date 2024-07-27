@@ -350,7 +350,9 @@ The following blocks perform basic AI functions
 
 The following blocks internally use AI requests themselves to perform some tasks which are often found in AI agents:
 
-(t.b.w.)
+![SummaryOfText](./Screenshots/SummaryOfText.png)
+
+> returns a summary of the given text. The block uses its own set of context items (prefixed with `Summary_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set
 
 ### AI Support ###
 
@@ -538,6 +540,16 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![PoC-UI](./Examples/PoC-UI.png)
 
 > this is what you may get as the result
+
+### Text Summary ###
+
+![PoC](./Examples/TextSummary.png)
+
+> this example summarizes a given text (see [Blockly workspace file](./Examples/TextSummary.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![PoC-UI](./Examples/TextSummary-UI.png)
+
+> this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
 
 ## License ##
 
