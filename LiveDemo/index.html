@@ -808,6 +808,7 @@ function ValueIsWikipediaPageName(Value) {
 /**** HTMLtoText ****/
 function HTMLtoText(HTML, Options) {
     expectText('HTML text', HTML);
+    console.log('HTMLtoText Options', Options);
     if (Options == null) {
         Options = {
             wordwrap: 80,
@@ -1181,50 +1182,6 @@ function externalAPI(Interpreter, global) {
             const PageList = (await Response.json()).query.pages;
             const PageKey = Object.keys(PageList)[0];
             Callback(HTMLtoText(PageList[PageKey].extract, HTMLtoTextOptions));
-        }
-        catch (Signal) {
-            Playground.thrownException = Signal;
-            Callback(null);
-        }
-    }));
-    /**** TextOfWikipediaArticleForAI ****/
-    Interpreter.setProperty(global, 'TextOfWikipediaArticleForAI', Interpreter.createAsyncFunction(async function _TextOfWikipediaArticleForAI(PageName, Callback) {
-        try {
-            if (!ValueIsWikipediaPageName(PageName))
-                throwError('InvalidArgument: the given argument is no Wikipedia page name');
-            const RequestParameters = new URLSearchParams({
-                action: 'query',
-                format: 'json',
-                prop: 'extracts',
-                titles: PageName,
-                //          explaintext:    '1',
-                //          exsectionformat:'plain',
-                origin: '*'
-            });
-            const HTMLtoTextOptions = {
-                wordwrap: 80,
-                selectors: [
-                    { selector: 'h1', options: { uppercase: false } },
-                    { selector: 'h2', options: { uppercase: false } },
-                    { selector: 'h3', options: { uppercase: false } },
-                    { selector: 'h4', options: { uppercase: false } },
-                    { selector: 'h5', options: { uppercase: false } },
-                    { selector: 'h6', options: { uppercase: false } },
-                ]
-            };
-            const Response = await fetch(// may fail!
-            `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
-            const PageList = (await Response.json()).query.pages;
-            const PageKey = Object.keys(PageList)[0];
-            function TextWithoutSection(Text, Heading) {
-                let Pattern = new RegExp('(?:^|\\n\\n\\n)' + Heading + '(?:(?!(?:^|\\n{3}))[\\s\\S])*', 'i');
-                return Text.replace(Pattern, '');
-            }
-            let Text = HTMLtoText(PageList[PageKey].extract, HTMLtoTextOptions);
-            Text = TextWithoutSection(Text, 'See also');
-            Text = TextWithoutSection(Text, 'References');
-            Text = TextWithoutSection(Text, 'External Links');
-            Callback(Text);
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -2745,25 +2702,6 @@ javascriptGenerator.forBlock['TextOfWikipediaArticle'] = function (Block, Genera
     let PageName = Generator.valueToCode(Block, 'pagename', Order.NONE) || '""';
     return [`TextOfWikipediaArticle(${PageName})`, Order.FUNCTION_CALL];
 };
-/**** TextOfWikipediaArticleForAI ****/
-Blockly.Blocks['TextOfWikipediaArticleForAI'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'TextOfWikipediaArticleForAI',
-            tooltip: 'loads a Wikipedia article with a given page name and returns its contents ready for AI',
-            helpUrl: '',
-            message0: 'text of Wikipedia article %1 for AI',
-            args0: [{ type: 'input_value', name: 'pagename', check: 'String' }],
-            output: 'String',
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['TextOfWikipediaArticleForAI'] = function (Block, Generator) {
-    let PageName = Generator.valueToCode(Block, 'pagename', Order.NONE) || '""';
-    return [`TextOfWikipediaArticleForAI(${PageName})`, Order.FUNCTION_CALL];
-};
 /**** WebSearch ****/
 Blockly.Blocks['WebSearch'] = {
     init: function () {
@@ -3241,7 +3179,6 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "HTMLtoText" },
                     { kind: "block", type: "TextOfWebDocument" },
                     { kind: "block", type: "TextOfWikipediaArticle" },
-                    { kind: "block", type: "TextOfWikipediaArticleForAI" },
                     { kind: "block", type: "WebSearch" },
                     { kind: "block", type: "WikipediaSearch" },
                 ]
