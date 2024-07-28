@@ -446,6 +446,34 @@ The following blocks do not fit into the categories shown before - may may still
 
 > returns `true` if the given value contains a string that looks like a Wikipedia document URL - or `false` otherwise
 
+### Object Support ###
+
+The following blocks help to create and manipulate objects
+
+![createObject](./Screenshots/createObject.png)
+
+> returns a newly created empty object
+
+![PropertiesOfObject](./Screenshots/PropertiesOfObject.png)
+
+> returns a (possibly empty) list with the keys of all own properties of a given object
+
+![ObjectHasProperty](./Screenshots/ObjectHasProperty.png)
+
+> returns `true` if the given object contains a proeprty with the given key - or `false` otherwise
+
+![getObjectProperty](./Screenshots/getObjectProperty.png)
+
+> returns the current value of the given object's property with the given key
+
+![setObjectProperty](./Screenshots/setObjectProperty.png)
+
+> sets the given object's property with the given key to a given value
+
+![deleteObjectProperty](./Screenshots/deleteObjectProperty.png)
+
+> deletes the given object's property with the given key
+
 ## Examples ##
 
 Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground". The linked Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
