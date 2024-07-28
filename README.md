@@ -452,27 +452,27 @@ The following blocks help to create and manipulate objects
 
 ![createObject](./Screenshots/createObject.png)
 
-> returns a newly created empty object
+> returns a newly created empty object (see related [example](#objects))
 
 ![PropertiesOfObject](./Screenshots/PropertiesOfObject.png)
 
-> returns a (possibly empty) list with the keys of all own properties of a given object
+> returns a (possibly empty) list with the keys of all own properties of a given object (see related [example](#objects))
 
 ![ObjectHasProperty](./Screenshots/ObjectHasProperty.png)
 
-> returns `true` if the given object contains a proeprty with the given key - or `false` otherwise
+> returns `true` if the given object contains a proeprty with the given key - or `false` otherwise (see related [example](#objects))
 
 ![getObjectProperty](./Screenshots/getObjectProperty.png)
 
-> returns the current value of the given object's property with the given key
+> returns the current value of the given object's property with the given key (see related [example](#objects))
 
 ![setObjectProperty](./Screenshots/setObjectProperty.png)
 
-> sets the given object's property with the given key to a given value
+> sets the given object's property with the given key to a given value (see related [example](#objects))
 
 ![deleteObjectProperty](./Screenshots/deleteObjectProperty.png)
 
-> deletes the given object's property with the given key
+> deletes the given object's property with the given key (see related [example](#objects))
 
 ## Examples ##
 
