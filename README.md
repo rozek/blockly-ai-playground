@@ -545,6 +545,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 > this example demonstrates how to react on a button click (see [Blockly workspace file](./Examples/ButtonWasClicked.json))
 
+### Objects ###
+
+![Objects](./Examples/Objects.png)
+
+> this example demonstrates how to work with objects (see [Blockly workspace file](./Examples/Objects.json))
+
 ## AI Examples ##
 
 The following examples actually include AI-related blocks. As before, the Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
