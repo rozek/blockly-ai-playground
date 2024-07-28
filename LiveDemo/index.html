@@ -836,6 +836,10 @@ function rerenderPlayground() {
 const JSInterpreterStates = ['idle', 'running', 'suspended'];
 /**** external API ****/
 function externalAPI(Interpreter, global) {
+    /**** PropertiesOfObject ****/
+    Interpreter.setProperty(global, 'PropertiesOfObject', Interpreter.createNativeFunction(function _PropertiesOfObject(Target) {
+        return Array.from(Object.keys(Playground.Interpreter.pseudoToNative(Target)));
+    }));
     /**** ContextKeys ****/
     Interpreter.setProperty(global, 'ContextKeys', Interpreter.createNativeFunction(function _ContextKeys() {
         return ContextKeys();
@@ -1458,6 +1462,139 @@ javascriptGenerator.forBlock['KeyValuePair'] = function (Block, Generator) {
     let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
     return [`[${Key},${Value}]`, Order.FUNCTION_CALL];
+};
+/**** createObject ****/
+Blockly.Blocks['createObject'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'createObject',
+            tooltip: 'creates a new object',
+            helpUrl: '',
+            message0: 'new object',
+            args0: [],
+            output: 'Object',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['createObject'] = function (Block, Generator) {
+    return ['{}', Order.FUNCTION_CALL];
+};
+/**** ObjectHasProperty ****/
+Blockly.Blocks['ObjectHasProperty'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ObjectHasProperty',
+            tooltip: 'returns true if the given object contains the given property',
+            helpUrl: '',
+            message0: 'object %1 has %2',
+            args0: [
+                { type: 'input_value', name: 'object', check: 'Object' },
+                { type: 'input_value', name: 'key', check: ['Number', 'String'] }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ObjectHasProperty'] = function (Block, Generator) {
+    let Object = Generator.valueToCode(Block, 'object', Order.NONE) || '{}';
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`(${Key} in ${Object})`, Order.FUNCTION_CALL];
+};
+/**** getObjectProperty ****/
+Blockly.Blocks['getObjectProperty'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'getObjectProperty',
+            tooltip: 'returns the current value of a property in an object',
+            helpUrl: '',
+            message0: 'from object %1 get %2',
+            args0: [
+                { type: 'input_value', name: 'object', check: 'Object' },
+                { type: 'input_value', name: 'key', check: ['Number', 'String'] }
+            ],
+            output: 'any',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['getObjectProperty'] = function (Block, Generator) {
+    let Object = Generator.valueToCode(Block, 'object', Order.NONE) || '{}';
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return [`(${Object}[${Key}])`, Order.FUNCTION_CALL];
+};
+/**** setObjectProperty ****/
+Blockly.Blocks['setObjectProperty'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'setObjectProperty',
+            tooltip: 'sets a property in an object to a new value',
+            helpUrl: '',
+            message0: 'in object %1 set %2 to %3',
+            args0: [
+                { type: 'input_value', name: 'object', check: 'Object' },
+                { type: 'input_value', name: 'key', check: ['Number', 'String'] },
+                { type: 'input_value', name: 'value' }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['setObjectProperty'] = function (Block, Generator) {
+    let Object = Generator.valueToCode(Block, 'object', Order.NONE) || '{}';
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return `${Object}[${Key}] = ${Value};\n`;
+};
+/**** deleteObjectProperty ****/
+Blockly.Blocks['deleteObjectProperty'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'deleteObjectProperty',
+            tooltip: 'deletes a property from an object',
+            helpUrl: '',
+            message0: 'from object %1 delete %2',
+            args0: [
+                { type: 'input_value', name: 'object', check: 'Object' },
+                { type: 'input_value', name: 'key', check: ['Number', 'String'] }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['deleteObjectProperty'] = function (Block, Generator) {
+    let Object = Generator.valueToCode(Block, 'object', Order.NONE) || '{}';
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    return `delete ${Object}[${Key}];\n`;
+};
+/**** PropertiesOfObject ****/
+Blockly.Blocks['PropertiesOfObject'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'PropertiesOfObject',
+            tooltip: 'returns s list with the names of all properties in an object',
+            helpUrl: '',
+            message0: 'properties of object %1',
+            args0: [{ type: 'input_value', name: 'object', check: 'Object' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['PropertiesOfObject'] = function (Block, Generator) {
+    let Object = Generator.valueToCode(Block, 'object', Order.NONE) || '{}';
+    return [`PropertiesOfObject(${Object})`, Order.FUNCTION_CALL];
 };
 /**** ContextKeys ****/
 Blockly.Blocks['ContextKeys'] = {
@@ -2765,6 +2902,25 @@ javascriptGenerator.forBlock['WikipediaSearch'] = function (Block, Generator) {
     let SearchPhrase = Generator.valueToCode(Block, 'searchphrase', Order.NONE) || '""';
     return [`WikipediaSearch(${SearchPhrase})`, Order.FUNCTION_CALL];
 };
+/**** nop ****/
+Blockly.Blocks['nop'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'nop',
+            tooltip: 'does nothing',
+            helpUrl: '',
+            message0: ' ',
+            args0: [],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['nop'] = function (Block, Generator) {
+    return '\n';
+};
 /**** wait ****/
 Blockly.Blocks['wait'] = {
     init: function () {
@@ -3141,6 +3297,17 @@ const WorkspaceSpecification = {
             },
             {
                 kind: "category",
+                name: "Objects",
+                contents: [
+                    { kind: "block", type: "createObject" },
+                    { kind: "block", type: "ObjectHasProperty" },
+                    { kind: "block", type: "getObjectProperty" },
+                    { kind: "block", type: "setObjectProperty" },
+                    { kind: "block", type: "deleteObjectProperty" },
+                    { kind: "block", type: "PropertiesOfObject" },
+                ]
+            }, {
+                kind: "category",
                 name: "Context",
                 contents: [
                     { kind: "block", type: "ContextKeys" },
@@ -3229,6 +3396,7 @@ const WorkspaceSpecification = {
                 kind: "category",
                 name: "Miscellany",
                 contents: [
+                    { kind: "block", type: "nop" },
                     { kind: "block", type: "wait" },
                     { kind: "block", type: "alert" },
                     { kind: "block", type: "confirm" },
