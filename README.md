@@ -390,6 +390,14 @@ The following blocks have been made to support the creation of AI agents.
 
 The following blocks do not fit into the categories shown before - may may still be helpful when creating agents:
 
+![nop](./Screenshots/nop.png)
+
+> t.b.w
+
+![throwError](./Screenshots/throwError.png)
+
+> t.b.w (see related [example](#throw))
+
 ![wait](./Screenshots/wait.png)
 
 > waits for a given number of seconds and continues (see [Console example](#console))
@@ -501,6 +509,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
 
 > use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
+
+### throw ###
+
+![throwError](./Examples/throwError.png)
+
+> this example illustrates how to use the "throw" block (see [Blockly workspace file](./Examples/throwError.json)) - please note, that all blocks following a "throw" will not be evaluated as throwing an exception will terminate a Blockly program
 
 ### Context ###
 
