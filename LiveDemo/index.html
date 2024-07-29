@@ -509,6 +509,7 @@ const PlaygroundUITypes = [
     'checkbox', 'radiobutton-group', 'dropdown', 'button',
     'textline-output', 'number-output', 'text-output',
     'text', 'fineprint',
+    'api-server-input',
 ];
 const PlaygroundUIEventTypes = ['click', 'input'];
 /**** showWorkspace ****/
@@ -960,6 +961,10 @@ function externalAPI(Interpreter, global) {
     /**** appendFinePrint ****/
     Interpreter.setProperty(global, 'appendFinePrint', Interpreter.createNativeFunction(function _appendFinePrint(Key) {
         appendToUI(Key, '', 'fineprint');
+    }));
+    /**** appendAPIServerInput ****/
+    Interpreter.setProperty(global, 'appendAPIServerInput', Interpreter.createNativeFunction(function _appendAPIServerInput(Label) {
+        appendToUI('APIServer', Label, 'api-server-input');
     }));
     /**** configureUI ****/
     Interpreter.setProperty(global, 'configureUI', Interpreter.createNativeFunction(function _configureUI(Key, Option, Value) {
@@ -1497,7 +1502,7 @@ Blockly.Blocks['createObject'] = {
             message0: 'new object',
             args0: [],
             output: 'Object',
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1518,7 +1523,7 @@ Blockly.Blocks['ObjectHasProperty'] = {
                 { type: 'input_value', name: 'key', check: ['Number', 'String'] }
             ],
             output: 'Boolean',
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1541,7 +1546,7 @@ Blockly.Blocks['getObjectProperty'] = {
                 { type: 'input_value', name: 'key', check: ['Number', 'String'] }
             ],
             output: 'any',
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1566,7 +1571,7 @@ Blockly.Blocks['setObjectProperty'] = {
             ],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1591,7 +1596,7 @@ Blockly.Blocks['deleteObjectProperty'] = {
             ],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1611,7 +1616,7 @@ Blockly.Blocks['PropertiesOfObject'] = {
             message0: 'properties of object %1',
             args0: [{ type: 'input_value', name: 'object', check: 'Object' }],
             output: 'Array',
-            colour: 60,
+            colour: 260,
             inputsInline: true
         });
     }
@@ -1630,7 +1635,7 @@ Blockly.Blocks['ContextKeys'] = {
             message0: 'list of context keys',
             args0: [],
             output: 'Array',
-            colour: 60
+            colour: 330
         });
     }
 };
@@ -1648,7 +1653,7 @@ Blockly.Blocks['clearContext'] = {
             args0: [],
             previousStatement: null,
             nextStatement: null,
-            colour: 60
+            colour: 330
         });
     }
 };
@@ -1665,7 +1670,7 @@ Blockly.Blocks['getFromContext'] = {
             message0: 'value of context item %1',
             args0: [{ type: 'input_value', name: 'key', check: 'String' }],
             output: 'String',
-            colour: 60,
+            colour: 330,
             inputsInline: true
         });
     }
@@ -1688,7 +1693,7 @@ Blockly.Blocks['setInContext'] = {
             ],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 330,
             inputsInline: true
         });
     }
@@ -1709,7 +1714,7 @@ Blockly.Blocks['removeFromContext'] = {
             args0: [{ type: 'input_value', name: 'key', check: 'String' }],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 330,
             inputsInline: true
         });
     }
@@ -1729,7 +1734,7 @@ Blockly.Blocks['preserveContextItem'] = {
             args0: [{ type: 'input_value', name: 'key', check: 'String' }],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 330,
             inputsInline: true
         });
     }
@@ -1749,7 +1754,7 @@ Blockly.Blocks['restoreContextItem'] = {
             args0: [{ type: 'input_value', name: 'key', check: 'String' }],
             previousStatement: null,
             nextStatement: null,
-            colour: 60,
+            colour: 330,
             inputsInline: true
         });
     }
@@ -2274,6 +2279,26 @@ Blockly.Blocks['appendFinePrint'] = {
 javascriptGenerator.forBlock['appendFinePrint'] = function (Block, Generator) {
     let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
     return `appendFinePrint(${Key});\n`;
+};
+/**** appendAPIServerInput ****/
+Blockly.Blocks['appendAPIServerInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendAPIServerInput',
+            tooltip: 'appends a URL input element for API Servers to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append API Server input element labelled %1 to UI',
+            args0: [{ type: 'input_value', name: 'label', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendAPIServerInput'] = function (Block, Generator) {
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendAPIServerInput(${Label});\n`;
 };
 /**** configureUI ****/
 Blockly.Blocks['configureUI'] = {
@@ -3434,6 +3459,7 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "appendTextOutput" },
                     { kind: "block", type: "appendText" },
                     { kind: "block", type: "appendFinePrint" },
+                    { kind: "block", type: "appendAPIServerInput" },
                     { kind: "block", type: "configureUI" },
                     { kind: "block", type: "ConfigurationOf" },
                     { kind: "block", type: "EnablingOf" },
@@ -3654,6 +3680,7 @@ class PlaygroundUIItemView extends Component {
             case 'text-output': return html `<${TextOutputItem} Item=${Item}/>`;
             case 'text': return html `<${TextViewItem} Item=${Item}/>`;
             case 'fineprint': return html `<${FinePrintViewItem} Item=${Item}/>`;
+            case 'api-server-input': return html `<${APIServerInputItem} Item=${Item}/>`;
             default: throwError('InvalidArgument: missing or invalid "Item.Type"');
         }
         return undefined;
@@ -4129,6 +4156,67 @@ class FinePrintViewItem extends PlaygroundUIItemView {
         <div class="Playground UI Element FinePrintView">
           ${ValueToShow}
         </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** APIServerInputItem ****/
+class APIServerInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = 'APIServer';
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        if (document.activeElement !== my.View) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onChange(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            Event.target.value = '';
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="url" class="Playground UI Element URLInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          pattern=${Pattern}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+        />
+        <select onChange=${onChange} style="
+          display:inline-block; position:relative;
+          top:1px; height:28px; margin-left:4px;
+        ">
+          <option value="" selected disabled>(select)</option>
+          <option value="https://api.openai.com/v1/chat/completions">Open AI</option>
+          <option value="https://api.perplexity.ai/chat/completions">Perplexity AI</option>
+        </select>
         <div class="Playground UI newLine"/>
       `;
     }
