@@ -505,6 +505,7 @@ function restoreContextItem(Key) {
 //------------------------------------------------------------------------------
 const PlaygroundUITypes = [
     'textline-input', 'password-input', 'number-input', 'url-input', 'text-input',
+    'speech-input',
     'checkbox', 'radiobutton-group', 'dropdown', 'button',
     'textline-output', 'number-output', 'text-output',
     'text', 'fineprint',
@@ -919,6 +920,10 @@ function externalAPI(Interpreter, global) {
     /**** appendTextInput ****/
     Interpreter.setProperty(global, 'appendTextInput', Interpreter.createNativeFunction(function _appendTextInput(Key, Label) {
         appendToUI(Key, Label, 'text-input');
+    }));
+    /**** appendSpeechInput ****/
+    Interpreter.setProperty(global, 'appendSpeechInput', Interpreter.createNativeFunction(function _appendSpeechInput(Key, Label) {
+        appendToUI(Key, Label, 'speech-input');
     }));
     /**** appendCheckbox ****/
     Interpreter.setProperty(global, 'appendCheckbox', Interpreter.createNativeFunction(function _appendCheckbox(Key, Label) {
@@ -1405,11 +1410,11 @@ function runInterpreter() {
     try {
         for (;;) {
             Playground.Interpreter.step();
-            if (Playground.InterpreterState === 'idle') {
-                return;
-            }
             if (Playground.thrownException != null) {
                 throw Playground.thrownException;
+            }
+            if (Playground.InterpreterState === 'idle') {
+                return;
             }
             if (Playground.pendingInterpreterState != null) { // 'suspended' || 'idle'
                 Playground.InterpreterState = Playground.pendingInterpreterState;
@@ -2037,6 +2042,30 @@ javascriptGenerator.forBlock['appendTextInput'] = function (Block, Generator) {
     let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
     let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
     return `appendTextInput(${Key},${Label});\n`;
+};
+/**** appendSpeechInput ****/
+Blockly.Blocks['appendSpeechInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendSpeechInput',
+            tooltip: 'appends a speech input element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append speech input element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendSpeechInput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendSpeechInput(${Key},${Label});\n`;
 };
 /**** appendCheckbox ****/
 Blockly.Blocks['appendCheckbox'] = {
@@ -3395,6 +3424,7 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "appendNumberInput" },
                     { kind: "block", type: "appendURLInput" },
                     { kind: "block", type: "appendTextInput" },
+                    { kind: "block", type: "appendSpeechInput" },
                     { kind: "block", type: "appendCheckbox" },
                     { kind: "block", type: "appendRadiobuttonGroup" },
                     { kind: "block", type: "appendDropDown" },
@@ -3513,7 +3543,6 @@ class PlaygroundView extends Component {
     }
     render() {
         const { activeTab } = Playground;
-        console.log('PlaygroundView', Playground.InterpreterState);
         return html `<div class="Playground View">
         <div class="Playground Title">Blockly AI Playground</div>
         <div class="Playground Strip">
@@ -3615,6 +3644,7 @@ class PlaygroundUIItemView extends Component {
             case 'number-input': return html `<${NumberInputItem} Item=${Item}/>`;
             case 'url-input': return html `<${URLInputItem} Item=${Item}/>`;
             case 'text-input': return html `<${TextInputItem} Item=${Item}/>`;
+            case 'speech-input': return html `<${SpeechInputItem} Item=${Item}/>`;
             case 'checkbox': return html `<${CheckboxItem} Item=${Item}/>`;
             case 'radiobutton-group': return html `<${RadiobuttonGroupItem} Item=${Item}/>`;
             case 'dropdown': return html `<${DropDownItem} Item=${Item}/>`;
@@ -4099,6 +4129,99 @@ class FinePrintViewItem extends PlaygroundUIItemView {
         <div class="Playground UI Element FinePrintView">
           ${ValueToShow}
         </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** SpeechInputItem ****/
+class SpeechInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "listening", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: false
+        });
+        Object.defineProperty(this, "Recognition", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+    }
+    render(PropSet) {
+        const Iam = this, my = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const LineWrapping = acceptableOptionalBoolean(OptionSet.LineWrapping);
+        let Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        const SpeechRecognition = (
+        // @ts-ignore TS2339 don#t worry about [webkit]SpeechRecognition
+        window.SpeechRecognition || window.webkitSpeechRecognition);
+        Enabling = Enabling && (SpeechRecognition != null);
+        let ValueToShow = acceptableText(getFromContext(Key), '');
+        if (!Iam.listening && (SpeechRecognition != null)) {
+            const Recognition = new SpeechRecognition();
+            Recognition.lang = 'en';
+            Recognition.continuous = false;
+            Recognition.interimResults = false;
+            Recognition.onresult = (Event) => {
+                setInContext(Key, Event.results[0][0].transcript);
+                enqueueUIEvent('input', Key);
+            };
+            Recognition.onerror = (Event) => {
+                Playground.thrownException = Event.error;
+                console.log('speech recognition error', Event.error, Event.message);
+                //            throwError('SppechRecognitionFailure: speech recognition failed')
+            };
+            Recognition.onspeechend = () => {
+                Recognition.stop();
+            };
+            Recognition.onend = () => {
+                Iam.listening = false;
+                rerenderPlayground();
+            };
+            my.Recognition = Recognition;
+        }
+        function onClick(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            if (Iam.listening) {
+                my.Recognition.stop();
+            }
+            else {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then((Stream) => {
+                    Stream.getTracks().forEach((Track) => Track.stop());
+                })
+                    .then(() => {
+                    Iam.listening = true;
+                    rerenderPlayground();
+                    my.Recognition.start();
+                });
+            }
+        }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <button class="Playground UI Element Button"
+          disabled=${Enabling == false} onClick=${onClick}
+        >${Iam.listening ? 'Stop' : 'Listen'}</>
+        <div class="Playground UI newLine"/>
+        <div class="Playground UI Label"></>
+        <textarea class="Playground UI Element TextOutput"
+          minlength=${minLength} maxlength=${maxLength}
+          readOnly placeholder=${Placeholder}
+          style="${LineWrapping == true
+            ? 'white-space:pre; overflow-wrap:break-word; hyphens:auto'
+            : undefined}"
+          disabled=${Enabling == false}
+        >${ValueToShow}</>
         <div class="Playground UI newLine"/>
       `;
     }
