@@ -228,6 +228,8 @@ These two blocks enable or disable specific UI elements.
 
 > appends an input element (with the given name and label) to the UI that can be used to listen to and recognize what a user says into a microphone. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `LineWrapping`, `SpellChecking` and `Enabling` (see [related example](#speechinput))
 
+> Nota bene: speech recognition requires microphone access - for that reason the browser may ask for permission to use your PC's microphone. Recognition will only work if you grant that permission - or else fail.
+
 > **Important: not all browsers support speech recognition (Chrome seems to, but other browsers may not - even if they are based on webkit). Additionally, the playground must be served over valid (and secure!) HTTPS**
 
 ![appendCheckbox](./Screenshots/appendCheckbox.png)
