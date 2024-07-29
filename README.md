@@ -424,7 +424,7 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![speak](./Screenshots/speak.png)
 
-> t.b.w. (see related [example](#text-to-speech))
+> uses text-to-speech to speak the given (english!) message (see related [example](#text-to-speech))
 
 ![ValueIsNonEmpty](./Screenshots/ValueIsNonEmpty.png)
 
