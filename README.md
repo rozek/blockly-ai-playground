@@ -272,6 +272,10 @@ These two blocks enable or disable specific UI elements.
 
 > appends an unlabelled "fine print" view element with the given name to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#output-elements))
 
+![appendAPIServerInput](./Screenshots/appendAPIServerInput.png)
+
+> appends a URL input element customized for the selection or input of the `APIServer` context item with the given label to the UI. If an element with the name `APIServer` already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+
 ![configureUI](./Screenshots/configureUI.png)
 
 > sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options and option values are meaningful (and, thus, used by the UI), depends on the type of the given UI element
