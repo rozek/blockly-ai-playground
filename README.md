@@ -414,6 +414,10 @@ The following blocks do not fit into the categories shown before - may may still
 
 > opens a browser "prompt" pop-up dialog, displays the given message and continues as soon as the user has entered a response. If cancelled, the block returns an empty string, otherwise it returns the entered string (see related [example](#alert-confirm-prompt))
 
+![speak](./Screenshots/speak.png)
+
+> t.b.w. (see related [example](#text-to-speech))
+
 ![ValueIsNonEmpty](./Screenshots/ValueIsNonEmpty.png)
 
 > returns `true` if the given value contains a string that is neither empty nor contains whitespace only - or `false` otherwise
@@ -509,6 +513,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 ![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
 
 > use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
+
+### Text-to-Speech ###
+
+![speak](./Examples/speak.png)
+
+> this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json))
 
 ### throw ###
 
