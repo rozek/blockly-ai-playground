@@ -400,11 +400,11 @@ The following blocks do not fit into the categories shown before - may may still
 
 ![nop](./Screenshots/nop.png)
 
-> t.b.w
+> this block has no specific functionality but serves as a visual separator between adjacent blocks only - this may help identifying related blocks
 
 ![throwError](./Screenshots/throwError.png)
 
-> t.b.w (see related [example](#throw))
+> throws the given exception (which is then shown in an alert dialog) and aborts the running program (see related [example](#throw))
 
 ![wait](./Screenshots/wait.png)
 
