@@ -275,7 +275,7 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
@@ -804,6 +804,78 @@ function ValueIsWikipediaPageName(Value) {
     const UTF8Bytes = new TextEncoder().encode(Value);
     return (UTF8Bytes.length <= 255);
 }
+/**** JSONinText ****/
+function JSONinText(Text) {
+    expectText('text', Text);
+    function IndexOfClosingBracketAfter(StartIndex) {
+        let Nesting = 1, inString = false, escaped = false;
+        for (let i = StartIndex + 1, l = Text.length; i < l; i++) {
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            switch (Text[i]) {
+                case '\\':
+                    escaped = true;
+                    break;
+                case '"':
+                    if (!escaped) {
+                        inString = !inString;
+                    }
+                    ;
+                    break;
+                case '[':
+                    if (!inString) {
+                        Nesting++;
+                    }
+                    ;
+                    break;
+                case ']': if (!inString) {
+                    Nesting--;
+                    if (Nesting === 0) {
+                        return i;
+                    }
+                }
+                case '{':
+                    if (!inString) {
+                        Nesting++;
+                    }
+                    ;
+                    break;
+                case '}': if (!inString) {
+                    Nesting--;
+                    if (Nesting === 0) {
+                        return i;
+                    }
+                }
+            } // escaping '{','}','[' or ']' makes no sense and will crash JSON.parse below
+        }
+        return -1;
+    }
+    let firstBracketIndex = Text.indexOf('[');
+    if (firstBracketIndex < 0) {
+        firstBracketIndex = Text.length;
+    }
+    let firstBraceIndex = Text.indexOf('{');
+    if (firstBraceIndex < 0) {
+        firstBraceIndex = Text.length;
+    }
+    const JSONStart = Math.min(firstBracketIndex, firstBraceIndex);
+    if (JSONStart === Text.length) {
+        return undefined;
+    }
+    const JSONEnd = IndexOfClosingBracketAfter(JSONStart);
+    if (JSONEnd < 0) {
+        return undefined;
+    }
+    const JSONString = Text.slice(JSONStart, JSONEnd + 1);
+    try {
+        return JSON.parse(JSONString);
+    }
+    catch (Signal) {
+        return undefined;
+    }
+}
 /**** HTMLtoText ****/
 function HTMLtoText(HTML, Options) {
     expectText('HTML text', HTML);
@@ -1011,11 +1083,15 @@ function externalAPI(Interpreter, global) {
     }));
     /**** print ****/
     Interpreter.setProperty(global, 'print', Interpreter.createNativeFunction(function _print(Message) {
-        print(Message);
+        print(ValueIsPlainObject(Message) || ValueIsList(Message)
+            ? JSON.stringify(Message, null, ' ')
+            : Message);
     }));
     /**** println ****/
     Interpreter.setProperty(global, 'println', Interpreter.createNativeFunction(function _println(Message) {
-        println(Message);
+        println(ValueIsPlainObject(Message) || ValueIsList(Message)
+            ? JSON.stringify(Message, null, ' ')
+            : Message);
     }));
     /**** waitForNextUIEvent ****/
     Interpreter.setProperty(global, 'waitForNextUIEvent', Interpreter.createAsyncFunction(async function _waitForNextUIEvent(Timeout, Callback) {
@@ -1089,9 +1165,115 @@ function externalAPI(Interpreter, global) {
                 acceptableText(getFromContext('Summary_SystemTemplate') ||
                     getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
                 acceptableText(getFromContext('Summary_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToSummarize}}', Text),
+                    getFromContext('default_UserTemplate'), 'summarize {{Text}}').replace('{{TextToSummarize}}', Text),
             ];
             const OptionSet = RequestOptionsFrom('Summary_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** StepsDerivedFromText ****/
+    Interpreter.setProperty(global, 'StepsDerivedFromText', Interpreter.createAsyncFunction(async function _StepsDerivedFromText(Objective, Callback) {
+        try {
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('TaskDecomposition_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('TaskDecomposition_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), 'Think step by step. Create a List of steps to solve {{Objective}}').replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('TaskDecomposition_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            console.log('Response', Response);
+            const StepList = JSONinText(Response);
+            console.log('StepList', StepList);
+            Callback(Playground.Interpreter.nativeToPseudo(ValueIsList(StepList) ? StepList : []));
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** SearchPhraseForText ****/
+    Interpreter.setProperty(global, 'SearchPhraseForText', Interpreter.createAsyncFunction(async function _SearchPhraseForText(Objective, Callback) {
+        try {
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('SearchGenerator_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('SearchGenerator_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), 'generate a search phrase for {{Objective}}').replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('SearchGenerator_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** FindingsFromText ****/
+    Interpreter.setProperty(global, 'FindingsFromText', Interpreter.createAsyncFunction(async function _FindingsFromText(Text, Objective, Callback) {
+        try {
+            expectText('text to analyze', Text);
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('InformationExtractor_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('InformationExtractor_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToRead}}', Text)
+                    .replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('InformationExtractor_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** TextHelpsWith ****/
+    Interpreter.setProperty(global, 'TextHelpsWith', Interpreter.createAsyncFunction(async function _TextHelpsWith(Text, Objective, Callback) {
+        try {
+            expectText('text to analyze', Text);
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('InformationValidator_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('InformationValidator_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToAnalzye}}', Text)
+                    .replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('InformationValidator_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Callback(Response.trim().toLowerCase() === 'true');
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** SolutionMergedFromTexts ****/
+    Interpreter.setProperty(global, 'SolutionMergedFromTexts', Interpreter.createAsyncFunction(async function _SolutionMergedFromTexts(Text1, Text2, Objective, Callback) {
+        try {
+            expectText('text #1', Text1);
+            expectText('text #2', Text2);
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('SolutionMerger_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('SolutionMerger_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Text1}}', Text1)
+                    .replace('{{Text2}}', Text2)
+                    .replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('SolutionMerger_');
             let Response = await await ChatCompletionFor(MessageList, OptionSet);
             Callback(Response);
         }
@@ -1111,55 +1293,7 @@ function externalAPI(Interpreter, global) {
     }));
     /**** JSONinText ****/
     Interpreter.setProperty(global, 'JSONinText', Interpreter.createNativeFunction(function _JSONinText(Text) {
-        expectText('text', Text);
-        function IndexOfClosingBracketAfter(StartIndex) {
-            let Nesting = 1, inString = false, escaped = false;
-            for (let i = StartIndex + 1, l = Text.length; i < l; i++) {
-                if (escaped) {
-                    escaped = false;
-                    continue;
-                }
-                switch (Text[i]) {
-                    case '\\':
-                        escaped = true;
-                        break;
-                    case '"':
-                        if (!escaped) {
-                            inString = !inString;
-                        }
-                        ;
-                        break;
-                    case '{':
-                        if (!inString) {
-                            Nesting++;
-                        }
-                        ;
-                        break;
-                    case '}': if (!inString) {
-                        Nesting--;
-                        if (Nesting === 0) {
-                            return i;
-                        }
-                    }
-                } // escaping '{' or '}' makes no sense and will crash JSON.parse below
-            }
-            return -1;
-        }
-        const JSONStart = Text.indexOf('{');
-        if (JSONStart < 0) {
-            return undefined;
-        }
-        const JSONEnd = IndexOfClosingBracketAfter(JSONStart);
-        if (JSONEnd < 0) {
-            return undefined;
-        }
-        const JSONString = Text.slice(JSONStart, JSONEnd + 1);
-        try {
-            return JSON.parse(JSONString);
-        }
-        catch (Signal) {
-            return undefined;
-        }
+        return Playground.Interpreter.nativeToPseudo(JSONinText(Text));
     }));
     /**** HTMLtoText ****/
     Interpreter.setProperty(global, 'HTMLtoText', Interpreter.createNativeFunction(function _HTMLtoText(HTML) {
@@ -1230,7 +1364,7 @@ function externalAPI(Interpreter, global) {
             const Result = (await Response.json()).results
                 .filter((Result) => Result.score >= ScoreThreshold)
                 .map((Result) => Result.url);
-            Callback(Result);
+            Callback(Playground.Interpreter.nativeToPseudo(Result));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1246,7 +1380,7 @@ function externalAPI(Interpreter, global) {
                 encodeURIComponent(SearchPhrase) +
                 '&format=json&srlimit=20&inprop=url&origin=*');
             const TitleList = (await Response.json()).query.search.map((SearchResult) => SearchResult.title);
-            Callback(TitleList);
+            Callback(Playground.Interpreter.nativeToPseudo(TitleList));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1366,6 +1500,111 @@ Text to summarize:
 {{TextToSummarize}}
 
 Please provide a concise summary of the above text in no more than 3-4 sentences.`,
+        TaskDecomposition_model: undefined, TaskDecomposition_max_tokens: 2048,
+        TaskDecomposition_temperature: 0, TaskDecomposition_top_p: undefined, TaskDecomposition_top_k: 1,
+        TaskDecomposition_presence_penalty: undefined, TaskDecomposition_frequency_penalty: 1,
+        TaskDecomposition_SystemTemplate: 'Be precise and concise.',
+        TaskDecomposition_UserTemplate: `
+Your task is to analyze and break down the following task into clear, logical, and sequential steps:
+
+Task Description:
+{{Objective}}
+
+Provide a detailed step-by-step breakdown of how to accomplish this task. Your response should be in the form of a valid JSON list, where each item in the list is an object containing the following properties:
+
+- "Description": A brief description of the step
+- "Explanation": A more detailed explanation of what the step entails
+
+Do not include any text outside of the JSON structure. The JSON should start with an opening square bracket '[' and end with a closing square bracket ']'. Each object within the list should be separated by a comma.
+
+Example format:
+[
+  {
+    "Description": "Step description here",
+    "Explanation": "More detailed explanation here"
+  },
+  {
+    "Description": "Another step description",
+    "Explanation": "Another detailed explanation"
+  }
+]
+
+Ensure that your steps are:
+- Comprehensive and cover all aspects of the task
+- Presented in a logical order
+- Clear and easy to understand for someone unfamiliar with the task
+- Specific and actionable
+
+Your goal is to create a guide that anyone could follow to successfully complete the given task, presented in a valid JSON format.`,
+        SearchGenerator_model: undefined, SearchGenerator_max_tokens: 2048,
+        SearchGenerator_temperature: 0, SearchGenerator_top_p: undefined, SearchGenerator_top_k: 1,
+        SearchGenerator_presence_penalty: undefined, SearchGenerator_frequency_penalty: 1,
+        SearchGenerator_SystemTemplate: 'Be precise and concise.',
+        SearchGenerator_UserTemplate: `
+You are an AI assistant tasked with formulating effective search engine queries. Your goal is to create a concise, relevant query that will help find information about the following problem:
+
+{{Objective}}
+
+Generate a search query that:
+1. Captures the core elements of the problem
+2. Uses relevant keywords and phrases
+3. Is concise (ideally 5-7 words)
+4. Avoids unnecessary words or punctuation
+5. Is likely to return useful results from a search engine
+
+Important: Output ONLY the query string itself, without any additional text, explanations, or formatting.
+`,
+        InformationExtractor_model: undefined, InformationExtractor_max_tokens: 2048,
+        InformationExtractor_temperature: 0, InformationExtractor_top_p: undefined, InformationExtractor_top_k: 1,
+        InformationExtractor_presence_penalty: undefined, InformationExtractor_frequency_penalty: 1,
+        InformationExtractor_SystemTemplate: 'Be precise and concise.',
+        InformationExtractor_UserTemplate: `
+Your task is to answer the following question based ONLY on the information provided in the given text. Do not use any external knowledge or information beyond what is explicitly stated in the text.
+
+Text: {{TextToRead}}
+
+Question: {{Objective}}
+
+Answer:
+`,
+        InformationValidator_model: undefined, InformationValidator_max_tokens: 2048,
+        InformationValidator_temperature: 0, InformationValidator_top_p: undefined, InformationValidator_top_k: 1,
+        InformationValidator_presence_penalty: undefined, InformationValidator_frequency_penalty: 1,
+        InformationValidator_SystemTemplate: 'Be precise and concise.',
+        InformationValidator_UserTemplate: `
+You are an expert at analyzing text for relevance to specific problems. Your task is to determine whether a given text contains information that could help solve a particular problem.
+
+Text to analyze: {{TextToAnalzye}}
+Problem to solve: {{Objective}}
+
+Carefully examine the text and consider whether it contains any information, concepts, ideas, or insights that could be useful in addressing or solving the specified problem. Your response should be either "true" or "false".
+
+Output "true" if the text contains any relevant information that could contribute to solving the problem, even if it's not a complete solution.
+Output "false" if the text does not contain any information that would be helpful in addressing the problem.
+
+Your response should be only one word: either "true" or "false".
+
+Response:
+`,
+        SolutionMerger_model: undefined, SolutionMerger_max_tokens: 2048,
+        SolutionMerger_temperature: 0, SolutionMerger_top_p: undefined, SolutionMerger_top_k: 1,
+        SolutionMerger_presence_penalty: undefined, SolutionMerger_frequency_penalty: 1,
+        SolutionMerger_SystemTemplate: 'Be precise and concise.',
+        SolutionMerger_UserTemplate: `
+**Task:** Merge two texts.
+
+**Instructions:**
+
+Combine the information from **Text 1** and **Text 2** into a single, cohesive text that addresses the **Objective**. Output only the merged text, without any additional content.
+
+### Inputs:
+- **Text 1:** {{Text1}}
+- **Text 2:** {{Text2}}
+- **Objective:** {{Objective}}
+
+### Output:
+[mergedText]
+`,
         Console: '',
     });
     Playground.InterpreterState = 'running';
@@ -2823,6 +3062,115 @@ javascriptGenerator.forBlock['SummaryOfText'] = function (Block, Generator) {
     let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
     return [`SummaryOfText(${Text})`, Order.FUNCTION_CALL];
 };
+/**** StepsDerivedFromText ****/
+Blockly.Blocks['StepsDerivedFromText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'StepsDerivedFromText',
+            tooltip: 'creates a summary of the given text',
+            helpUrl: '',
+            message0: 'steps derived from %1',
+            args0: [{ type: 'input_value', name: 'objective', check: 'String' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['StepsDerivedFromText'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    return [`StepsDerivedFromText(${Objective})`, Order.FUNCTION_CALL];
+};
+/**** SearchPhraseForText ****/
+Blockly.Blocks['SearchPhraseForText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'SearchPhraseForText',
+            tooltip: 'creates a search phrase for the given problem',
+            helpUrl: '',
+            message0: 'search phrase for %1',
+            args0: [{ type: 'input_value', name: 'problem', check: 'String' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['SearchPhraseForText'] = function (Block, Generator) {
+    let Problem = Generator.valueToCode(Block, 'problem', Order.NONE) || '""';
+    return [`SearchPhraseForText(${Problem})`, Order.FUNCTION_CALL];
+};
+/**** FindingsFromText ****/
+Blockly.Blocks['FindingsFromText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'FindingsFromText',
+            tooltip: 'extracts information from a given text that leads to the given objective',
+            helpUrl: '',
+            message0: 'information from %1 useful for %2',
+            args0: [
+                { type: 'input_value', name: 'text', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['FindingsFromText'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`FindingsFromText(${Text},${Objective})`, Order.FUNCTION_CALL];
+};
+/**** TextHelpsWith ****/
+Blockly.Blocks['TextHelpsWith'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'TextHelpsWith',
+            tooltip: 'checks if the given text helps with the given objective',
+            helpUrl: '',
+            message0: 'is %1 useful for %2',
+            args0: [
+                { type: 'input_value', name: 'text', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['TextHelpsWith'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`TextHelpsWith(${Text},${Objective})`, Order.FUNCTION_CALL];
+};
+/**** SolutionMergedFromTexts ****/
+Blockly.Blocks['SolutionMergedFromTexts'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'SolutionMergedFromTexts',
+            tooltip: 'merges information from two texts to approach the given objective',
+            helpUrl: '',
+            message0: 'combination of %1 and %2 to approach %3',
+            args0: [
+                { type: 'input_value', name: 'text1', check: 'String' },
+                { type: 'input_value', name: 'text2', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['SolutionMergedFromTexts'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Text1 = Generator.valueToCode(Block, 'text1', Order.NONE) || '""';
+    let Text2 = Generator.valueToCode(Block, 'text1', Order.NONE) || '""';
+    return [`SolutionMergedFromTexts(${Text1},${Text2},${Objective})`, Order.FUNCTION_CALL];
+};
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
     init: function () {
@@ -3493,6 +3841,11 @@ const WorkspaceSpecification = {
                 name: "AI Mezzanines",
                 contents: [
                     { kind: "block", type: "SummaryOfText" },
+                    { kind: "block", type: "StepsDerivedFromText" },
+                    { kind: "block", type: "SearchPhraseForText" },
+                    { kind: "block", type: "FindingsFromText" },
+                    { kind: "block", type: "TextHelpsWith" },
+                    { kind: "block", type: "SolutionMergedFromTexts" },
                 ]
             }, {
                 kind: "category",
