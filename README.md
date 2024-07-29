@@ -528,6 +528,12 @@ Here are a few examples which you can uploda into the Blockly workspace to get f
 
 > this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json))
 
+### WebSpeech ###
+
+![WebSpeech](./Examples/WebSpeech.png)
+
+> this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json))
+
 ### throw ###
 
 ![throwError](./Examples/throwError.png)
