@@ -1266,6 +1266,25 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'prompt', Interpreter.createNativeFunction(function prompt(Message, Default) {
         return (window.prompt(Message, Default) || '');
     }));
+    /**** speak ****/
+    Interpreter.setProperty(global, 'speak', Interpreter.createAsyncFunction(async function _speak(Message, Callback) {
+        try {
+            expectNonEmptyString('message', Message);
+            return new Promise((resolve, reject) => {
+                const Utterance = new SpeechSynthesisUtterance(Message.trim());
+                Utterance.lang = 'en';
+                //              Utterance.pitch = ...
+                //              Utterance.rate  = ...
+                Utterance.onend = () => resolve(undefined);
+                Utterance.onerror = () => reject();
+                window.speechSynthesis.speak(Utterance);
+            }).then(() => Callback()).catch(() => Callback());
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
     /**** ValueIsNotEmpty ****/
     Interpreter.setProperty(global, 'ValueIsNotEmpty', Interpreter.createNativeFunction(function _ValueIsNotEmpty(Value) {
         return ValueIsNonEmptyString(Value);
@@ -2921,6 +2940,26 @@ Blockly.Blocks['nop'] = {
 javascriptGenerator.forBlock['nop'] = function (Block, Generator) {
     return '\n';
 };
+/**** throwException ****/
+Blockly.Blocks['throwException'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'throwException',
+            tooltip: 'throws an exception',
+            helpUrl: '',
+            message0: 'throw %1',
+            args0: [{ type: 'input_value', name: 'message', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['throwException'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return `throw ${Message};\n`;
+};
 /**** wait ****/
 Blockly.Blocks['wait'] = {
     init: function () {
@@ -3022,6 +3061,26 @@ javascriptGenerator.forBlock['prompt_with_default'] = function (Block, Generator
     let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
     let Default = Generator.valueToCode(Block, 'default', Order.NONE) || '""';
     return [`prompt(${Message},${Default})`, Order.FUNCTION_CALL];
+};
+/**** speak ****/
+Blockly.Blocks['speak'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'speak',
+            tooltip: 'speaks a given message using text-to-speach synthesis',
+            helpUrl: '',
+            message0: 'speak %1',
+            args0: [{ type: 'input_value', name: 'message', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['speak'] = function (Block, Generator) {
+    let Message = Generator.valueToCode(Block, 'message', Order.NONE) || '""';
+    return `speak(${Message});\n`;
 };
 /**** ValueIsNotEmpty ****/
 Blockly.Blocks['ValueIsNotEmpty'] = {
@@ -3397,11 +3456,13 @@ const WorkspaceSpecification = {
                 name: "Miscellany",
                 contents: [
                     { kind: "block", type: "nop" },
+                    { kind: "block", type: "throwException" },
                     { kind: "block", type: "wait" },
                     { kind: "block", type: "alert" },
                     { kind: "block", type: "confirm" },
                     { kind: "block", type: "prompt" },
                     { kind: "block", type: "prompt_with_default" },
+                    { kind: "block", type: "speak" },
                     { kind: "block", type: "ValueIsNotEmpty" },
                     { kind: "block", type: "ValueIsNumber" },
                     { kind: "block", type: "ValueIsNumberInRange" },
