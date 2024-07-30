@@ -372,23 +372,23 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
-> t.b.w.
+> generates a "phrase" which can be used to perform an internet search using a common search engine (or SearXNG) (see [AI Web Search](#ai-web-search) example)
 
 ![InformationExtractor](./Screenshots/InformationExtractor.png)
 
-> t.b.w.
+> a web search usually returns a list of URLs - one per document that seems relevant. This block now fetches one of theses documents from the given URL, "reads" it and extracts any information that seems relevant for the given objective (see [AI Web Search](#ai-web-search) example)
 
 ![InformationValidator](./Screenshots/InformationValidator.png)
 
-> t.b.w.
+> extracting information from a document may return nonsense. In order not to dilute the final result, this block checks if the given extract is actually relevant for the given objective or not. It returns `true` if it is or `false` otherwise (see [AI Web Search](#ai-web-search) example)
 
 ![SolutionMerger](./Screenshots/SolutionMerger.png)
 
-> t.b.w.
+> extracting information from several documents yields a list of separate extracts which may overlap in their contents. This block takes two such extracts and combines them into a single response relevant for a given objective (see [AI Web Search](#ai-web-search) example)
 
 ![SolutionEncoder](./Screenshots/SolutionEncoder.png)
 
-> t.b.w.
+> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search-with-live-reporting))
 
 ### AI Support ###
 
