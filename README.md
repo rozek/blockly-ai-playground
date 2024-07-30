@@ -6,7 +6,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 [Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: this is still just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow until end of this week**
 
-> **Latest News: if you want to try, start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings. Then use the [PoC example](#proof-of-concept) and run your first inferences. So far, it has only been tested with Perplexity AI on a Mac - but you may still play around with the set of already existing blocks!**
+> **Latest News: if you want to try, start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings. Then use the [PoC example](#proof-of-concept) and run your first inferences. If you have API access to a SearXNG server, you may also try the [AI-assisted Web Search](#ai-web-search-with-live-reporting) So far, it has only been tested with Perplexity AI on a Mac - but you may still play around with the set of already existing blocks!**
 
 ![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
