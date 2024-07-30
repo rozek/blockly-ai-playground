@@ -2,9 +2,9 @@
 
 experiment with AI and build your own AI agents using Blockly - even if you are a complete beginner! (also suitable for school lessons)
 
-> (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
+> (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at August, 2nd)
 
-[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: this is still just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow until end of this week**
+[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: please read "Overview" and "Prerequisites" first**
 
 > CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a CORS Unblocking extension into your browser (like [this](https://webextension.org/listing/access-control.html) one)
 
