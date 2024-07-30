@@ -4063,7 +4063,8 @@ class TextlineInputItem extends PlaygroundUIItemView {
         const SpellChecking = acceptableOptionalBoolean(OptionSet.SpellChecking);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
         const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsTextline);
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             my.ValueToShow = acceptableTextline(getFromContext(Key), '');
         }
         let SuggestionList = '', SuggestionId;
@@ -4116,7 +4117,8 @@ class PasswordInputItem extends PlaygroundUIItemView {
         const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
         const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             my.ValueToShow = acceptableTextline(getFromContext(Key), '');
         }
         function onInput(Event) {
@@ -4162,7 +4164,8 @@ class NumberInputItem extends PlaygroundUIItemView {
         const Maximum = acceptableOptionalNumber(OptionSet.Maximum);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
         const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsNumber);
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             const Candidate = getFromContext(Key);
             my.ValueToShow = acceptableNumber(ValueIsString(Candidate) ? parseFloat(Candidate) : Candidate, 0);
         }
@@ -4216,7 +4219,8 @@ class URLInputItem extends PlaygroundUIItemView {
         const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
         const Suggestions = acceptableOptionalListSatisfying(OptionSet.Suggestions, undefined, ValueIsURL);
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             my.ValueToShow = acceptableTextline(getFromContext(Key), '');
         }
         let SuggestionList = '', SuggestionId;
@@ -4270,7 +4274,8 @@ class TextInputItem extends PlaygroundUIItemView {
         const LineWrapping = acceptableOptionalBoolean(OptionSet.LineWrapping);
         const SpellChecking = acceptableOptionalBoolean(OptionSet.SpellChecking);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             my.ValueToShow = acceptableText(getFromContext(Key), '');
         }
         function onInput(Event) {
@@ -4535,7 +4540,8 @@ class APIServerInputItem extends PlaygroundUIItemView {
         const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
         const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
-        if (document.activeElement !== my.View) {
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
             my.ValueToShow = acceptableTextline(getFromContext(Key), '');
         }
         function onInput(Event) {
