@@ -4850,6 +4850,7 @@ function downloadWorkspace() {
 /**** loadExample ****/
 async function loadExample(Example) {
     Playground.Workspace.clear();
+    showWorkspace();
     try {
         const URL = ('https://rozek.github.io/blockly-ai-playground/Examples/' +
             Example +
