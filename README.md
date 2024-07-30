@@ -666,11 +666,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![StepsDerivedFromText](./Examples/StepsDerivedFromText.png)
 
-> this example ... (see [Blockly workspace file](./Examples/StepsDerivedFromText.json) - download it onto your computer and then upload it into the Blockly workspace)
+> this example demonstrates the decomposition of a given objective into smaller steps (see [Blockly workspace file](./Examples/StepsDerivedFromText.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![StepsDerivedFromText-UI](./Examples/StepsDerivedFromText-UI.png)
 
-> ...
+> this is what you may get when asking for the steps to solve the problem "what is the total number of people living in all german cities whose names end with "dorf"?" (an objective which is so weird that you presumably won't find the solution by a simple web search)
 
 ## License ##
 
