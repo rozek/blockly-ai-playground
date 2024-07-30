@@ -368,7 +368,7 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![TaskDecomposer](./Screenshots/TaskDecomposer.png)
 
-> generates a sequence of work steps to achieve a given goal. The result is a list of objects and should be processed accordingly (see [related example](#[ai-web-search](#steps-derived-from-a-given-objective))
+> generates a sequence of work steps to achieve a given goal. The result is a list of objects and should be processed accordingly (see [related example](#steps-derived-from-a-given-objective))
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
