@@ -1708,6 +1708,25 @@ Blockly.Blocks['LineFeed'] = {
 javascriptGenerator.forBlock['LineFeed'] = function (Block, Generator) {
     return [`"\\n"`, Order.FUNCTION_CALL];
 };
+/**** MultilineText ****/
+Blockly.Blocks['MultilineText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'MultilineText',
+            tooltip: 'allows to enter multi-line text',
+            helpUrl: '',
+            message0: 'text %1',
+            args0: [{ type: 'field_multilineinput', name: 'text', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['MultilineText'] = function (Block, Generator) {
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`${Text}`, Order.FUNCTION_CALL];
+};
 /**** KeyValuePair ****/
 Blockly.Blocks['KeyValuePair'] = {
     init: function () {
