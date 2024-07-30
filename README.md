@@ -660,7 +660,9 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
 
-> and this is the output of the author's run: while the document found looks a bit weird (your mileage may vary) the response is impressive (**not convinced? then just have a look into [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don#t worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
+> and this is the output of the author's run: while the document found looks a bit weird (your mileage may vary) the response is impressive
+>
+> (**not convinced? then just have a look into [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don't worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
 
 ### Steps derived from a given Objective ###
 
