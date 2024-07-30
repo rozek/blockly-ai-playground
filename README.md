@@ -2,11 +2,15 @@
 
 experiment with AI and build your own AI agents using Blockly - even if you are a complete beginner! (also suitable for school lessons)
 
-> (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at July, 31st)
+> (Work in progress - intended as a contribution to the [Backdrop Build](https://backdropbuild.com/) contest, please stay tuned - contest ends at August, 2nd)
 
-[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: this is still just a "proof-of-concept" which only runs an inference on a given OpenAI-compatible Server (tested with [Perplexity](https://www.perplexity.ai/)). More interesting blocks will follow until end of this week**
+[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: please read "Overview" and "Prerequisites" first**
 
-> **Latest News: if you want to try, start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings. Then use the [PoC example](#proof-of-concept) and run your first inferences. So far, it has only been tested with Perplexity AI on a Mac - but you may still play around with the set of already existing blocks!**
+> **CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a "CORS Unblocking" extension into your browser (like [this](https://webextension.org/listing/access-control.html) one)**
+
+> **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#proof-of-concept) and run your first inferences. If you have API access to a SearXNG server, you may also try the [AI-assisted Web Search](#ai-web-search-with-live-reporting) to learn about the benefits of an AI agent**
+
+> **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI on a Mac so far**
 
 ![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
@@ -368,23 +372,27 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![TaskDecomposer](./Screenshots/TaskDecomposer.png)
 
-> t.b.w.
+> generates a sequence of work steps to achieve a given goal. The result is a list of objects and should be processed accordingly (see [related example](#steps-derived-from-a-given-objective))
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
-> t.b.w.
+> generates a "phrase" which can be used to perform an internet search using a common search engine (or SearXNG) (see [AI Web Search](#ai-web-search) example)
 
 ![InformationExtractor](./Screenshots/InformationExtractor.png)
 
-> t.b.w.
+> a web search usually returns a list of URLs - one per document that seems relevant. This block now fetches one of theses documents from the given URL, "reads" it and extracts any information that seems relevant for the given objective (see [AI Web Search](#ai-web-search) example)
 
 ![InformationValidator](./Screenshots/InformationValidator.png)
 
-> t.b.w.
+> extracting information from a document may return nonsense. In order not to dilute the final result, this block checks if the given extract is actually relevant for the given objective or not. It returns `true` if it is or `false` otherwise (see [AI Web Search](#ai-web-search) example)
 
 ![SolutionMerger](./Screenshots/SolutionMerger.png)
 
-> t.b.w.
+> extracting information from several documents yields a list of separate extracts which may overlap in their contents. This block takes two such extracts and combines them into a single response relevant for a given objective (see [AI Web Search](#ai-web-search) example)
+
+![SolutionEncoder](./Screenshots/SolutionEncoder.png)
+
+> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search-with-live-reporting))
 
 ### AI Support ###
 
