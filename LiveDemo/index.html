@@ -624,12 +624,14 @@ function removeFromUI(Key) {
     const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
     if (Index >= 0) {
         Playground.UI.splice(Index, 1);
+        rerenderPlayground();
     }
 }
 /**** clearConsole ****/
 function clearConsole() {
+    removeFromUI('Console');
     setInContext('Console', '');
-    rerenderPlayground();
+    //  rerenderPlayground()
 }
 /**** print ****/
 function print(Message) {
@@ -638,7 +640,6 @@ function print(Message) {
         appendToUI('Console', 'Console', 'text-output');
     }
     setInContext('Console', (getFromContext('Console') || '') + Message);
-    rerenderPlayground();
 }
 /**** println ****/
 function println(Message) {
@@ -647,7 +648,6 @@ function println(Message) {
         appendToUI('Console', 'Console', 'text-output');
     }
     setInContext('Console', (getFromContext('Console') || '') + Message + '\n');
-    rerenderPlayground();
 }
 /**** enqueueUIEvent ****/
 function enqueueUIEvent(Type, Key) {
@@ -1181,16 +1181,14 @@ function externalAPI(Interpreter, global) {
         try {
             expectText('objective', Objective);
             const MessageList = [
-                acceptableText(getFromContext('TaskDecomposition_SystemTemplate') ||
+                acceptableText(getFromContext('TaskDecomposer_SystemTemplate') ||
                     getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('TaskDecomposition_UserTemplate') ||
+                acceptableText(getFromContext('TaskDecomposer_UserTemplate') ||
                     getFromContext('default_UserTemplate'), 'Think step by step. Create a List of steps to solve {{Objective}}').replace('{{Objective}}', Objective),
             ];
-            const OptionSet = RequestOptionsFrom('TaskDecomposition_');
+            const OptionSet = RequestOptionsFrom('TaskDecomposer_');
             let Response = await await ChatCompletionFor(MessageList, OptionSet);
-            console.log('Response', Response);
             const StepList = JSONinText(Response);
-            console.log('StepList', StepList);
             Callback(Playground.Interpreter.nativeToPseudo(ValueIsList(StepList) ? StepList : []));
         }
         catch (Signal) {
@@ -1210,6 +1208,10 @@ function externalAPI(Interpreter, global) {
             ];
             const OptionSet = RequestOptionsFrom('SearchGenerator_');
             let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            Response = Response.trim();
+            if (/^".*"$/.test(Response)) {
+                Response = Response.slice(1, Response.length - 1);
+            }
             Callback(Response);
         }
         catch (Signal) {
@@ -1226,7 +1228,7 @@ function externalAPI(Interpreter, global) {
                 acceptableText(getFromContext('InformationExtractor_SystemTemplate') ||
                     getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
                 acceptableText(getFromContext('InformationExtractor_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToRead}}', Text)
+                    getFromContext('default_UserTemplate'), 'extract an information from {{TextToRead}} to solve {{Objective}}').replace('{{TextToRead}}', Text)
                     .replace('{{Objective}}', Objective),
             ];
             const OptionSet = RequestOptionsFrom('InformationExtractor_');
@@ -1247,7 +1249,7 @@ function externalAPI(Interpreter, global) {
                 acceptableText(getFromContext('InformationValidator_SystemTemplate') ||
                     getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
                 acceptableText(getFromContext('InformationValidator_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{TextToAnalzye}}', Text)
+                    getFromContext('default_UserTemplate'), 'does {{TextToAnalzye}} help to solve {{Objective}}?').replace('{{TextToAnalzye}}', Text)
                     .replace('{{Objective}}', Objective),
             ];
             const OptionSet = RequestOptionsFrom('InformationValidator_');
@@ -1269,13 +1271,35 @@ function externalAPI(Interpreter, global) {
                 acceptableText(getFromContext('SolutionMerger_SystemTemplate') ||
                     getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
                 acceptableText(getFromContext('SolutionMerger_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Text1}}', Text1)
+                    getFromContext('default_UserTemplate'), 'combine {{Text1}} and {{Text2}} to solve {{Objective}}').replace('{{Text1}}', Text1)
                     .replace('{{Text2}}', Text2)
                     .replace('{{Objective}}', Objective),
             ];
             const OptionSet = RequestOptionsFrom('SolutionMerger_');
             let Response = await await ChatCompletionFor(MessageList, OptionSet);
             Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** SolutionEncodedFrom ****/
+    Interpreter.setProperty(global, 'SolutionEncodedFrom', Interpreter.createAsyncFunction(async function _SolutionEncodedFrom(Text, Objective, Callback) {
+        try {
+            expectText('text', Text);
+            expectText('objective', Objective);
+            const MessageList = [
+                acceptableText(getFromContext('SolutionEncoder_SystemTemplate') ||
+                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
+                acceptableText(getFromContext('SolutionEncoder_UserTemplate') ||
+                    getFromContext('default_UserTemplate'), 'generate a JSON structure from {{Text}} to solve {{Objective}}').replace('{{Text}}', Text)
+                    .replace('{{Objective}}', Objective),
+            ];
+            const OptionSet = RequestOptionsFrom('SolutionEncoder_');
+            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            let JSONResponse = JSONinText(Response);
+            Callback(Playground.Interpreter.nativeToPseudo(ValueIsList(JSONResponse) ? JSONResponse : []));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1358,7 +1382,8 @@ function externalAPI(Interpreter, global) {
             if (!ValueIsNumberInRange(ScoreThreshold, 0, 10, true, true))
                 throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
             const Parameters = new URLSearchParams({
-                q: SearchPhrase, format: 'json', categories: 'general'
+                q: SearchPhrase, languagedefault: 'en',
+                format: 'json', categories: 'general'
             });
             const Response = await fetch(`${ServerURL}/search?${Parameters}`); // may fail!
             const Result = (await Response.json()).results
@@ -1500,11 +1525,11 @@ Text to summarize:
 {{TextToSummarize}}
 
 Please provide a concise summary of the above text in no more than 3-4 sentences.`,
-        TaskDecomposition_model: undefined, TaskDecomposition_max_tokens: 2048,
-        TaskDecomposition_temperature: 0, TaskDecomposition_top_p: undefined, TaskDecomposition_top_k: 1,
-        TaskDecomposition_presence_penalty: undefined, TaskDecomposition_frequency_penalty: 1,
-        TaskDecomposition_SystemTemplate: 'Be precise and concise.',
-        TaskDecomposition_UserTemplate: `
+        TaskDecomposer_model: undefined, TaskDecomposer_max_tokens: 2048,
+        TaskDecomposer_temperature: 0, TaskDecomposer_top_p: undefined, TaskDecomposer_top_k: 1,
+        TaskDecomposer_presence_penalty: undefined, TaskDecomposer_frequency_penalty: 1,
+        TaskDecomposer_SystemTemplate: 'Be precise and concise.',
+        TaskDecomposer_UserTemplate: `
 Your task is to analyze and break down the following task into clear, logical, and sequential steps:
 
 Task Description:
@@ -1603,7 +1628,20 @@ Combine the information from **Text 1** and **Text 2** into a single, cohesive t
 - **Objective:** {{Objective}}
 
 ### Output:
-[mergedText]
+`,
+        SolutionEncoder_model: undefined, SolutionEncoder_max_tokens: 2048,
+        SolutionEncoder_temperature: 0, SolutionEncoder_top_p: undefined, SolutionEncoder_top_k: 1,
+        SolutionEncoder_presence_penalty: undefined, SolutionEncoder_frequency_penalty: 1,
+        SolutionEncoder_SystemTemplate: 'Be precise and concise.',
+        SolutionEncoder_UserTemplate: `
+Generate a concise, machine-processable solution for a given problem solely based on the information in a given text. Output only the solution as a JSON-compliant list, without any explanations or additional context.
+
+Text to analyze: {{Text}}
+Problem to solve: {{Objective}}
+
+Response format:
+Output a JSON array in the form: ["item1", "item2", "item3"]
+Ensure that all string values are properly escaped according to JSON rules, and that the entire output is valid JSON.
 `,
         Console: '',
     });
@@ -3187,8 +3225,31 @@ Blockly.Blocks['SolutionMergedFromTexts'] = {
 javascriptGenerator.forBlock['SolutionMergedFromTexts'] = function (Block, Generator) {
     let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
     let Text1 = Generator.valueToCode(Block, 'text1', Order.NONE) || '""';
-    let Text2 = Generator.valueToCode(Block, 'text1', Order.NONE) || '""';
+    let Text2 = Generator.valueToCode(Block, 'text2', Order.NONE) || '""';
     return [`SolutionMergedFromTexts(${Text1},${Text2},${Objective})`, Order.FUNCTION_CALL];
+};
+/**** SolutionEncodedFrom ****/
+Blockly.Blocks['SolutionEncodedFrom'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'SolutionEncodedFrom',
+            tooltip: 'generates a machine-readable result from a given text and a given objective',
+            helpUrl: '',
+            message0: 'result encoded from %1 for %2',
+            args0: [
+                { type: 'input_value', name: 'text', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['SolutionEncodedFrom'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
+    return [`SolutionEncodedFrom(${Text},${Objective})`, Order.FUNCTION_CALL];
 };
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
@@ -3865,6 +3926,7 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "FindingsFromText" },
                     { kind: "block", type: "TextHelpsWith" },
                     { kind: "block", type: "SolutionMergedFromTexts" },
+                    { kind: "block", type: "SolutionEncodedFrom" },
                 ]
             }, {
                 kind: "category",
