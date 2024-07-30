@@ -386,6 +386,10 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 > t.b.w.
 
+![SolutionEncoder](./Screenshots/SolutionEncoder.png)
+
+> t.b.w.
+
 ### AI Support ###
 
 The following blocks have been made to support the creation of AI agents.
