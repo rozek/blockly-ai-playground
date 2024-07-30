@@ -656,11 +656,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIWebSearch](./Examples/AIWebSearch.png)
 
-> this example ... (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
+> this example illustrates how to use several AI Mezzanines to implement an AI-assisted web search (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
 
-> ...
+> and this is the output of the author's run: while the document found looks a bit weird (your mileage may vary) the response is impressive (**not convinced? then just have a look into [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don#t worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
 
 ### Steps derived from a given Objective ###
 
