@@ -4017,6 +4017,7 @@ class PlaygroundView extends Component {
         const { activeTab } = Playground;
         function onChange(Event) {
             loadExample(Event.target.value);
+            Event.target.value = "";
         }
         return html `<div class="Playground View">
         <div class="Playground Title">Blockly AI Playground</div>
