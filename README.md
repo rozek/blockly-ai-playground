@@ -652,7 +652,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
 
-### AI WebSearch ###
+### AI Web Search ###
 
 ![AIWebSearch](./Examples/AIWebSearch.png)
 
@@ -665,6 +665,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 > this is the output of the author's run: while the document found looks a bit weird (your mileage may vary) the response is impressive!
 >
 > (**not convinced? then just have a look at [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don't worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
+
+### AI Web Search with live Reporting ###
+
+![AIWebSearch_reporting_I](./Examples/AIWebSearch_reporting_I.png)
+![AIWebSearch_reporting_II](./Examples/AIWebSearch_reporting_II.png)
+
+> the AI Web Search from the previous section already demonstrates that AI assisted loops may take some time to complete. However, without any recognizable feedback, users may get the impression that the program got stuck and may thus be tempted to abort it. This example therefore adds some simple live reporting of the actions the program is undertaking (see [Blockly workspace file](./Examples/AIWebSearch_reporting.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### Steps derived from a given Objective ###
 
