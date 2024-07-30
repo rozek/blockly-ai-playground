@@ -366,6 +366,26 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 > returns a summary of the given text. The block uses its own set of context items (prefixed with `Summary_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set
 
+![TaskDecomposer](./Screenshots/TaskDecomposer.png)
+
+> t.b.w.
+
+![SearchGenerator](./Screenshots/SearchGenerator.png)
+
+> t.b.w.
+
+![InformationExtractor](./Screenshots/InformationExtractor.png)
+
+> t.b.w.
+
+![InformationValidator](./Screenshots/InformationValidator.png)
+
+> t.b.w.
+
+![SolutionMerger](./Screenshots/SolutionMerger.png)
+
+> t.b.w.
+
 ### AI Support ###
 
 The following blocks have been made to support the creation of AI agents.
