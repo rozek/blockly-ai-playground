@@ -756,16 +756,28 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
     if (RequestBody.model == null)
         throwError('Missingargument: no AI "model" given');
     try {
-        const Response = await fetch(APIServer, {
-            method: 'POST',
-            headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                Authorization: `Bearer ${APIKey}`,
-            },
-            body: JSON.stringify(RequestBody)
-        });
-        return (await Response.json()).choices[0].message.content;
+        for (;;) {
+            const Response = await fetch(APIServer, {
+                method: 'POST',
+                headers: {
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    Authorization: `Bearer ${APIKey}`,
+                },
+                body: JSON.stringify(RequestBody)
+            });
+            if (Response.status === 429) {
+                if (window.confirm('API Request Limit reached\n\nDo you want to continue? ' +
+                    'Then wait a minute and press "Ok" - otherwise press "Cancel" ' +
+                    'to abort the Blockly program') == true) {
+                    continue;
+                }
+                else {
+                    throw 'HTTP 439 (too many requests)';
+                }
+            }
+            return (await Response.json()).choices[0].message.content;
+        }
     }
     catch (Signal) {
         throwError('RequestFailure: API request failed with ' + Signal);
@@ -3996,13 +4008,16 @@ class PlaygroundView extends Component {
     componentDidMount() {
         Playground.View = this;
         Playground.WorkspaceElement = this.base.querySelector('.Playground.Workspace > .Placeholder');
-        const Workspace = Blockly.inject(Playground.WorkspaceElement, WorkspaceSpecification);
+        const Workspace = Playground.Workspace = Blockly.inject(Playground.WorkspaceElement, WorkspaceSpecification);
         restoreWorkspace();
         Workspace.addChangeListener(preserveWorkspace);
-        Playground.Workspace = Workspace;
+        //    Playground.Workspace = Workspace
     }
     render() {
         const { activeTab } = Playground;
+        function onChange(Event) {
+            loadExample(Event.target.value);
+        }
         return html `<div class="Playground View">
         <div class="Playground Title">Blockly AI Playground</div>
         <div class="Playground Strip">
@@ -4013,6 +4028,16 @@ class PlaygroundView extends Component {
           <div class="Playground Tab ${activeTab === 1 ? 'active' : ''}"
             onClick=${() => { Playground.activeTab = 1; this.rerender(); }}
           >User Interface</>
+            <div class="Playground Gap"/>
+          <span>load Example</span>
+          <select id="ExampleLoader" style="max-width:190px; margin-left:4px"
+            onChange=${onChange}
+          >
+            <option value="" disabled selected>(please select)</option>
+            <option value="PoC">Proof-of-Concept</option>
+            <option value="AIWebSearch">AI-assisted Web Search</option>
+            <option value="AIWebSearch_reporting">AI-assisted Web Search with live Reporting</option>
+          </select>
             <div class="Playground Gap"/>
           <button class="Playground Button" style="width:80px"
             disabled=${Playground.pendingInterpreterState != null}
@@ -4764,6 +4789,7 @@ function preserveWorkspace() {
 }
 /**** restoreWorkspace ****/
 function restoreWorkspace() {
+    Playground.Workspace.clear();
     const WorkspaceSerialization = (Playground.BackupWanted
         ? localStorage.getItem('blockly-ai-playground')
         : sessionStorage.getItem('blockly-ai-playground')) || '{}';
@@ -4795,6 +4821,7 @@ function uploadWorkspaceFrom(File) {
     Reader.onabort = function LoadAborted() { window.alert('Upload was aborted'); };
     Reader.onerror = function LoadFailed() { window.alert('Upload failed'); };
     Reader.onload = function FileLoaded(Event) {
+        Playground.Workspace.clear();
         let FileValue = (new TextDecoder()).decode(Reader.result);
         try {
             let Serialization = JSON.parse(FileValue);
@@ -4817,6 +4844,21 @@ function downloadWorkspace() {
     }
     else {
         window.alert('Download is not safe');
+    }
+}
+/**** loadExample ****/
+async function loadExample(Example) {
+    Playground.Workspace.clear();
+    try {
+        const URL = ('https://rozek.github.io/blockly-ai-playground/Examples/' +
+            Example +
+            '.json');
+        const Response = await fetch(URL); // may fail!
+        const Serialization = await Response.text();
+        Blockly.serialization.workspaces.load(JSON.parse(Serialization), Playground.Workspace);
+    }
+    catch (Signal) {
+        window.alert('Could not load the requested Example\n\nReason: ' + Signal);
     }
 }
 function SetFromKeyValueList(List) {
