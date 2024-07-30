@@ -644,13 +644,33 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### Text Summary ###
 
-![PoC](./Examples/TextSummary.png)
+![TextSummary](./Examples/TextSummary.png)
 
 > this example summarizes a given text (see [Blockly workspace file](./Examples/TextSummary.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-![PoC-UI](./Examples/TextSummary-UI.png)
+![TextSummary-UI](./Examples/TextSummary-UI.png)
 
 > this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
+
+### AI WebSearch ###
+
+![AIWebSearch](./Examples/AIWebSearch.png)
+
+> this example ... (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
+
+> ...
+
+### Steps derived from a given Objective ###
+
+![StepsDerivedFromText](./Examples/StepsDerivedFromText.png)
+
+> this example ... (see [Blockly workspace file](./Examples/StepsDerivedFromText.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![StepsDerivedFromText-UI](./Examples/StepsDerivedFromText-UI.png)
+
+> ...
 
 ## License ##
 
