@@ -14,6 +14,9 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 ![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
+> You have comments, wishes or ideas? You found a bug? Then [open an issue](https://github.com/rozek/blockly-ai-playground/issues)
+> You like this tool and plan to use it? Then leave a star!
+
 ## Overview ##
 
 AI agents are "cool" these days and can be found at many places - but for most of us, they are basically just "black boxes" which do not reveal how they work internally.
