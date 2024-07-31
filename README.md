@@ -672,7 +672,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
 
-> this is the output of the author's run: while the document found looks a bit weird (your mileage may vary) the response is impressive!
+> this is the output of the author's first run: while the document found looks a bit weird (your mileage may vary) the response is impressive!
 >
 > (**not convinced? then just have a look at [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don't worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
 
@@ -682,6 +682,10 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![AIWebSearch_reporting_II](./Examples/AIWebSearch_reporting_II.png)
 
 > the AI Web Search from the previous section already demonstrates that AI assisted loops may take some time to complete. However, without any recognizable feedback, users may get the impression that the program got stuck and may thus be tempted to abort it. This example therefore adds some simple live reporting of the actions the program is undertaking (see [Blockly workspace file](./Examples/AIWebSearch_reporting.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
+
+> this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates all findings into a comprehensive output - even one that can be used for further processing!
 
 ### Steps derived from a given Objective ###
 
