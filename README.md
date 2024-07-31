@@ -685,7 +685,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
 
-> this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates all findings into a comprehensive output - even one that can be used for further processing!
+> this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
 
 ### Steps derived from a given Objective ###
 
