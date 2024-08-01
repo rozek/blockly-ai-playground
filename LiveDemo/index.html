@@ -72,6 +72,8 @@
 *                                                                              *
 *******************************************************************************/
 
+  :disabled { opacity:0.3 }
+
   .Playground {
     display:block; position:relative;
   }
@@ -275,7 +277,7 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
@@ -1325,6 +1327,19 @@ function externalAPI(Interpreter, global) {
             Playground.thrownException = Signal;
             Callback(null);
         }
+    }));
+    /**** ValueIsKnowledge ****/
+    Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value) {
+        return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
+            ValueIsNonEmptyString(Value.Description) &&
+            ValueIsNonEmptyString(Value.Fact)));
+    }));
+    /**** ValueIsStepList ****/
+    Interpreter.setProperty(global, 'ValueIsStepList', Interpreter.createNativeFunction(function _ValueIsStepList(Value) {
+        return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
+            ValueIsOneOf(Value.Tool, ['ResearchTool', 'ComputationTool', 'ResponseTool']) &&
+            ValueIsNonEmptyString(Value.Objective) &&
+            ValueIsNonEmptyString(Value.Justification)));
     }));
     /**** ValueIsWikipediaURL ****/
     Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
@@ -3271,6 +3286,44 @@ javascriptGenerator.forBlock['SolutionEncodedFrom'] = function (Block, Generator
     let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
     return [`SolutionEncodedFrom(${Text},${Objective})`, Order.FUNCTION_CALL];
 };
+/**** ValueIsKnowledge ****/
+Blockly.Blocks['ValueIsKnowledge'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsKnowledge',
+            tooltip: 'returns true if the given value contains knowledge for an AI Agent - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is agent knowledge?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsKnowledge'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsKnowledge(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsStepList ****/
+Blockly.Blocks['ValueIsStepList'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsStepList',
+            tooltip: 'returns true if the given value contains a list of steps for an AI Agent - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is an agent step list?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsStepList'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsStepList(${Value})`, Order.FUNCTION_CALL];
+};
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
     init: function () {
@@ -3947,6 +4000,8 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "TextHelpsWith" },
                     { kind: "block", type: "SolutionMergedFromTexts" },
                     { kind: "block", type: "SolutionEncodedFrom" },
+                    { kind: "block", type: "ValueIsKnowledge" },
+                    { kind: "block", type: "ValueIsStepList" },
                 ]
             }, {
                 kind: "category",
