@@ -820,7 +820,9 @@ function ValueIsWikipediaPageName(Value) {
 function JSONinText(Text) {
     expectText('text', Text);
     function IndexOfClosingBracketAfter(StartIndex) {
-        let Nesting = 1, inString = false, escaped = false;
+        let Nesting = 1;
+        let inString = (Text[StartIndex] === '"');
+        let escaped = false;
         for (let i = StartIndex + 1, l = Text.length; i < l; i++) {
             if (escaped) {
                 escaped = false;
@@ -842,24 +844,30 @@ function JSONinText(Text) {
                     }
                     ;
                     break;
-                case ']': if (!inString) {
-                    Nesting--;
-                    if (Nesting === 0) {
-                        return i;
+                case ']':
+                    if (!inString) {
+                        Nesting--;
+                        if (Nesting === 0) {
+                            return i;
+                        }
                     }
-                }
+                    ;
+                    break;
                 case '{':
                     if (!inString) {
                         Nesting++;
                     }
                     ;
                     break;
-                case '}': if (!inString) {
-                    Nesting--;
-                    if (Nesting === 0) {
-                        return i;
+                case '}':
+                    if (!inString) {
+                        Nesting--;
+                        if (Nesting === 0) {
+                            return i;
+                        }
                     }
-                }
+                    ;
+                    break;
             } // escaping '{','}','[' or ']' makes no sense and will crash JSON.parse below
         }
         return -1;
