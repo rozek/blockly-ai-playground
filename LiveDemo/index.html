@@ -277,7 +277,7 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectedText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
@@ -651,6 +651,21 @@ function println(Message) {
     }
     setInContext('Console', (getFromContext('Console') || '') + Message + '\n');
 }
+/**** logStep ****/
+function logStep(Message) {
+    expectText('log message', Message);
+    if (getFromContext('logStepsToConsole') === true) {
+        println('\nnext Step: ' + Message);
+    }
+}
+/**** logAction ****/
+function logAction(Message) {
+    expectText('log message', Message);
+    if ((getFromContext('logStepsToConsole') === true) &&
+        (getFromContext('logActionsToConsole') === true)) {
+        println('  ' + Message);
+    }
+}
 /**** enqueueUIEvent ****/
 function enqueueUIEvent(Type, Key) {
     if (Playground.UIEventHandlerState == null) {
@@ -799,8 +814,415 @@ function RequestOptionsFrom(ContextPrefix = 'default_') {
     return Result;
 }
 //------------------------------------------------------------------------------
+//--                         Playground AI Mezzanines                         --
+//------------------------------------------------------------------------------
+/**** SummaryOfText ****/
+async function SummaryOfText(Text) {
+    expectText('text to summarize', Text);
+    const MessageList = [
+        expectedText('system template for summarizer', getFromContext('Summarizer_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for summarizer', getFromContext('Summarizer_UserTemplate')).replace('{{TextToSummarize}}', Text),
+    ];
+    const OptionSet = RequestOptionsFrom('Summarizer_');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return Response;
+}
+/**** ResearchFor ****/
+async function ResearchFor(Objective) {
+    expectText('objective', Objective);
+    logStep('conducting web research to achieve ' + quoted(Objective));
+    const SearchPhrase = await SearchPhraseForText(Objective);
+    const Findings = [];
+    logAction('(searching for ' + quoted(SearchPhrase) + ')');
+    const URLList = await WebSearchFor(SearchPhrase);
+    if (URLList.length === 0) {
+        logAction('(no relevant documents found)');
+    }
+    else {
+        logAction('(reading ' + URLList.length + ' document(s))');
+    }
+    for (const URL of URLList) {
+        let Text;
+        if (ValueIsWikipediaURL(URL)) {
+            logAction('(fetching Wikipedia article ' + quoted(URL) + ')');
+            Text = await TextOfWikipediaArticleForAI(URL);
+        }
+        else {
+            logAction('(fetching Web document ' + quoted(URL) + ')');
+            Text = await TextOfWebDocument(URL);
+        }
+        if (Text.trim() === '') {
+            continue;
+        }
+        const Finding = await FindingsFromText(Text, Objective);
+        if (await TextHelpsWith(Text, Objective)) {
+            Findings.push(Finding);
+        }
+    }
+    if (Findings.length === 0) {
+        logAction('ignoring document - no relevant information found');
+        return '';
+    }
+    else {
+        let Result = Findings.shift() || '';
+        while (Findings.length > 0) {
+            Result = await SolutionMergedFromTexts(Result, Findings.shift() || '', Objective);
+        }
+        console.log('merged result', Result);
+        return JSON.stringify((await SolutionEncodedFrom(Result, Objective)) || '');
+    }
+}
+/**** SearchPhraseForText ****/
+async function SearchPhraseForText(Objective) {
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for search phrase generator', getFromContext('SearchGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for search phrase generator', getFromContext('SearchGenerator_UserTemplate')).replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('SearchGenerator_');
+    logAction('(generating search phrase)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    Response = Response.trim();
+    if (/^".*"$/.test(Response)) {
+        Response = Response.slice(1, Response.length - 1);
+    }
+    return Response;
+}
+/**** FindingsFromText ****/
+async function FindingsFromText(Text, Objective) {
+    expectText('text to analyze', Text);
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for information extractor', getFromContext('InformationExtractor_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for information extractor', getFromContext('InformationExtractor_UserTemplate')).replace('{{TextToRead}}', Text)
+            .replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('InformationExtractor_');
+    logAction('(extracting relevant information from text)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return Response;
+}
+/**** TextHelpsWith ****/
+async function TextHelpsWith(Text, Objective) {
+    expectText('text to analyze', Text);
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for information validator', getFromContext('InformationValidator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for information validator', getFromContext('InformationValidator_UserTemplate')).replace('{{TextToAnalzye}}', Text)
+            .replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('InformationValidator_');
+    logAction('(validating relevance of findings)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return (Response.trim().toLowerCase() === 'true');
+}
+/**** SolutionMergedFromTexts ****/
+async function SolutionMergedFromTexts(Text1, Text2, Objective) {
+    expectText('text #1', Text1);
+    expectText('text #2', Text2);
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for solution merger', getFromContext('SolutionMerger_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for solution merger', getFromContext('SolutionMerger_UserTemplate')).replace('{{Text1}}', Text1)
+            .replace('{{Text2}}', Text2)
+            .replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('SolutionMerger_');
+    logAction('(merging two findings)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return Response;
+}
+/**** SolutionEncodedFrom ****/
+async function SolutionEncodedFrom(Text, Objective) {
+    expectText('text', Text);
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for solution encoder', getFromContext('SolutionEncoder_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('system template for solution encoder', getFromContext('SolutionEncoder_UserTemplate')).replace('{{Text}}', Text)
+            .replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('SolutionEncoder_');
+    logAction('(generating machine-readable response)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    let JSONResponse = JSONinText(Response);
+    return (ValueIsList(JSONResponse) ? JSONResponse : []);
+}
+/**** ComputationOf ****/
+async function ComputationOf(Objective, Knowledge) {
+    expectText('objective', Objective);
+    logStep('using JavaScript to achieve ' + quoted(Objective));
+    const ParameterList = await ParameterListFor(Objective);
+    const FunctionSource = await FunctionFor(Objective, ParameterList);
+    let Executable;
+    try {
+        logAction('(compiling JavaScript function)');
+        const compiledFunction = new Function(`return ${FunctionSource}`);
+        Executable = compiledFunction();
+        console.log('compiled Function', Executable);
+    }
+    catch (Signal) {
+        throwError('CompilationError: could not generate executable function\n' +
+            'reason: ' + Signal);
+    }
+    const ArgumentList = [];
+    logAction('(generating argument list)');
+    for (const Parameter of JSON.parse(ParameterList)) {
+        const Argument = await ArgumentValueFor(JSON.stringify(Parameter));
+        ArgumentList.push(Argument);
+    }
+    console.log('ArgumentList', ArgumentList);
+    try {
+        logAction('(executing JavaScript function)');
+        let Result = Executable.apply(null, ArgumentList);
+        if (Result == null) {
+            Result = null;
+        }
+        console.log('computed Result', Result);
+        return JSON.stringify(Result);
+    }
+    catch (Signal) {
+        throwError('ExecutionError: could not execute generated function\n' +
+            'reason: ' + Signal);
+    }
+    return ''; // just to satisfy the compiler
+}
+/**** ParameterListFor ****/
+async function ParameterListFor(Objective) {
+    expectText('objective', Objective);
+    const MessageList = [
+        expectedText('system template for parameter list generator', getFromContext('ParameterListGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for parameter list generator', getFromContext('ParameterListGenerator_UserTemplate')).replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('ParameterListGenerator_');
+    logAction('(generating parameter list)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    const ParameterList = JSONinText(Response);
+    return JSON.stringify(ValueIsParameterList(ParameterList) ? ParameterList : []);
+}
+/**** FunctionFor ****/
+async function FunctionFor(Objective, JSONParameterList) {
+    expectText('objective', Objective);
+    expectText('JSON-encoded parameter list', JSONParameterList);
+    let ParameterList = undefined;
+    try {
+        ParameterList = JSON.parse(JSONParameterList);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsParameterList(ParameterList))
+        throwError('InvalidArgument: the given "ParameterList" argument does not ' +
+            'contain a valid JSON-encoded function parameter list');
+    const MessageList = [
+        expectedText('system template for function generator', getFromContext('FunctionGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for function generator', getFromContext('FunctionGenerator_UserTemplate')).replace('{{Objective}}', Objective),
+    ];
+    const OptionSet = RequestOptionsFrom('FunctionGenerator_');
+    logAction('(generating function)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    if (/(^|\n)```javascript/.test(Response)) {
+        Response = Response.replace(/^[\s\S]*```javascript\s*/, '')
+            .replace(/```[\s\S]*$/, '');
+    }
+    return Response;
+}
+/**** ArgumentValueFor ****/
+async function ArgumentValueFor(JSONParameter) {
+    expectText('JSON-encoded parameter', JSONParameter);
+    let Parameter = undefined;
+    try {
+        Parameter = JSON.parse(JSONParameter);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsParameter(Parameter))
+        throwError('InvalidArgument: the given "Parameter" argument does not ' +
+            'contain a valid JSON-encoded function parameter');
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
+    const MessageList = [
+        expectedText('system template for argument value generator', getFromContext('ArgumentGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('user template for argument value generator', getFromContext('ArgumentGenerator_UserTemplate')).replace('{{Parameter.Description}}', Parameter.Description)
+            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
+    ];
+    const OptionSet = RequestOptionsFrom('ArgumentGenerator_');
+    logAction('(computing value for function parameter ' + quoted(Parameter.Description) + ')');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    let packedValue = JSONinText(Response);
+    if (ValueIsPlainObject(packedValue) && ('Value' in packedValue)) {
+        return packedValue.Value; // any JavaScript type
+    }
+    else {
+        console.error('unexpected "ArgumentValueFrom" output', packedValue);
+        throwError('InvalidResponse: unexpected output');
+    }
+    return Response;
+}
+/**** StepsDerivedFromText ****/
+async function StepsDerivedFromText(Task) {
+    expectText('task to perform', Task);
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
+    const MessageList = [
+        expectedText('system template for task decomposer', getFromContext('TaskDecomposer_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('system template for task decomposer', getFromContext('TaskDecomposer_UserTemplate')).replace('{{Task}}', Task)
+            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
+    ];
+    const OptionSet = RequestOptionsFrom('TaskDecomposer_');
+    logAction('(deriving the steps needed to perform the given task)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    const StepList = JSONinText(Response);
+    if (ValueIsStepList(StepList)) {
+        return StepList;
+    }
+    else {
+        console.error('invalid list of steps', StepList);
+        throwError('the LLM did not produce a valid step');
+    }
+}
+/**** AnswerGeneratedFor ****/
+async function AnswerGeneratedFor(Task) {
+    expectText('task to perform', Task);
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
+    const MessageList = [
+        expectedText('system template for answer generator', getFromContext('AnswerGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('system template for answer generator', getFromContext('AnswerGenerator_UserTemplate')).replace('{{Task}}', Task)
+            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
+    ];
+    const OptionSet = RequestOptionsFrom('AnswerGenerator_');
+    logAction('(generating response for the completed task)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return Response.trim();
+}
+/**** addKnowledgeFrom ****/
+async function addKnowledgeFrom(Objective, Fact) {
+    expectText('objective', Objective);
+    expectText('fact', Fact);
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
+    const MessageList = [
+        expectedText('system template for knowledge generator', getFromContext('KnowledgeGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('system template for knowledge generator', getFromContext('KnowledgeGenerator_UserTemplate')).replace('{{Objective}}', Objective)
+            .replace('{{Fact}}', Fact),
+    ];
+    const OptionSet = RequestOptionsFrom('KnowledgeGenerator_');
+    logAction('(adds a new fact to the given knowledge)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    Knowledge.push({ Description: Response.trim(), Fact: Fact });
+    setInContext('Knowledge', JSON.stringify(Knowledge));
+    return;
+}
+//------------------------------------------------------------------------------
 //--                           Playground AI Tools                            --
 //------------------------------------------------------------------------------
+/**** ValueIsKnowledge ****/
+function ValueIsKnowledge(Value, JSONisAllowed = false) {
+    try {
+        if (JSONisAllowed && ValueIsString(Value)) {
+            Value = JSON.parse(Value);
+        }
+        return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
+            ValueIsNonEmptyString(Value.Description) &&
+            ValueIsNonEmptyString(Value.Fact)));
+    }
+    catch (Signal) {
+        return false;
+    }
+}
+/**** ValueIsStepList ****/
+function ValueIsStepList(Value) {
+    return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
+        ValueIsOneOf(Value.Tool, ['ResearchTool', 'ComputationTool', 'ResponseTool']) &&
+        ValueIsNonEmptyString(Value.Objective) &&
+        ValueIsNonEmptyString(Value.Justification)));
+}
+/**** ValueIsParameter ****/
+function ValueIsParameter(Value) {
+    return (ValueIsPlainObject(Value) &&
+        ValueIsNonEmptyString(Value.Name) &&
+        ValueIsNonEmptyString(Value.Description));
+}
+/**** ValueIsParameterList ****/
+function ValueIsParameterList(Value) {
+    return ValueIsListSatisfying(Value, ValueIsParameter);
+}
+/**** WebSearchFor ****/
+async function WebSearchFor(SearchPhrase) {
+    try {
+        let URLList = await WebSearch(SearchPhrase);
+        return URLList;
+    }
+    catch (Signal) {
+        console.error('"WebSearchFor" failed with', Signal);
+        throw Signal;
+    }
+}
+/**** WebSearch - returns a list of URLs ****/
+async function WebSearch(SearchPhrase) {
+    const SearXNGServer = getFromContext('SearXNGServer');
+    if (!ValueIsURL(SearXNGServer))
+        throwError('MissingContextItem: no or invalid "SearXNGServer" context item found');
+    const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+    if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
+        throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
+    const Parameters = new URLSearchParams({
+        q: SearchPhrase, format: 'json', categories: 'general'
+    });
+    const Response = await fetch(`${SearXNGServer}/search?${Parameters}`); // may fail!
+    return (await Response.json()).results
+        .filter((Result) => Result.score >= SearXNGThreshold)
+        .map((Result) => Result.url);
+}
 /**** ValueIsWikipediaPageName ****/
 function ValueIsWikipediaPageName(Value) {
     if (!ValueIsNonEmptyString(Value)) {
@@ -817,6 +1239,69 @@ function ValueIsWikipediaPageName(Value) {
     Value = encodeURIComponent(Value.replace(/\s+/g, '_'));
     const UTF8Bytes = new TextEncoder().encode(Value);
     return (UTF8Bytes.length <= 255);
+}
+/**** ValueIsWikipediaURL ****/
+const WikipediaPattern = /^http[s]?:\/\/[^.]+[.]wikipedia[.]org\/(?:wiki\/)?([^#?\/]+)/;
+function ValueIsWikipediaURL(URL) {
+    return WikipediaPattern.test(URL);
+}
+/**** TextOfWikipediaArticle ****/
+async function TextOfWikipediaArticle(URL) {
+    const PageName = URL.replace(/^.*\//, '')
+        .replace(/#.*$/, '').replace(/[?].*$/, '');
+    const RequestParameters = new URLSearchParams({
+        action: 'parse',
+        page: PageName,
+        format: 'json',
+        origin: '*'
+    });
+    const Response = await fetch(// may fail!
+    `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
+    const Data = await Response.json();
+    if (Data.error != null) {
+        return '';
+    }
+    const rawHTML = Data.parse.text['*'];
+    const aux = document.createElement('div');
+    aux.innerHTML = rawHTML;
+    const unwantedSelectors = [
+        'img', '.reference', '.infobox', '.navbox', '.metadata',
+        '.mw-editsection', '.hatnote', '.reflist'
+    ];
+    unwantedSelectors.forEach((unwantedSelector) => {
+        const unwantedElements = aux.querySelectorAll(unwantedSelector);
+        unwantedElements.forEach((unwantedElement) => unwantedElement.remove());
+    });
+    aux.querySelectorAll('a').forEach((Element) => Element.removeAttribute('href'));
+    const HTMLtoTextOptions = {
+        wordwrap: 80,
+        selectors: [
+            { selector: 'h1', options: { uppercase: false } },
+            { selector: 'h2', options: { uppercase: false } },
+            { selector: 'h3', options: { uppercase: false } },
+            { selector: 'h4', options: { uppercase: false } },
+            { selector: 'h5', options: { uppercase: false } },
+            { selector: 'h6', options: { uppercase: false } },
+        ]
+    };
+    return HTMLtoText(aux.innerHTML, HTMLtoTextOptions);
+}
+/**** TextOfWikipediaArticleForAI ****/
+async function TextOfWikipediaArticleForAI(URL) {
+    let Text = await TextOfWikipediaArticle(URL);
+    Text = TextWithoutSection(Text, 'See also');
+    Text = TextWithoutSection(Text, 'References');
+    Text = TextWithoutSection(Text, 'External Links');
+    return Text;
+}
+function TextWithoutSection(Text, Heading) {
+    let Pattern = new RegExp('(?:^|\\n\\n\\n)' + Heading + '(?:(?!(?:^|\\n{3}))[\\s\\S])*', 'i');
+    return Text.replace(Pattern, '');
+}
+/**** TextOfWebDocument ****/
+async function TextOfWebDocument(URL) {
+    const Response = await fetch(URL); // may fail!
+    return HTMLtoText(await Response.text());
 }
 /**** JSONinText ****/
 function JSONinText(Text) {
@@ -1171,7 +1656,7 @@ function externalAPI(Interpreter, global) {
                     getFromContext('default_UserTemplate'), '{{Prompt}}').replace('{{Prompt}}', Prompt),
             ];
             const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            let Response = await ChatCompletionFor(MessageList, OptionSet);
             Callback(Response);
         }
         catch (Signal) {
@@ -1182,15 +1667,7 @@ function externalAPI(Interpreter, global) {
     /**** SummaryOfText ****/
     Interpreter.setProperty(global, 'SummaryOfText', Interpreter.createAsyncFunction(async function _SummaryOfText(Text, Callback) {
         try {
-            expectText('text to summarize', Text);
-            const MessageList = [
-                acceptableText(getFromContext('Summary_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('Summary_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'summarize {{Text}}').replace('{{TextToSummarize}}', Text),
-            ];
-            const OptionSet = RequestOptionsFrom('Summary_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            let Response = await SummaryOfText(Text);
             Callback(Response);
         }
         catch (Signal) {
@@ -1198,20 +1675,11 @@ function externalAPI(Interpreter, global) {
             Callback(null);
         }
     }));
-    /**** StepsDerivedFromText ****/
-    Interpreter.setProperty(global, 'StepsDerivedFromText', Interpreter.createAsyncFunction(async function _StepsDerivedFromText(Objective, Callback) {
+    /**** ResearchFor ****/
+    Interpreter.setProperty(global, 'ResearchFor', Interpreter.createAsyncFunction(async function _ResearchFor(Objective, Callback) {
         try {
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('TaskDecomposer_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('TaskDecomposer_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'Think step by step. Create a List of steps to solve {{Objective}}').replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('TaskDecomposer_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
-            const StepList = JSONinText(Response);
-            Callback(Playground.Interpreter.nativeToPseudo(ValueIsList(StepList) ? StepList : []));
+            let Response = await ResearchFor(Objective);
+            Callback(Response);
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1221,19 +1689,7 @@ function externalAPI(Interpreter, global) {
     /**** SearchPhraseForText ****/
     Interpreter.setProperty(global, 'SearchPhraseForText', Interpreter.createAsyncFunction(async function _SearchPhraseForText(Objective, Callback) {
         try {
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('SearchGenerator_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('SearchGenerator_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'generate a search phrase for {{Objective}}').replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('SearchGenerator_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
-            Response = Response.trim();
-            if (/^".*"$/.test(Response)) {
-                Response = Response.slice(1, Response.length - 1);
-            }
+            let Response = await SearchPhraseForText(Objective);
             Callback(Response);
         }
         catch (Signal) {
@@ -1244,17 +1700,7 @@ function externalAPI(Interpreter, global) {
     /**** FindingsFromText ****/
     Interpreter.setProperty(global, 'FindingsFromText', Interpreter.createAsyncFunction(async function _FindingsFromText(Text, Objective, Callback) {
         try {
-            expectText('text to analyze', Text);
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('InformationExtractor_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('InformationExtractor_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'extract an information from {{TextToRead}} to solve {{Objective}}').replace('{{TextToRead}}', Text)
-                    .replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('InformationExtractor_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            let Response = await FindingsFromText(Text, Objective);
             Callback(Response);
         }
         catch (Signal) {
@@ -1265,18 +1711,8 @@ function externalAPI(Interpreter, global) {
     /**** TextHelpsWith ****/
     Interpreter.setProperty(global, 'TextHelpsWith', Interpreter.createAsyncFunction(async function _TextHelpsWith(Text, Objective, Callback) {
         try {
-            expectText('text to analyze', Text);
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('InformationValidator_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('InformationValidator_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'does {{TextToAnalzye}} help to solve {{Objective}}?').replace('{{TextToAnalzye}}', Text)
-                    .replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('InformationValidator_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
-            Callback(Response.trim().toLowerCase() === 'true');
+            let Response = await TextHelpsWith(Text, Objective);
+            Callback(Response);
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1286,19 +1722,7 @@ function externalAPI(Interpreter, global) {
     /**** SolutionMergedFromTexts ****/
     Interpreter.setProperty(global, 'SolutionMergedFromTexts', Interpreter.createAsyncFunction(async function _SolutionMergedFromTexts(Text1, Text2, Objective, Callback) {
         try {
-            expectText('text #1', Text1);
-            expectText('text #2', Text2);
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('SolutionMerger_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('SolutionMerger_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'combine {{Text1}} and {{Text2}} to solve {{Objective}}').replace('{{Text1}}', Text1)
-                    .replace('{{Text2}}', Text2)
-                    .replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('SolutionMerger_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
+            let Response = await SolutionMergedFromTexts(Text1, Text2, Objective);
             Callback(Response);
         }
         catch (Signal) {
@@ -1309,37 +1733,98 @@ function externalAPI(Interpreter, global) {
     /**** SolutionEncodedFrom ****/
     Interpreter.setProperty(global, 'SolutionEncodedFrom', Interpreter.createAsyncFunction(async function _SolutionEncodedFrom(Text, Objective, Callback) {
         try {
-            expectText('text', Text);
-            expectText('objective', Objective);
-            const MessageList = [
-                acceptableText(getFromContext('SolutionEncoder_SystemTemplate') ||
-                    getFromContext('default_SystemTemplate'), 'Be precise and concise.'),
-                acceptableText(getFromContext('SolutionEncoder_UserTemplate') ||
-                    getFromContext('default_UserTemplate'), 'generate a JSON structure from {{Text}} to solve {{Objective}}').replace('{{Text}}', Text)
-                    .replace('{{Objective}}', Objective),
-            ];
-            const OptionSet = RequestOptionsFrom('SolutionEncoder_');
-            let Response = await await ChatCompletionFor(MessageList, OptionSet);
-            let JSONResponse = JSONinText(Response);
-            Callback(Playground.Interpreter.nativeToPseudo(ValueIsList(JSONResponse) ? JSONResponse : []));
+            let Response = await SolutionEncodedFrom(Text, Objective);
+            Callback(Playground.Interpreter.nativeToPseudo(Response));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
             Callback(null);
         }
     }));
-    /**** ValueIsKnowledge ****/
-    Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value) {
-        return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
-            ValueIsNonEmptyString(Value.Description) &&
-            ValueIsNonEmptyString(Value.Fact)));
+    /**** ComputationOf ****/
+    Interpreter.setProperty(global, 'ComputationOf', Interpreter.createAsyncFunction(async function _ComputationOf(Objective, Knowledge, Callback) {
+        try {
+            let Response = await ComputationOf(Objective, Knowledge); // JSON value
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** ParameterListFor ****/
+    Interpreter.setProperty(global, 'ParameterListFor', Interpreter.createAsyncFunction(async function _ParameterListFor(Objective, Callback) {
+        try {
+            let Response = await ParameterListFor(Objective); // JSON array
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** FunctionFor ****/
+    Interpreter.setProperty(global, 'FunctionFor', Interpreter.createAsyncFunction(async function _FunctionFor(Objective, ParameterList, Callback) {
+        try {
+            let Response = await FunctionFor(Objective, ParameterList);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** ArgumentValueFor ****/
+    Interpreter.setProperty(global, 'ArgumentValueFor', Interpreter.createAsyncFunction(async function _ArgumentValueFor(Parameter, Callback) {
+        try {
+            let Response = await ArgumentValueFor(Parameter); // any JS type
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** StepsDerivedFromText ****/
+    Interpreter.setProperty(global, 'StepsDerivedFromText', Interpreter.createAsyncFunction(async function _StepsDerivedFromText(Task, Callback) {
+        try {
+            let Response = await StepsDerivedFromText(Task);
+            Callback(Playground.Interpreter.nativeToPseudo(Response));
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** AnswerGeneratedFor ****/
+    Interpreter.setProperty(global, 'AnswerGeneratedFor', Interpreter.createAsyncFunction(async function _AnswerGeneratedFor(Task, Callback) {
+        try {
+            let Response = await AnswerGeneratedFor(Task);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
+    /**** addKnowledgeFrom ****/
+    Interpreter.setProperty(global, 'addKnowledgeFrom', Interpreter.createAsyncFunction(async function _addKnowledgeFrom(Objective, Fact, Callback) {
+        try {
+            await addKnowledgeFrom(Objective, Fact);
+            Callback(undefined);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
     }));
     /**** ValueIsStepList ****/
     Interpreter.setProperty(global, 'ValueIsStepList', Interpreter.createNativeFunction(function _ValueIsStepList(Value) {
-        return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
-            ValueIsOneOf(Value.Tool, ['ResearchTool', 'ComputationTool', 'ResponseTool']) &&
-            ValueIsNonEmptyString(Value.Objective) &&
-            ValueIsNonEmptyString(Value.Justification)));
+        return ValueIsStepList(Value);
+    }));
+    /**** ValueIsKnowledge ****/
+    Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value, JSONisAllowed) {
+        return ValueIsKnowledge(Value, JSONisAllowed);
     }));
     /**** ValueIsWikipediaURL ****/
     Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
@@ -1550,58 +2035,94 @@ function startBlocklyProgram() {
         default_presence_penalty: undefined, default_frequency_penalty: 1,
         default_SystemTemplate: 'Be precise and concise.',
         default_UserTemplate: '{{Prompt}}',
-        Summary_model: undefined, Summary_max_tokens: 1024,
-        Summary_temperature: 0, Summary_top_p: undefined, Summary_top_k: 1,
-        Summary_presence_penalty: undefined, Summary_frequency_penalty: 1,
-        Summary_SystemTemplate: 'Be precise and concise.',
-        Summary_UserTemplate: `Your task is to provide a concise and precise summary of the following text, capturing its key points and main ideas. The summary should be clear, accurate, and significantly shorter than the original text.
+        Summarizer_model: undefined, Summarizer_max_tokens: 1024,
+        Summarizer_temperature: 0, Summarizer_top_p: undefined, Summarizer_top_k: 1,
+        Summarizer_presence_penalty: undefined, Summarizer_frequency_penalty: 1,
+        Summarizer_SystemTemplate: 'Be precise and concise.',
+        Summarizer_UserTemplate: `
+Your task is to provide a concise and precise summary of the following text,
+capturing its key points and main ideas. The summary should be clear, accurate,
+and significantly shorter than the original text.
 
 Text to summarize:
 {{TextToSummarize}}
 
-Please provide a concise summary of the above text in no more than 3-4 sentences.`,
+Please provide a concise summary of the above text in no more than 3-4 sentences.
+`,
         TaskDecomposer_model: undefined, TaskDecomposer_max_tokens: 2048,
         TaskDecomposer_temperature: 0, TaskDecomposer_top_p: undefined, TaskDecomposer_top_k: 1,
         TaskDecomposer_presence_penalty: undefined, TaskDecomposer_frequency_penalty: 1,
         TaskDecomposer_SystemTemplate: 'Be precise and concise.',
         TaskDecomposer_UserTemplate: `
-Your task is to analyze and break down the following task into clear, logical, and sequential steps:
+You are an AI assistant trained to perform a given task. Your role is to
+analyze and break down the following task into clear, logical, and sequential
+steps taking into account what you already know and the tools you have at hand:
 
 Task Description:
-{{Objective}}
+{{Task}}
 
-Provide a detailed step-by-step breakdown of how to accomplish this task. Your response should be in the form of a valid JSON list, where each item in the list is an object containing the following properties:
+What you already know:
+{{KnowledgeList}}
 
-- "Description": A brief description of the step
-- "Explanation": A more detailed explanation of what the step entails
+The available tools are:
 
-Do not include any text outside of the JSON structure. The JSON should start with an opening square bracket '[' and end with a closing square bracket ']'. Each object within the list should be separated by a comma.
+1. ResponseTool:
+   - Description: Generates a final response and completes the task. This must be the final step.
+   - Usage: ResponseTool()
+
+2. ResearchTool:
+   - Description: Performs web searches to gather missing information and returns relevant results.
+   - Usage: ResearchTool(objective)
+
+3. ComputationTool:
+   - Description: Performs any kind of computation to achieve an objective.
+   - Usage: ComputationTool(objective)
+
+Provide a detailed step-by-step breakdown of how to accomplish this task. Your
+response should be in the form of a valid JSON list, where each item in the list
+is an object containing the following properties:
+
+- "Tool": "Name of the selected tool (ResearchTool, ComputationTool or ResponseTool)",
+- "Objective": "A clear, concise statement of what the tool should achieve",
+- "Justification": "A brief explanation of why this tool and objective were chosen"
+
+Do not include any text outside of the JSON structure. The JSON should start
+with an opening square bracket '[' and end with a closing square bracket ']'.
+Each object within the list should be separated by a comma.
 
 Example format:
 [
   {
-    "Description": "Step description here",
-    "Explanation": "More detailed explanation here"
+    "Tool":          "Chosen tool here",
+    "Objective":     "Step objective here",
+    "Justification": "A detailed justification here"
   },
   {
-    "Description": "Another step description",
-    "Explanation": "Another detailed explanation"
+    "Tool":          "Another chosen tool here",
+    "Objective":     "Another step objective",
+    "Justification": "Another detailed justification"
   }
 ]
 
-Ensure that your steps are:
-- Comprehensive and cover all aspects of the task
-- Presented in a logical order
-- Clear and easy to understand for someone unfamiliar with the task
-- Specific and actionable
+Ensure that your steps:
+- Do not recompute or regenerate any already known information
+- Are comprehensive and cover all aspects of the task
+- Are presented in a logical order
+- Are clear and easy to understand for someone unfamiliar with the task
+- Are specific and actionable
+- End with a step using the ResponseTool
 
-Your goal is to create a guide that anyone could follow to successfully complete the given task, presented in a valid JSON format.`,
+Your goal is to create a guide that anyone could follow to successfully complete
+the given task, presented in a valid JSON format.
+`,
         SearchGenerator_model: undefined, SearchGenerator_max_tokens: 2048,
         SearchGenerator_temperature: 0, SearchGenerator_top_p: undefined, SearchGenerator_top_k: 1,
         SearchGenerator_presence_penalty: undefined, SearchGenerator_frequency_penalty: 1,
         SearchGenerator_SystemTemplate: 'Be precise and concise.',
         SearchGenerator_UserTemplate: `
-You are an AI assistant tasked with formulating effective search engine queries. Your goal is to create a concise, relevant query that will help find information about the following problem:
+You are an AI assistant tasked with formulating effective search engine queries.
+Your goal is to create a concise, relevant query that will help find information
+about the following problem:
 
 {{Objective}}
 
@@ -1612,14 +2133,17 @@ Generate a search query that:
 4. Avoids unnecessary words or punctuation
 5. Is likely to return useful results from a search engine
 
-Important: Output ONLY the query string itself, without any additional text, explanations, or formatting.
+Important: Output ONLY the query string itself, without any additional text,
+explanations, or formatting.
 `,
         InformationExtractor_model: undefined, InformationExtractor_max_tokens: 2048,
         InformationExtractor_temperature: 0, InformationExtractor_top_p: undefined, InformationExtractor_top_k: 1,
         InformationExtractor_presence_penalty: undefined, InformationExtractor_frequency_penalty: 1,
         InformationExtractor_SystemTemplate: 'Be precise and concise.',
         InformationExtractor_UserTemplate: `
-Your task is to answer the following question based ONLY on the information provided in the given text. Do not use any external knowledge or information beyond what is explicitly stated in the text.
+Your task is to answer the following question based ONLY on the information
+provided in the given text. Do not use any external knowledge or information
+beyond what is explicitly stated in the text.
 
 Text: {{TextToRead}}
 
@@ -1632,15 +2156,21 @@ Answer:
         InformationValidator_presence_penalty: undefined, InformationValidator_frequency_penalty: 1,
         InformationValidator_SystemTemplate: 'Be precise and concise.',
         InformationValidator_UserTemplate: `
-You are an expert at analyzing text for relevance to specific problems. Your task is to determine whether a given text contains information that could help solve a particular problem.
+You are an expert at analyzing text for relevance to specific problems. Your
+task is to determine whether a given text contains information that could help
+solve a particular problem.
 
 Text to analyze: {{TextToAnalzye}}
 Problem to solve: {{Objective}}
 
-Carefully examine the text and consider whether it contains any information, concepts, ideas, or insights that could be useful in addressing or solving the specified problem. Your response should be either "true" or "false".
+Carefully examine the text and consider whether it contains any information,
+concepts, ideas, or insights that could be useful in addressing or solving the
+specified problem. Your response should be either "true" or "false".
 
-Output "true" if the text contains any relevant information that could contribute to solving the problem, even if it's not a complete solution.
-Output "false" if the text does not contain any information that would be helpful in addressing the problem.
+Output "true" if the text contains any relevant information that could
+contribute to solving the problem, even if it's not a complete solution.
+Output "false" if the text does not contain any information that would be
+helpful in addressing the problem.
 
 Your response should be only one word: either "true" or "false".
 
@@ -1655,7 +2185,9 @@ Response:
 
 **Instructions:**
 
-Combine the information from **Text 1** and **Text 2** into a single, cohesive text that addresses the **Objective**. Output only the merged text, without any additional content.
+Combine the information from **Text 1** and **Text 2** into a single, cohesive
+text that addresses the **Objective**. Output only the merged text, without any
+additional content.
 
 ### Inputs:
 - **Text 1:** {{Text1}}
@@ -1669,16 +2201,124 @@ Combine the information from **Text 1** and **Text 2** into a single, cohesive t
         SolutionEncoder_presence_penalty: undefined, SolutionEncoder_frequency_penalty: 1,
         SolutionEncoder_SystemTemplate: 'Be precise and concise.',
         SolutionEncoder_UserTemplate: `
-Generate a concise, machine-processable solution for a given problem solely based on the information in a given text. Output only the solution as a JSON-compliant list, without any explanations or additional context.
+Generate a concise, machine-processable solution for a given problem solely
+based on the information in a given text. Output only the solution as a
+JSON-compliant list, without any explanations or additional context.
 
 Text to analyze: {{Text}}
 Problem to solve: {{Objective}}
 
 Response format:
 Output a JSON array in the form: ["item1", "item2", "item3"]
-Ensure that all string values are properly escaped according to JSON rules, and that the entire output is valid JSON.
+Ensure that all string values are properly escaped according to JSON rules,
+and that the entire output is valid JSON.
+`,
+        ParameterListGenerator_model: undefined, ParameterListGenerator_max_tokens: 2048,
+        ParameterListGenerator_temperature: 0, ParameterListGenerator_top_p: undefined, ParameterListGenerator_top_k: 1,
+        ParameterListGenerator_presence_penalty: undefined, ParameterListGenerator_frequency_penalty: 1,
+        ParameterListGenerator_SystemTemplate: 'Be precise and concise.',
+        ParameterListGenerator_UserTemplate: `
+Generate a list of parameters for a JavaScript function designed to compute the
+result of a given objective. The output should be a valid JSON list, where each
+element is an object containing the following fields:
+- "Name": the name of the argument
+- "Description": a human-readable description of the argument's purpose
+
+Here is an example JSON list for a function that calculates the area of a
+rectangle:
+[
+  {
+    "Name": "width",
+    "Description": "The width of the rectangle"
+  },
+  {
+    "Name": "height",
+    "Description": "The height of the rectangle"
+  }
+]
+
+Please generate a similar JSON list for a function that achieves the following
+objective
+{{Objective}}
+`,
+        FunctionGenerator_model: undefined, FunctionGenerator_max_tokens: 2048,
+        FunctionGenerator_temperature: 0, FunctionGenerator_top_p: undefined, FunctionGenerator_top_k: 1,
+        FunctionGenerator_presence_penalty: undefined, FunctionGenerator_frequency_penalty: 1,
+        FunctionGenerator_SystemTemplate: 'Be precise and concise.',
+        FunctionGenerator_UserTemplate: `
+You are a highly skilled JavaScript developer. Your task is to generate a
+JavaScript function that computes a specific result based on a given objective
+and a list of arguments. Each argument is described by the type of data it will
+contain. Ensure that the function is well-documented with comments explaining
+each step.
+Output the generated function only. Avoid any "example usage", "module.exports",
+"export" statements or any other text outside the actual function.
+
+### Objective:
+{{Objective}}
+
+### Arguments:
+{{ParameterList}}
+
+### Function Source:
+`,
+        ArgumentGenerator_model: undefined, ArgumentGenerator_max_tokens: 2048,
+        ArgumentGenerator_temperature: 0, ArgumentGenerator_top_p: undefined, ArgumentGenerator_top_k: 1,
+        ArgumentGenerator_presence_penalty: undefined, ArgumentGenerator_frequency_penalty: 1,
+        ArgumentGenerator_SystemTemplate: 'Be precise and concise.',
+        ArgumentGenerator_UserTemplate: `
+You are given a list of known facts and a description of a function argument.
+Your task is to extract the relevant data for the specified function argument
+from the list of known facts. The argument value should be either a single
+value or a list of values, packed into a JavaScript object with the sole
+property "Value". Output the result as valid JSON.
+
+### Known Facts:
+{{Knowledge}}
+
+### Function Argument Description:
+{{Parameter.Description}}
+
+### Output:
+Provide the extracted data in the following JSON format:
+{
+  "Value": <extracted data as a boolean, number, string, array or object>
+}
+`,
+        KnowledgeGenerator_model: undefined, KnowledgeGenerator_max_tokens: 2048,
+        KnowledgeGenerator_temperature: 0, KnowledgeGenerator_top_p: undefined, KnowledgeGenerator_top_k: 1,
+        KnowledgeGenerator_presence_penalty: undefined, KnowledgeGenerator_frequency_penalty: 1,
+        KnowledgeGenerator_SystemTemplate: 'Be precise and concise.',
+        KnowledgeGenerator_UserTemplate: `
+Generate a brief and concise headline (1 line, 50 words max) for the
+following data that was gathered in order to achieve the given objective:
+
+{{Fact}}
+
+Objective:
+{{Objective}}
+
+Focus on the key points that are most relevant to the stated objective. Use
+clear and simple language. Do not include any extraneous details.
+`,
+        AnswerGenerator_model: undefined, AnswerGenerator_max_tokens: 2048,
+        AnswerGenerator_temperature: 0, AnswerGenerator_top_p: undefined, AnswerGenerator_top_k: 1,
+        AnswerGenerator_presence_penalty: undefined, AnswerGenerator_frequency_penalty: 1,
+        AnswerGenerator_SystemTemplate: 'Be precise and concise.',
+        AnswerGenerator_UserTemplate: `
+Given a specific task and all known facts, generate a brief and concise
+human-readable result.
+
+Task:
+{{Task}}
+
+Known facts:
+{{Knowledge}}
+
+Focus on clarity and brevity.
 `,
         Console: '',
+        logStepsToConsole: true, logActionsToConsole: true,
     });
     Playground.InterpreterState = 'running';
     Playground.pendingInterpreterState = undefined;
@@ -2950,7 +3590,11 @@ javascriptGenerator.forBlock['wheneverUIEventOccuredWithin'] = function (Block, 
       var EventReceived = waitForNextUIEvent(${Timeout})
       if (! EventReceived) { break }
 
-      ${Body}
+      try {
+        ${Body}
+      } catch (Signal) {
+        if (Signal === 'leaveUIEventLoop') { break } else { throw Signal }
+      }
     }
     UIEventHandlerWasLeft()
   } catch (Signal) {
@@ -2985,7 +3629,11 @@ javascriptGenerator.forBlock['wheneverUIEventOccured'] = function (Block, Genera
       var EventReceived = waitForNextUIEvent(-1)
       if (! EventReceived) { break }
 
-      ${Body}
+      try {
+        ${Body}
+      } catch (Signal) {
+        if (Signal === 'leaveUIEventLoop') { break } else { throw Signal }
+      }
     }
     UIEventHandlerWasLeft()
   } catch (Signal) {
@@ -3049,7 +3697,7 @@ Blockly.Blocks['leaveUIEventLoop'] = {
     }
 };
 javascriptGenerator.forBlock['leaveUIEventLoop'] = function (Block, Generator) {
-    return `leaveUIEventLoop();\n`;
+    return `throw 'leaveUIEventLoop';\n`;
 };
 /**** ChatCompletionFor ****/
 Blockly.Blocks['ChatCompletionFor'] = {
@@ -3154,24 +3802,24 @@ javascriptGenerator.forBlock['SummaryOfText'] = function (Block, Generator) {
     let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
     return [`SummaryOfText(${Text})`, Order.FUNCTION_CALL];
 };
-/**** StepsDerivedFromText ****/
-Blockly.Blocks['StepsDerivedFromText'] = {
+/**** ResearchFor ****/
+Blockly.Blocks['ResearchFor'] = {
     init: function () {
         this.jsonInit({
-            type: 'StepsDerivedFromText',
-            tooltip: 'creates a summary of the given text',
+            type: 'ResearchFor',
+            tooltip: 'conducts a web research with regards to a given objective',
             helpUrl: '',
-            message0: 'steps derived from %1',
+            message0: 'findings from the web for %1',
             args0: [{ type: 'input_value', name: 'objective', check: 'String' }],
-            output: 'Array',
+            output: 'String',
             colour: 60,
             inputsInline: true
         });
     }
 };
-javascriptGenerator.forBlock['StepsDerivedFromText'] = function (Block, Generator) {
+javascriptGenerator.forBlock['ResearchFor'] = function (Block, Generator) {
     let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
-    return [`StepsDerivedFromText(${Objective})`, Order.FUNCTION_CALL];
+    return [`ResearchFor(${Objective})`, Order.FUNCTION_CALL];
 };
 /**** SearchPhraseForText ****/
 Blockly.Blocks['SearchPhraseForText'] = {
@@ -3286,6 +3934,149 @@ javascriptGenerator.forBlock['SolutionEncodedFrom'] = function (Block, Generator
     let Text = Generator.valueToCode(Block, 'text', Order.NONE) || '""';
     return [`SolutionEncodedFrom(${Text},${Objective})`, Order.FUNCTION_CALL];
 };
+/**** ComputationOf ****/
+Blockly.Blocks['ComputationOf'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ComputationOf',
+            tooltip: 'runs a computation to perform a given task considering any already gathered knowledge',
+            helpUrl: '',
+            message0: 'computation result for %1',
+            args0: [{ type: 'input_value', name: 'objective', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ComputationOf'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    return [`ComputationOf(${Objective})`, Order.FUNCTION_CALL];
+};
+/**** ParameterListFor ****/
+Blockly.Blocks['ParameterListFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ParameterListFor',
+            tooltip: 'generates a parameter list for a function to achieve the given objective',
+            helpUrl: '',
+            message0: 'parameters for function to achieve %1',
+            args0: [
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ParameterListFor'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    return [`ParameterListFor(${Objective})`, Order.FUNCTION_CALL];
+};
+/**** FunctionFor ****/
+Blockly.Blocks['FunctionFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'FunctionFor',
+            tooltip: 'generates a JavaScript function to achieve the given objective with the given parameters',
+            helpUrl: '',
+            message0: 'function with parameters %1 to achieve %2',
+            args0: [
+                { type: 'input_value', name: 'parameters', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['FunctionFor'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Parameters = Generator.valueToCode(Block, 'parameters', Order.NONE) || '"[]"';
+    return [`FunctionFor(${Objective},${Parameters})`, Order.FUNCTION_CALL];
+};
+/**** ArgumentValueFor ****/
+Blockly.Blocks['ArgumentValueFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ArgumentValueFor',
+            tooltip: 'derives a function argument using its parameter description and the existing knowledge',
+            helpUrl: '',
+            message0: 'argument for %1',
+            args0: [{ type: 'input_value', name: 'parameter', check: 'String' },],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ArgumentValueFor'] = function (Block, Generator) {
+    let Parameter = Generator.valueToCode(Block, 'parameter', Order.NONE) || '""';
+    return [`ArgumentValueFor(${Parameter})`, Order.FUNCTION_CALL];
+};
+/**** StepsDerivedFromText ****/
+Blockly.Blocks['StepsDerivedFromText'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'StepsDerivedFromText',
+            tooltip: 'creates a list of steps to perform a given task based on already existing knowledge',
+            helpUrl: '',
+            message0: 'steps derived from %1',
+            args0: [{ type: 'input_value', name: 'objective', check: 'String' }],
+            output: 'Array',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['StepsDerivedFromText'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    return [`StepsDerivedFromText(${Objective})`, Order.FUNCTION_CALL];
+};
+/**** AnswerGeneratedFor ****/
+Blockly.Blocks['AnswerGeneratedFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'AnswerGeneratedFor',
+            tooltip: 'creates a human-readable response for a given task based on the gathered knowledge',
+            helpUrl: '',
+            message0: 'answer for %1',
+            args0: [{ type: 'input_value', name: 'task', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['AnswerGeneratedFor'] = function (Block, Generator) {
+    let Task = Generator.valueToCode(Block, 'task', Order.NONE) || '""';
+    return [`AnswerGeneratedFor(${Task})`, Order.FUNCTION_CALL];
+};
+/**** addKnowledgeFrom ****/
+Blockly.Blocks['addKnowledgeFrom'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'addKnowledgeFrom',
+            tooltip: 'adds a given fact to the already existing knowledge',
+            helpUrl: '',
+            message0: 'add %1 as a response to %2 to existing knowledge',
+            args0: [
+                { type: 'input_value', name: 'fact', check: 'String' },
+                { type: 'input_value', name: 'objective', check: 'String' }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60
+        });
+    }
+};
+javascriptGenerator.forBlock['addKnowledgeFrom'] = function (Block, Generator) {
+    let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
+    let Fact = Generator.valueToCode(Block, 'fact', Order.NONE) || '""';
+    return `addKnowledgeFrom(${Objective},${Fact});\n`;
+};
 /**** ValueIsKnowledge ****/
 Blockly.Blocks['ValueIsKnowledge'] = {
     init: function () {
@@ -3303,7 +4094,7 @@ Blockly.Blocks['ValueIsKnowledge'] = {
 };
 javascriptGenerator.forBlock['ValueIsKnowledge'] = function (Block, Generator) {
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsKnowledge(${Value})`, Order.FUNCTION_CALL];
+    return [`ValueIsKnowledge(${Value},true)`, Order.FUNCTION_CALL];
 };
 /**** ValueIsStepList ****/
 Blockly.Blocks['ValueIsStepList'] = {
@@ -3994,19 +4785,26 @@ const WorkspaceSpecification = {
                 name: "AI Mezzanines",
                 contents: [
                     { kind: "block", type: "SummaryOfText" },
-                    { kind: "block", type: "StepsDerivedFromText" },
+                    { kind: "block", type: "ResearchFor" },
                     { kind: "block", type: "SearchPhraseForText" },
                     { kind: "block", type: "FindingsFromText" },
                     { kind: "block", type: "TextHelpsWith" },
                     { kind: "block", type: "SolutionMergedFromTexts" },
                     { kind: "block", type: "SolutionEncodedFrom" },
-                    { kind: "block", type: "ValueIsKnowledge" },
-                    { kind: "block", type: "ValueIsStepList" },
+                    { kind: "block", type: "ComputationOf" },
+                    { kind: "block", type: "ParameterListFor" },
+                    { kind: "block", type: "FunctionFor" },
+                    { kind: "block", type: "ArgumentValueFor" },
+                    { kind: "block", type: "StepsDerivedFromText" },
+                    { kind: "block", type: "AnswerGeneratedFor" },
+                    { kind: "block", type: "addKnowledgeFrom" },
                 ]
             }, {
                 kind: "category",
                 name: "AI Support",
                 contents: [
+                    { kind: "block", type: "ValueIsKnowledge" },
+                    { kind: "block", type: "ValueIsStepList" },
                     { kind: "block", type: "ValueIsWikipediaURL" },
                     { kind: "block", type: "ValueIsWikipediaPageName" },
                     { kind: "block", type: "JSONinText" },
@@ -4101,7 +4899,7 @@ class PlaygroundView extends Component {
             <option value="basicSettings">basic Settings</option>
             <option value="PoC">Proof-of-Concept</option>
             <option value="AIWebSearch">AI-assisted Web Search</option>
-            <option value="AIWebSearch_reporting">AI-assisted Web Search with live Reporting</option>
+            <option value="AIAgent">AI Agent</option>
           </select>
             <div class="Playground Gap"/>
           <button class="Playground Button" style="width:80px"
