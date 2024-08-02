@@ -511,7 +511,7 @@ const PlaygroundUITypes = [
     'checkbox', 'radiobutton-group', 'dropdown', 'button',
     'textline-output', 'number-output', 'text-output',
     'text', 'fineprint',
-    'api-server-input',
+    'api-server-input', 'searxng-server-input',
 ];
 const PlaygroundUIEventTypes = ['click', 'input'];
 /**** showWorkspace ****/
@@ -1545,6 +1545,10 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'appendAPIServerInput', Interpreter.createNativeFunction(function _appendAPIServerInput(Label) {
         appendToUI('APIServer', Label, 'api-server-input');
     }));
+    /**** appendSearXNGServerInput ****/
+    Interpreter.setProperty(global, 'appendSearXNGServerInput', Interpreter.createNativeFunction(function _appendSearXNGServerInput(Label) {
+        appendToUI('SearXNGServer', Label, 'searxng-server-input');
+    }));
     /**** configureUI ****/
     Interpreter.setProperty(global, 'configureUI', Interpreter.createNativeFunction(function _configureUI(Key, Option, Value) {
         configureUI(Key, Option, Value);
@@ -1908,7 +1912,8 @@ function externalAPI(Interpreter, global) {
             const Response = await fetch(`${ServerURL}/search?${Parameters}`); // may fail!
             const Result = (await Response.json()).results
                 .filter((Result) => Result.score >= ScoreThreshold)
-                .map((Result) => Result.url);
+                .map((Result) => Result.url)
+                .filter((URL) => URL.startsWith('https://'));
             Callback(Playground.Interpreter.nativeToPseudo(Result));
         }
         catch (Signal) {
@@ -3270,6 +3275,26 @@ Blockly.Blocks['appendAPIServerInput'] = {
 javascriptGenerator.forBlock['appendAPIServerInput'] = function (Block, Generator) {
     let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
     return `appendAPIServerInput(${Label});\n`;
+};
+/**** appendSearXNGServerInput ****/
+Blockly.Blocks['appendSearXNGServerInput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendSearXNGServerInput',
+            tooltip: 'appends a URL input element for SearXNG Servers to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append SearXNG Server input element labelled %1 to UI',
+            args0: [{ type: 'input_value', name: 'label', check: 'String' }],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendSearXNGServerInput'] = function (Block, Generator) {
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendSearXNGServerInput(${Label});\n`;
 };
 /**** configureUI ****/
 Blockly.Blocks['configureUI'] = {
@@ -4752,6 +4777,7 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "appendText" },
                     { kind: "block", type: "appendFinePrint" },
                     { kind: "block", type: "appendAPIServerInput" },
+                    { kind: "block", type: "appendSearXNGServerInput" },
                     { kind: "block", type: "configureUI" },
                     { kind: "block", type: "ConfigurationOf" },
                     { kind: "block", type: "EnablingOf" },
@@ -5003,6 +5029,7 @@ class PlaygroundUIItemView extends Component {
             case 'text': return html `<${TextViewItem} Item=${Item}/>`;
             case 'fineprint': return html `<${FinePrintViewItem} Item=${Item}/>`;
             case 'api-server-input': return html `<${APIServerInputItem} Item=${Item}/>`;
+            case 'searxng-server-input': return html `<${SearXNGServerInputItem} Item=${Item}/>`;
             default: throwError('InvalidArgument: missing or invalid "Item.Type"');
         }
         return undefined;
@@ -5544,6 +5571,66 @@ class APIServerInputItem extends PlaygroundUIItemView {
           <option value="" selected disabled>(select)</option>
           <option value="https://api.openai.com/v1/chat/completions">Open AI</option>
           <option value="https://api.perplexity.ai/chat/completions">Perplexity AI</option>
+        </select>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
+/**** SearXNGServerInputItem ****/
+class SearXNGServerInputItem extends PlaygroundUIItemView {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "ValueToShow", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: ''
+        });
+    }
+    render(PropSet) {
+        const my = this, me = this;
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = 'SearXNGServer';
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        if ((document.activeElement == null) ||
+            !document.activeElement.contains(my.View)) {
+            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
+        }
+        function onInput(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            enqueueUIEvent('input', Key);
+        }
+        function onChange(Event) {
+            if (Enabling == false) {
+                return consumingEvent(Event);
+            }
+            setInContext(Key, Event.target.value);
+            Event.target.value = '';
+            enqueueUIEvent('input', Key);
+        }
+        function onBlur() { me.rerender(); }
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <input type="url" class="Playground UI Element URLInput"
+          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
+          readOnly=${readonly} placeholder=${Placeholder}
+          pattern=${Pattern}
+          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
+        />
+        <select onChange=${onChange} style="
+          display:inline-block; position:relative;
+          top:1px; height:28px; margin-left:4px;
+        ">
+          <option value="" selected disabled>(select)</option>
         </select>
         <div class="Playground UI newLine"/>
       `;
