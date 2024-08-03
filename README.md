@@ -84,7 +84,7 @@ Some context items are already used internally, these are
 
 * `APIServer` - the URL (and base path) of the OpenAI-compatible API you plan to use
 * `APIKey` - your API Access Key (if required)
-* `SearXNGServer` - the URL of your SearXNG server (preset to `http://127.0.0.1:8080`)
+* `SearXNGServer` - the URL of your own SearXNG server (just leave it empty if you don't have one - in that case, a random public server will be looked-up and used instead)
 
 the inferencing parameters
 
@@ -521,7 +521,7 @@ The following blocks have been made to support the creation of AI agents.
 
 ![WebSearch](./Screenshots/WebSearch.png)
 
-> searches the web for documents related to a given search phrase and returns a list with the URLs of the first found documents. The search request is sent to the SearXNG server specified in context item `SearXNGServer`, but found documents are only listed if they have a score greater than or equal to the threshold specified in context item `SearXNGScoreThreshold` (a number in the range 0...10 which defaults to 2)
+> searches the web for documents related to a given search phrase and returns a list with the URLs of the first found documents. If context item `SearXNGServer` contains a valid URL, the search request is sent to that server and only documents with a score greater than or equal to the threshold specified in context item `SearXNGScoreThreshold` (a number in the range 0...10 which defaults to 2) will be listed. Otherwise, a random public server will be looked up and used to perform the search. In both cases, up to 10 URLs will be returned, at most.
 
 ![WikipediaSearch](./Screenshots/WikipediaSearch.png)
 
