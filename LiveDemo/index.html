@@ -783,6 +783,9 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
                 },
                 body: JSON.stringify(RequestBody)
             });
+            if (Response.ok) {
+                return (await Response.json()).choices[0].message.content;
+            }
             if (Response.status === 429) {
                 if (window.confirm('API Request Limit reached\n\nDo you want to continue? ' +
                     'Then wait a minute and press "Ok" - otherwise press "Cancel" ' +
@@ -793,7 +796,9 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
                     throw 'HTTP 439 (too many requests)';
                 }
             }
-            return (await Response.json()).choices[0].message.content;
+            else {
+                throwError('RequestFailed: API request failed with HTTP status ' + Response.status);
+            }
         }
     }
     catch (Signal) {
@@ -834,9 +839,12 @@ async function ResearchFor(Objective) {
     expectText('objective', Objective);
     logStep('conducting web research to achieve ' + quoted(Objective));
     const SearchPhrase = await SearchPhraseForText(Objective);
+    const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+    if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
+        throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
     const Findings = [];
     logAction('(searching for ' + quoted(SearchPhrase) + ')');
-    const URLList = await WebSearchFor(SearchPhrase);
+    const URLList = await WebSearchFor(SearchPhrase, SearXNGThreshold);
     if (URLList.length === 0) {
         logAction('(no relevant documents found)');
     }
@@ -896,6 +904,9 @@ async function SearchPhraseForText(Objective) {
 async function FindingsFromText(Text, Objective) {
     expectText('text to analyze', Text);
     expectText('objective', Objective);
+    if (Text.trim() === '') {
+        return '';
+    } // ignore empty or invalid files
     const MessageList = [
         expectedText('system template for information extractor', getFromContext('InformationExtractor_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
@@ -1179,12 +1190,16 @@ function ValueIsKnowledge(Value, JSONisAllowed = false) {
         return false;
     }
 }
-/**** ValueIsStepList ****/
-function ValueIsStepList(Value) {
-    return ValueIsListSatisfying(Value, (Value) => (ValueIsPlainObject(Value) &&
+/**** ValueIsStep ****/
+function ValueIsStep(Value) {
+    return (ValueIsPlainObject(Value) &&
         ValueIsOneOf(Value.Tool, ['ResearchTool', 'ComputationTool', 'ResponseTool']) &&
         ValueIsNonEmptyString(Value.Objective) &&
-        ValueIsNonEmptyString(Value.Justification)));
+        ValueIsNonEmptyString(Value.Justification));
+}
+/**** ValueIsStepList ****/
+function ValueIsStepList(Value) {
+    return ValueIsListSatisfying(Value, ValueIsStepList);
 }
 /**** ValueIsParameter ****/
 function ValueIsParameter(Value) {
@@ -1197,9 +1212,12 @@ function ValueIsParameterList(Value) {
     return ValueIsListSatisfying(Value, ValueIsParameter);
 }
 /**** WebSearchFor ****/
-async function WebSearchFor(SearchPhrase) {
+async function WebSearchFor(SearchPhrase, ScoreThreshold) {
     try {
-        let URLList = await WebSearch(SearchPhrase);
+        let URLList = await WebSearch(SearchPhrase, ScoreThreshold);
+        if (URLList.length > 10) {
+            URLList.length = 10;
+        }
         return URLList;
     }
     catch (Signal) {
@@ -1208,20 +1226,65 @@ async function WebSearchFor(SearchPhrase) {
     }
 }
 /**** WebSearch - returns a list of URLs ****/
-async function WebSearch(SearchPhrase) {
+async function WebSearch(SearchPhrase, ScoreThreshold) {
     const SearXNGServer = getFromContext('SearXNGServer');
-    if (!ValueIsURL(SearXNGServer))
-        throwError('MissingContextItem: no or invalid "SearXNGServer" context item found');
-    const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
-    if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
-        throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
-    const Parameters = new URLSearchParams({
-        q: SearchPhrase, format: 'json', categories: 'general'
-    });
-    const Response = await fetch(`${SearXNGServer}/search?${Parameters}`); // may fail!
-    return (await Response.json()).results
-        .filter((Result) => Result.score >= SearXNGThreshold)
-        .map((Result) => Result.url);
+    if (ValueIsURL(SearXNGServer)) { // then search using the API
+        const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+        if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
+            throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
+        const Parameters = new URLSearchParams({
+            q: SearchPhrase, languagedefault: 'en',
+            format: 'json', categories: 'general', num_results: '10'
+        });
+        const Response = await fetch(`${SearXNGServer}/search?${Parameters}`); // may fail!
+        return (await Response.json()).results
+            .filter((Result) => Result.score >= ScoreThreshold)
+            .map((Result) => Result.url);
+    }
+    else { // else search using the Web interface
+        let SearXNGServers = [];
+        const SearXNGServerList = getFromContext('SearXNGServerList');
+        if (ValueIsString(SearXNGServerList)) {
+            try {
+                const URLList = JSON.parse(SearXNGServerList);
+                if (ValueIsListSatisfying(URLList, ValueIsURL)) {
+                    SearXNGServers = URLList;
+                }
+            }
+            catch (Signal) { /* nop */ }
+        }
+        if (SearXNGServers.length === 0) {
+            const Response = await fetch('https://searx.space/data/instances.json');
+            if (Response.ok) {
+                const URLList = Object.keys((await Response.json()).instances)
+                    .filter((Server) => !Server.endsWith('.onion/'));
+                if (ValueIsListSatisfying(URLList, ValueIsURL)) {
+                    SearXNGServers = URLList;
+                }
+            }
+            else {
+                throwError('NoSearXNGServers: searching for SearXNG servers failed with HTTP ' +
+                    'status ' + Response.status);
+            }
+        }
+        if (SearXNGServers.length === 0)
+            throwError('NoSearXNGServers: could not find any public SearXNG servers');
+        const Server = SearXNGServers[Math.trunc(Math.random() * SearXNGServers.length)];
+        const Parameters = new URLSearchParams({
+            q: SearchPhrase, languagedefault: 'en',
+            format: 'html', categories: 'general', num_results: '10'
+        });
+        const Response = await fetch(`${Server}/search?${Parameters}`); // may fail!
+        if (Response.ok) {
+            const HTML = await Response.text();
+            return Array.from(HTML.matchAll(/<h3><a href="([^"]+)"/g))
+                .map((Match) => Match[1])
+                .filter((URL) => (URL != null) && (URL.trim() !== ''));
+        }
+        else {
+            throwError('WebSearchFailed: web search failed with HTTP status ' + Response.status);
+        }
+    }
 }
 /**** ValueIsWikipediaPageName ****/
 function ValueIsWikipediaPageName(Value) {
@@ -1255,10 +1318,17 @@ async function TextOfWikipediaArticle(URL) {
         format: 'json',
         origin: '*'
     });
-    const Response = await fetch(// may fail!
-    `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
-    const Data = await Response.json();
-    if (Data.error != null) {
+    let Data;
+    try {
+        const Response = await fetch(// may fail!
+        `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
+        Data = await Response.json();
+        if (Data.error != null) {
+            return '';
+        }
+    }
+    catch (Signal) { // don't worry about untrusted servers etc.
+        console.error('failed to fetch ' + quoted(URL), Signal);
         return '';
     }
     const rawHTML = Data.parse.text['*'];
@@ -1300,8 +1370,14 @@ function TextWithoutSection(Text, Heading) {
 }
 /**** TextOfWebDocument ****/
 async function TextOfWebDocument(URL) {
-    const Response = await fetch(URL); // may fail!
-    return HTMLtoText(await Response.text());
+    try {
+        const Response = await fetch(URL); // may fail!
+        return HTMLtoText(await Response.text());
+    }
+    catch (Signal) { // don't worry about untrusted servers etc.
+        console.error('failed to fetch ' + quoted(URL), Signal);
+        return '';
+    }
 }
 /**** JSONinText ****/
 function JSONinText(Text) {
@@ -1385,7 +1461,9 @@ function JSONinText(Text) {
 }
 /**** HTMLtoText ****/
 function HTMLtoText(HTML, Options) {
-    expectText('HTML text', HTML);
+    if (!ValueIsText(HTML)) {
+        return '';
+    } // simplifies handling of binary files
     if (Options == null) {
         Options = {
             wordwrap: 80,
@@ -1822,13 +1900,25 @@ function externalAPI(Interpreter, global) {
             Callback(null);
         }
     }));
+    /**** ValueIsKnowledge ****/
+    Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value, JSONisAllowed) {
+        return ValueIsKnowledge(Value, JSONisAllowed);
+    }));
+    /**** ValueIsStep ****/
+    Interpreter.setProperty(global, 'ValueIsStep', Interpreter.createNativeFunction(function _ValueIsStep(Value) {
+        return ValueIsStep(Value);
+    }));
     /**** ValueIsStepList ****/
     Interpreter.setProperty(global, 'ValueIsStepList', Interpreter.createNativeFunction(function _ValueIsStepList(Value) {
         return ValueIsStepList(Value);
     }));
-    /**** ValueIsKnowledge ****/
-    Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value, JSONisAllowed) {
-        return ValueIsKnowledge(Value, JSONisAllowed);
+    /**** ValueIsParameter ****/
+    Interpreter.setProperty(global, 'ValueIsParameter', Interpreter.createNativeFunction(function _ValueIsParameter(Value) {
+        return ValueIsParameter(Value);
+    }));
+    /**** ValueIsParameterList ****/
+    Interpreter.setProperty(global, 'ValueIsParameterList', Interpreter.createNativeFunction(function _ValueIsParameterList(Value) {
+        return ValueIsParameterList(Value);
     }));
     /**** ValueIsWikipediaURL ****/
     Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
@@ -1851,8 +1941,7 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'TextOfWebDocument', Interpreter.createAsyncFunction(async function _TextOfWebDocument(URL, Callback) {
         try {
             expectURL('document URL', URL);
-            const Response = await fetch(URL); // may fail!
-            Callback(HTMLtoText(await Response.text()));
+            Callback(await TextOfWebDocument(URL));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1864,31 +1953,7 @@ function externalAPI(Interpreter, global) {
         try {
             if (!ValueIsWikipediaPageName(PageName))
                 throwError('InvalidArgument: the given argument is no Wikipedia page name');
-            const RequestParameters = new URLSearchParams({
-                action: 'query',
-                format: 'json',
-                prop: 'extracts',
-                titles: PageName,
-                //          explaintext:    '1',
-                //          exsectionformat:'plain',
-                origin: '*'
-            });
-            const HTMLtoTextOptions = {
-                wordwrap: 80,
-                selectors: [
-                    { selector: 'h1', options: { uppercase: false } },
-                    { selector: 'h2', options: { uppercase: false } },
-                    { selector: 'h3', options: { uppercase: false } },
-                    { selector: 'h4', options: { uppercase: false } },
-                    { selector: 'h5', options: { uppercase: false } },
-                    { selector: 'h6', options: { uppercase: false } },
-                ]
-            };
-            const Response = await fetch(// may fail!
-            `https://en.wikipedia.org/w/api.php?${RequestParameters}`);
-            const PageList = (await Response.json()).query.pages;
-            const PageKey = Object.keys(PageList)[0];
-            Callback(HTMLtoText(PageList[PageKey].extract, HTMLtoTextOptions));
+            Callback(await TextOfWikipediaArticle('https://en.wikipedia.org/' + PageName));
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1899,20 +1964,10 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'WebSearch', Interpreter.createAsyncFunction(async function _WebSearch(SearchPhrase, Callback) {
         try {
             expectNonEmptyString('search phrase', SearchPhrase);
-            const ServerURL = getFromContext('SearXNGServer');
-            if (!ValueIsURL(ServerURL))
-                throwError('MissingContextItem: no or invalid "SearXNGServer" context item found');
             const ScoreThreshold = getFromContext('SearXNGScoreThreshold') || 2;
             if (!ValueIsNumberInRange(ScoreThreshold, 0, 10, true, true))
                 throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
-            const Parameters = new URLSearchParams({
-                q: SearchPhrase, languagedefault: 'en',
-                format: 'json', categories: 'general'
-            });
-            const Response = await fetch(`${ServerURL}/search?${Parameters}`); // may fail!
-            const Result = (await Response.json()).results
-                .filter((Result) => Result.score >= ScoreThreshold)
-                .map((Result) => Result.url)
+            const Result = (await WebSearchFor(SearchPhrase, ScoreThreshold))
                 .filter((URL) => URL.startsWith('https://'));
             Callback(Playground.Interpreter.nativeToPseudo(Result));
         }
@@ -2400,6 +2455,7 @@ function runInterpreter() {
         }
     }
     catch (Signal) {
+        console.log('Blockly Execution Error', Signal);
         alert('Blockly Execution Error\n\n' + Signal);
         Playground.InterpreterState = 'idle';
         Playground.pendingInterpreterState = undefined;
@@ -4121,6 +4177,25 @@ javascriptGenerator.forBlock['ValueIsKnowledge'] = function (Block, Generator) {
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
     return [`ValueIsKnowledge(${Value},true)`, Order.FUNCTION_CALL];
 };
+/**** ValueIsStep ****/
+Blockly.Blocks['ValueIsStep'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsStep',
+            tooltip: 'returns true if the given value represents a single step for an AI Agent - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is an agent step?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsStep'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsStep(${Value})`, Order.FUNCTION_CALL];
+};
 /**** ValueIsStepList ****/
 Blockly.Blocks['ValueIsStepList'] = {
     init: function () {
@@ -4139,6 +4214,44 @@ Blockly.Blocks['ValueIsStepList'] = {
 javascriptGenerator.forBlock['ValueIsStepList'] = function (Block, Generator) {
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
     return [`ValueIsStepList(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsParameter ****/
+Blockly.Blocks['ValueIsParameter'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsParameter',
+            tooltip: 'returns true if the given value represents a single JavaScript function parameter specification - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a parameter specification?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsParameter'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsParameter(${Value})`, Order.FUNCTION_CALL];
+};
+/**** ValueIsParameterList ****/
+Blockly.Blocks['ValueIsParameterList'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'ValueIsParameterList',
+            tooltip: 'returns true if the given value contains a list of JavaScript function parameter specifications - or false otherwise',
+            helpUrl: '',
+            message0: 'value %1 is a parameter specification list?',
+            args0: [{ type: 'input_value', name: 'value' }],
+            output: 'Boolean',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['ValueIsParameterList'] = function (Block, Generator) {
+    let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
+    return [`ValueIsParameterList(${Value})`, Order.FUNCTION_CALL];
 };
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
@@ -4830,7 +4943,10 @@ const WorkspaceSpecification = {
                 name: "AI Support",
                 contents: [
                     { kind: "block", type: "ValueIsKnowledge" },
+                    { kind: "block", type: "ValueIsStep" },
                     { kind: "block", type: "ValueIsStepList" },
+                    { kind: "block", type: "ValueIsParameter" },
+                    { kind: "block", type: "ValueIsParameterList" },
                     { kind: "block", type: "ValueIsWikipediaURL" },
                     { kind: "block", type: "ValueIsWikipediaPageName" },
                     { kind: "block", type: "JSONinText" },
