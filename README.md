@@ -693,8 +693,8 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Agent ###
 
-![AIAgent_I](./Examples/AIAgent_I.png)
-![AIAgent_II](./Examples/AIAgent_II.png)
+![AI-Agent_I](./Examples/AI-Agent_I.png)
+![AI-Agent_II](./Examples/AI-Agent_II.png)
 
 
 
