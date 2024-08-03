@@ -4,7 +4,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 **Build your own Copilot - with Blockly - the video will show you how well it can perform (even in comparison with the original)!** (sorry for the bad quality: the video had to be created in a hurry)
 
-[![Backdrop Build Launch Video](https://i9.ytimg.com/vi_webp/_JJzPLHObiY/mq2.webp?sqp=CLjItrUG-oaymwEmCMACELQB8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGHIgOShZMA8=&rs=AOn4CLDpDY5LvG-tqeqC6bC-s02gCwU2eQ)](https://www.youtube.com/watch?v=_JJzPLHObiY)
+[![Backdrop Build Launch Video](https://i9.ytimg.com/vi_webp/_JJzPLHObiY/mq2.webp?sqp=CMjbubUG-oaymwEmCMACELQB8quKqQMa8AEB-AG-B4AC0AWKAgwIABABGHIgOShZMA8=&rs=AOn4CLBuak_ldI3WUNOvn9K0yNNUbUJKIA)](https://www.youtube.com/watch?v=_JJzPLHObiY)
 
 > (Work in progress - it was my contribution to the [Backdrop Build v5](https://backdropbuild.com/) contest and had to be launched as an MVP before their deadline. I'm now working on polishing it up...)
 
