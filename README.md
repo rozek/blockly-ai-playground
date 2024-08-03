@@ -381,7 +381,13 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![TaskDecomposer](./Screenshots/TaskDecomposer.png)
 
-> generates a sequence of work steps to achieve a given goal. The result is a list of objects and should be processed accordingly (see [related example](#steps-derived-from-a-given-objective))
+> generates a sequence of steps that have to be worked through in order to achieve a given goal. A single "step" is an object with the following properties:
+>
+> * Tool: name of a selected tool (either `ResearchTool`, `ComputationTool` or `ResponseTool`)
+> * Objective: a short statement of what the chosen tool should achieve
+> * Justification: a brief explanation of why this tool and objective were chosen
+>
+> The result of this block is a list of such steps (see [related example](#steps-derived-from-a-given-objective))
 
 ![ResearchFor](./Screenshots/ResearchFor.png)
 
