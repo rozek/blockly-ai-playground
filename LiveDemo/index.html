@@ -1199,7 +1199,7 @@ function ValueIsStep(Value) {
 }
 /**** ValueIsStepList ****/
 function ValueIsStepList(Value) {
-    return ValueIsListSatisfying(Value, ValueIsStepList);
+    return ValueIsListSatisfying(Value, ValueIsStep);
 }
 /**** ValueIsParameter ****/
 function ValueIsParameter(Value) {
