@@ -447,19 +447,28 @@ The following blocks have been made to support the creation of AI agents.
 
 ![ValueIsStep](./Screenshots/ValueIsStep.png)
 
-> t.b.w.
+> returns `true` if the given value represents a single working step for an AI agent - or `false` otherwise. A "working step" is a Javascript object containing the following properties:
+> 
+> * `Tool`: name of a selected tool (either `ResearchTool`, `ComputationTool` or `ResponseTool`)
+> * `Objective`: a short statement of what the chosen tool should achieve
+> * `Justification`: a brief explanation of why this tool and objective were chosen
 
 ![ValueIsStepList](./Screenshots/ValueIsStepList.png)
 
-> t.b.w.
+> returns `true` if the given value represents a sequence of working steps for an AI agent - or `false` otherwise.
 
 ![ValueIsParameter](./Screenshots/ValueIsParameter.png)
 
-> t.b.w.
+> returns `true` if the given value a single function parameter specification - or `false` otherwise. A "parameter specification" is a Javascript object containing the following properties:
+>
+> `Name`: the parameter name (a valid JavaScript identifier)
+> `Description`: a short description of the parameter's purpose
+>
+> both settings can be used to create a JavaScript function and derive its argument values from the already given knowledge
 
 ![ValueIsParameterList](./Screenshots/ValueIsParameterList.png)
 
-> t.b.w.
+> returns `true` if the given value represents a list of function parameter specifications - or `false` otherwise.
 
 ![ValueIsWikipediaURL](./Screenshots/ValueIsWikipediaURL.png)
 
