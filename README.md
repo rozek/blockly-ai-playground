@@ -693,6 +693,9 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Agent ###
 
+![AIAgent_I](./Examples/AIAgent_I.png)
+![AIAgent_II](./Examples/AIAgent_II.png)
+
 
 
 ### Steps derived from a given Objective ###
