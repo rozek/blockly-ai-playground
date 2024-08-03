@@ -415,27 +415,27 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![ComputationOf](./Screenshots/ComputationOf.png)
 
-> t.b.w.
+> generates a JavaScript function to achieve the given "objective", executes it and returns the result. This block internally uses the parameter list, function and argument generators described below.
 
 ![ParameterListGenerator](./Screenshots/ParameterListGenerator.png)
 
-> t.b.w.
+> uses the current "knowledge" (taken from the context item `Knowledge`) and generates a (possibly empty) list of parameter specifications for a Javascript function to achieve the given "objective")
 
 ![FunctionGenerator](./Screenshots/FunctionGenerator.png)
 
-> t.b.w.
+> uses the given parameter specification list and generates a JavaScript function to achieve the given "objective".
 
 ![ArgumentGenerator](./Screenshots/ArgumentGenerator.png)
 
-> t.b.w.
+> uses the current "knowledge" (taken from the context item `Knowledge`) and generates an argument value suitable for the given parameter specification.
 
 ![AnswerGenerator](./Screenshots/AnswerGenerator.png)
 
-> t.b.w.
+> uses the current "knowledge" (taken from the context item `Knowledge`) and generates a human-readable response to the given "task".
 
 ![KnowledgeGenerator](./Screenshots/KnowledgeGenerator.png)
 
-> t.b.w.
+> takes a given "fact", generates a concise description based on the given "objective" that was used to find or compute this data and appends it to the current "knowledge" of the running AI agent. The new "knowledge" will be writen to the context item `Knowledge` but not automatically preserved.
 
 ### AI Support ###
 
