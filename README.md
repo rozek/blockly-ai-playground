@@ -443,7 +443,12 @@ The following blocks have been made to support the creation of AI agents.
 
 ![ValueIsKnowledge](./Screenshots/ValueIsKnowledge.png)
 
-> t.b.w.
+> returns `true` if the given value represents valid agent "knowledge" - or `false` otherwise. Agent "knowledge" is a (possibly empty) list of JavaScript objects containing the following properties:
+> 
+> * `Description`: a concise description of what the actual `fact` represents
+> * `Fact`: the actual knowledge as a JSON-encoded JavaScript value
+>
+> The `Description` will help the AI to find relevant facts for its task, while the `Fact` contains the actual data.
 
 ![ValueIsStep](./Screenshots/ValueIsStep.png)
 
