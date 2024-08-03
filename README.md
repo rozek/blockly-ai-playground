@@ -46,6 +46,22 @@ Thus, if you want to use the built-in web search, you should install
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 * [SearXNG](https://docs.searxng.org/admin/installation-docker.html)
 
+## Current Status and Future Plans ##
+
+As you can see in the video, the "blockly-ai-playground" is principally working. However, due to the haste with which development had to take place, the result should only be considered as a "minimum viable product" (MVP) as it still requires a lot of "polishing" before it will be as easy to use as it should be for beginners.
+
+These are my plans for the near future:
+
+* create more examples (in the end, every custom block should be covered by at least one example)
+* create a tutorial for real beginners (perhaps with tutorial videos?)
+* use a bundler (vite) to make a real web app out of the playground
+* use some of the available Blockly plugins to enhance the user interface
+* create a desktop application (NW.js or Electron.js)
+* create installers for Windows/Linux/macOS, provide update paths (e.g., similar to the GitHub Desktop)
+* detect browser security violations (TLS, CORS etc.) and give user-friendly error messages with suggestions how to fix them
+
+The idea is to have a beginner-friendly version ready for the next lecture season (starting in October)
+
 ## Custom Blocks ###
 
 Besides common blocks which can be found in many Blockly environments, the "blockly-ai-playground" also provides a set of custom blocks to manage an internal context, a simple (but dynamic) user interface, basic and enhanced functions for AI, auxiliary tools for AI agents and other useful functions.
@@ -605,7 +621,7 @@ The following blocks help to create and manipulate objects
 
 ## Examples ##
 
-Here are a few examples which you can uploda into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground". The linked Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
+Here are a few examples which you can upload into the Blockly workspace to get familiar with Blockly itself and the custom blocks specifically made for the "blockly-ai-playground". The linked Blockly workspace files should first be downloaded onto your computer and then uploaded into your Blockly workspace
 
 ### Hello, World ###
 
