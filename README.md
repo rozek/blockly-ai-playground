@@ -391,7 +391,7 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![ResearchFor](./Screenshots/ResearchFor.png)
 
-> t.b.w.
+> uses the given "objective" to generate an adequate search phrase, search the internet, fetch all documents found by the search engine, extract any relevant information from these documents and produce a common result from all individual findings. Internally, this block uses the search phrase generator, information extractor and validator, solution merger and solution encoder described below.
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
