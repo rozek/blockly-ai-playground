@@ -12,7 +12,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 > **CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a "CORS Unblocking" extension into your browser (like [this](https://chromewebstore.google.com/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai) one)**
 
-> **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#proof-of-concept) and run your first inferences. If you have API access to a SearXNG server, you may also try the [AI-assisted Web Search](#ai-web-search-with-live-reporting) to learn about the benefits of an AI agent**
+> **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#proof-of-concept) and run your first inferences. If you have API access to a SearXNG server, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of an AI agent**
 
 > **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI on a Mac so far**
 
@@ -690,6 +690,10 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
 
 > this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
+
+### AI Agent ###
+
+
 
 ### Steps derived from a given Objective ###
 
