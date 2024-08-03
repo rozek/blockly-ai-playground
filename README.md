@@ -78,15 +78,14 @@ and
 
 * `Console` - the current contents of the built-in "Console" (initially empty)
 
-In addition to the items listed above, "AI Mezzanine" blocks provide their own context items in order to allow customization of their internal API calls. To find these items, simply replace the `default` prefix of the inferencing parameter items by the prefix for the given mezzanine (e.g., 'summary_max_tokens' specifies the token generation limit for text summarization). If any mezzanine-specific context item is removed (or empty) the related default setting is used instead.
-
+In addition to the items listed above, "AI Mezzanine" blocks provide their own context items in order to allow customization of their internal API calls. To find these items, simply replace the `default` prefix of the inferencing parameter items by the prefix for the given mezzanine (e.g., 'summarizer_max_tokens' specifies the token generation limit for text summarization). If any mezzanine-specific context item is removed (or empty) the related default setting is used instead.
 
 #### Preserve and Restore ####
 
 During development it is sometimes useful to keep settings and values beyond the life-time of a single program. Typical use case are:
 
 * you use one Blockly program to define APIServer, APIKey or other settings and use these settings in other Blockly programs
-* you save intermediate results in order to avoid having to rerun the steps to compute these results over and over again
+* you save intermediate results of API calls in order to avoid having to rerun them after restarting an AI-assisted application
 
 ![preserveContextItem](./Screenshots/preserveContextItem.png)
 ![restoreContextItem](./Screenshots/restoreContextItem.png)
@@ -159,7 +158,7 @@ Both blocks are typically placed into the condition field of an "if-then" block 
 
 The loop body is executed over and over again - until the loop is exited using the block shown above.
 
-A Blockly program may contain several event loops - but only one of them may be running at the same tine.
+A Blockly program may contain several event loops - but only one of them may be running at the same tine (i.e., **event loops must not be nested**).
 
 #### Enabling ####
 
@@ -285,6 +284,10 @@ These two blocks enable or disable specific UI elements.
 ![appendAPIServerInput](./Screenshots/appendAPIServerInput.png)
 
 > appends a URL input element customized for the selection or input of the `APIServer` context item with the given label to the UI. If an element with the name `APIServer` already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+
+![appendSearXNGServerInput](./Screenshots/appendSearXNGServerInput.png)
+
+> appends a URL input element customized for the selection or input of the `SearXNGServer` context item with the given label to the UI. If an element with the name `SearXNGServer` already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
 
 ![configureUI](./Screenshots/configureUI.png)
 
