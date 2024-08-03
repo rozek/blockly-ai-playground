@@ -1,6 +1,6 @@
 <center>
   <a href="#prerequisites">Prerequisites</a> |
-  <a href="#current-status-and-future-plans">Futrue plans</a> |
+  <a href="#current-status-and-future-plans">Future plans</a> |
   <a href="#playground-context">Playground Context</a> |
   <a href="#playground-ui">Playground UI</a> |
   <a href="#ai-basics">AI Basics</a> |
