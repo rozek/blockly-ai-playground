@@ -1,5 +1,15 @@
 <center>
-  <a href="#prerequisites">Prerequisites 
+  <a href="#prerequisites">Prerequisites</a> |
+  <a href="#current-status-and-future-plans">Futrue plans</a> |
+  <a href="#playground-context">Playground Context</a> |
+  <a href="#playground-ui">Playground UI</a> |
+  <a href="#ai-basics">AI Basics</a> |
+  <a href="#ai-mezzanines">AI Mezzanines</a> |
+  <a href="#ai-support">AI Support</a> |
+  <a href="#miscellany">Miscellany</a> |
+  <a href="#object-support">Object Support</a> |
+  <a href="#examples">Simple Examples</a> |
+  <a href="#ai-examples">AI Examples</a>
 </center>
 
 # blockly-ai-playground #
