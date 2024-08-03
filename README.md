@@ -323,7 +323,7 @@ These two blocks enable or disable specific UI elements.
 
 ![clearConsole](./Screenshots/clearConsole.png)
 
-> clears the built-in "Console" (see [related example](#console))
+> clears the built-in "Console" and (if need be) removes an item with this name from the UI (see [related example](#console)). If you just want the clear the console but keep its UI element, simply set the context item "Console" to an empty string.
 
 ![print](./Screenshots/print.png)
 
@@ -377,11 +377,15 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![SummaryOfText](./Screenshots/SummaryOfText.png)
 
-> returns a summary of the given text. The block uses its own set of context items (prefixed with `Summary_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set
+> returns a summary of the given text. The block uses its own set of context items (prefixed with `Summarizer_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set
 
 ![TaskDecomposer](./Screenshots/TaskDecomposer.png)
 
 > generates a sequence of work steps to achieve a given goal. The result is a list of objects and should be processed accordingly (see [related example](#steps-derived-from-a-given-objective))
+
+![ResearchFor](./Screenshots/ResearchFor.png)
+
+> t.b.w.
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
@@ -402,6 +406,30 @@ The following blocks internally use AI requests themselves to perform some tasks
 ![SolutionEncoder](./Screenshots/SolutionEncoder.png)
 
 > AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search-with-live-reporting))
+
+![ComputationOf](./Screenshots/ComputationOf.png)
+
+> t.b.w.
+
+![ParameterListGenerator](./Screenshots/ParameterListGenerator.png)
+
+> t.b.w.
+
+![FunctionGenerator](./Screenshots/FunctionGenerator.png)
+
+> t.b.w.
+
+![ArgumentGenerator](./Screenshots/ArgumentGenerator.png)
+
+> t.b.w.
+
+![AnswerGenerator](./Screenshots/AnswerGenerator.png)
+
+> t.b.w.
+
+![KnowledgeGenerator](./Screenshots/KnowledgeGenerator.png)
+
+> t.b.w.
 
 ### AI Support ###
 
