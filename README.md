@@ -24,6 +24,8 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 [Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: please read "Overview" and "Prerequisites" first**
 
+> **Import News: you no longer need to install your own SearXNG Server to perform web searches - just leave the SearXNGServer context item empty!**
+
 > **CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a "CORS Unblocking" extension into your browser (like [this](https://chromewebstore.google.com/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai) one)**
 
 > **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#proof-of-concept) and run your first inferences. If you have API access to a SearXNG server, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents"**
