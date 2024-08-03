@@ -1,4 +1,6 @@
-<center>[Prerequisites](#prerequisites)</center>
+<center>
+  <a href="#prerequisites">Prerequisites 
+</center>
 
 # blockly-ai-playground #
 
