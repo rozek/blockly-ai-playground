@@ -651,6 +651,14 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
 
+### throw ###
+
+![throwError](./Examples/throwError.png)
+
+> this example illustrates how to use the "throw" block (see [Blockly workspace file](./Examples/throwError.json)) - please note, that all blocks following a "throw" will not be evaluated as throwing an exception will terminate a Blockly program
+
+
+
 ### Text-to-Speech ###
 
 ![speak](./Examples/speak.png)
@@ -663,11 +671,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json))
 
-### throw ###
 
-![throwError](./Examples/throwError.png)
-
-> this example illustrates how to use the "throw" block (see [Blockly workspace file](./Examples/throwError.json)) - please note, that all blocks following a "throw" will not be evaluated as throwing an exception will terminate a Blockly program
 
 ### Context ###
 
@@ -681,11 +685,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
 
+
+
 ### Textline Input ###
 
 ![TextlineInput](./Examples/TextlineInput.png)
 
-> this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json))
+> this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json)). the other input elements work quite similarly
 
 ### SpeechInput ###
 
@@ -693,11 +699,23 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example demonstrates speech recognition using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/SpeechInput.json))
 
+### CheckboxElement ###
+
+> t.b.w.
+
 ### Radiobutton Group ###
 
 ![RadiobuttonGroup](./Examples/RadiobuttonGroup.png)
 
 > this example illustrates how to use a radiobutton group (see [Blockly workspace file](./Examples/RadiobuttonGroup.json))
+
+### DropDown ###
+
+> t.b.w.
+
+### APIServerInputElement ###
+
+> t.b.w.
 
 ### Output Elements ###
 
@@ -705,11 +723,19 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example shows all output elements of the playground UI (see [Blockly workspace file](./Examples/OutputElements.json))
 
+### Configuration Options ###
+
+> t.b.w.
+
 ### enable and disable ###
 
 ![enable_disable](./Examples/enable_disable.png)
 
 > this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
+
+### Event Loop ###
+
+> t.b.w.
 
 ### Button Clicks ###
 
@@ -722,6 +748,23 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 ![Objects](./Examples/Objects.png)
 
 > this example demonstrates how to work with objects (see [Blockly workspace file](./Examples/Objects.json))
+
+### Web Search ###
+
+> t.b.w.
+
+### Web Document Retrieval ###
+
+> t.b.w.
+
+### Wikipedia Search ###
+
+> t.b.w.
+
+### Wikipedia Article Retrieval ###
+
+> t.b.w.
+
 
 ## AI Examples ##
 
@@ -737,7 +780,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > as a hint, here are the settings used by the author himself
 
-### Proof-of-Concept ###
+### Chat Completion (Proof-of-Concept) ###
 
 ![PoC](./Examples/PoC.png)
 
@@ -746,6 +789,10 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![PoC-UI](./Examples/PoC-UI.png)
 
 > this is what you may get as the result
+
+### Text Completion ###
+
+> t.b.w.
 
 ### Text Summary ###
 
@@ -758,6 +805,10 @@ The following examples actually include AI-related blocks. As before, the Blockl
 > this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
 
 ### AI Web Search ###
+
+> t.b.w.
+
+### AI Web Search - step-by-step ###
 
 ![AIWebSearch](./Examples/AIWebSearch.png)
 
@@ -781,6 +832,26 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
 
 > this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
+
+### AI Code Generator ###
+
+> t.b.w.
+
+### AI Code Generator - step-by-step ###
+
+> t.b.w.
+
+### AI Task Decomposer ###
+
+> t.b.w.
+
+### AI Response Generator ###
+
+> t.b.w.
+
+### AI Knowledge Generator ###
+
+> t.b.w.
 
 ### AI Agent ###
 
