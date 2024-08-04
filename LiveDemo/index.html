@@ -975,13 +975,14 @@ async function ComputationOf(Objective, Knowledge) {
     expectText('objective', Objective);
     logStep('using JavaScript to achieve ' + quoted(Objective));
     const ParameterList = await ParameterListFor(Objective);
+    console.log('ParameterList', ParameterList);
     const FunctionSource = await FunctionFor(Objective, ParameterList);
     let Executable;
     try {
         logAction('(compiling JavaScript function)');
         const compiledFunction = new Function(`return ${FunctionSource}`);
         Executable = compiledFunction();
-        console.log('compiled Function', Executable);
+        console.log('compiled Function', '' + Executable);
     }
     catch (Signal) {
         throwError('CompilationError: could not generate executable function\n' +
@@ -2278,9 +2279,9 @@ and that the entire output is valid JSON.
         ParameterListGenerator_presence_penalty: undefined, ParameterListGenerator_frequency_penalty: 1,
         ParameterListGenerator_SystemTemplate: 'Be precise and concise.',
         ParameterListGenerator_UserTemplate: `
-Generate a list of parameters for a JavaScript function designed to compute the
-result of a given objective. The output should be a valid JSON list, where each
-element is an object containing the following fields:
+Generate the minimal list of parameters for a JavaScript function designed to
+compute the result of a given objective. The output should be a valid JSON list,
+where each element is an object containing the following fields:
 - "Name": the name of the argument
 - "Description": a human-readable description of the argument's purpose
 
@@ -2299,7 +2300,10 @@ rectangle:
 
 Please generate a similar JSON list for a function that achieves the following
 objective
+
 {{Objective}}
+
+Remember to list only really relevant parameters!
 `,
         FunctionGenerator_model: undefined, FunctionGenerator_max_tokens: 2048,
         FunctionGenerator_temperature: 0, FunctionGenerator_top_p: undefined, FunctionGenerator_top_k: 1,
@@ -2333,6 +2337,7 @@ from the list of known facts. The argument value should be either a single
 value or a list of values, packed into a JavaScript object with the sole
 property "Value". Output the result as valid JSON.
 
+
 ### Known Facts:
 {{Knowledge}}
 
@@ -2344,6 +2349,9 @@ Provide the extracted data in the following JSON format:
 {
   "Value": <extracted data as a boolean, number, string, array or object>
 }
+
+Important: do NOT perform the computation needed to achieve the objective
+yourself, just create the required argument.
 `,
         KnowledgeGenerator_model: undefined, KnowledgeGenerator_max_tokens: 2048,
         KnowledgeGenerator_temperature: 0, KnowledgeGenerator_top_p: undefined, KnowledgeGenerator_top_k: 1,
