@@ -835,7 +835,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Computation Tool ###
 
-> t.b.w.
+![AIComputationTool](./Examples/AIComputationTool.png)
+
+> the "Computation Tool" takes an "Objective" and uses the already existing "Knowledge" to create and execute a JavaScript function that tries to compute the requested result
+
+![AIComputationTool-UI](AIComputationTool-UI.png)
+
+> this is what you may get after running the above example
 
 ### AI Code Generation nd Execution ###
 
