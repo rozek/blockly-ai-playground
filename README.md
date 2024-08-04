@@ -804,11 +804,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
 
-### AI Web Search ###
+### AI Research Tool ###
 
 > t.b.w.
 
-### AI Web Search - step-by-step ###
+### AI Web Search ###
 
 ![AIWebSearch](./Examples/AIWebSearch.png)
 
@@ -833,11 +833,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
 
-### AI Code Generator ###
+### AI Computation Tool ###
 
 > t.b.w.
 
-### AI Code Generator - step-by-step ###
+### AI Code Generation nd Execution ###
 
 > t.b.w.
 
