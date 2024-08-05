@@ -28,7 +28,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 > **CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a "CORS Unblocking" extension into your browser (like [this](https://chromewebstore.google.com/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai) one)**
 
-> **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#proof-of-concept) and run your first inferences. Later, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents"**
+> **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#text-completion-proof-of-concept) and run your first inferences. Later, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents"**
 
 > **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI on a Mac so far**
 
@@ -61,6 +61,7 @@ These are my plans for the near future:
 
 * create more examples (in the end, every custom block should be covered by at least one example)
 * make sure that everything is working properly in the most important browsers and on the most important platforms (including tablets, but not smartphones - their displays are just too small)
+* **important: create a "Browser Troubleshooting" section!**
 * create a tutorial for real beginners (perhaps with tutorial videos?)
 * use a bundler (vite) to make a real web app out of the playground
 * use some of the available Blockly plugins to enhance the user interface
