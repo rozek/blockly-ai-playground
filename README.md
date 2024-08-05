@@ -833,21 +833,20 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIResearchTool-UI](./Examples/AIResearchTool-UI.png)
 
-> it's definitely not simple to find a good answer for the question "to which programming languages has Joseph Weizenbaum's famous Eliza program been ported?" (even if you try yourself) - here is what the author's attempt produced as output: definitely incomplete, but not bad for just a few seconds of work...
+> it's definitely not easy to find a good answer for the question "to which programming languages has Joseph Weizenbaum's famous Eliza program been ported?" (even if you try yourself) - here is what the author's attempt produced as output: definitely incomplete, but not bad for just a few seconds of work...
 
 ### AI Web Search ###
 
-![AIWebSearch](./Examples/AIWebSearch.png)
+![AIWebSearch_I](./Examples/AIWebSearch_I.png)
+![AIWebSearch_II](./Examples/AIWebSearch_II.png)
 
-> this example illustrates how to use several AI Mezzanines to implement an AI-assisted web search (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
+> you don't have to use the built-in "ResearchTool", you may also implement a similar functionality yourself: this example illustrates how to use several AI Mezzanines to implement an AI-assisted web search (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
 >
 > By the way: the objective was "to which programming languages has Joseph Weizenbaum's famous "Eliza" program be ported?"
 
 ![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
 
-> this is the output of the author's first run: while the document found looks a bit weird (your mileage may vary) the response is impressive!
->
-> (**not convinced? then just have a look at [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don't worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
+> this is what the example may produce as output
 
 ### AI Web Search with live Reporting ###
 
