@@ -833,32 +833,20 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIResearchTool-UI](./Examples/AIResearchTool-UI.png)
 
-> it's definitely not simple to find a good answer for the question "to which programming languages has Joseph Weizenbaum's famous Eliza program been ported?" (even if you try yourself) - here is what the author's attempt produced as output: definitely incomplete, but not bad for just a few seconds of work...
+> it's definitely not easy to find a good answer for the question "to which programming languages has Joseph Weizenbaum's famous Eliza program been ported?" (even if you try yourself) - here is what the author's attempt produced as output: definitely incomplete, but not bad for just a few seconds of work...
 
 ### AI Web Search ###
 
-![AIWebSearch](./Examples/AIWebSearch.png)
+![AIWebSearch_I](./Examples/AIWebSearch_I.png)
+![AIWebSearch_II](./Examples/AIWebSearch_II.png)
 
-> this example illustrates how to use several AI Mezzanines to implement an AI-assisted web search (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
+> you don't have to use the built-in "ResearchTool", you may also implement a similar functionality yourself: this example illustrates how to use several AI Mezzanines to implement an AI-assisted web search (see [Blockly workspace file](./Examples/AIWebSearch.json) - download it onto your computer and then upload it into the Blockly workspace)
 >
 > By the way: the objective was "to which programming languages has Joseph Weizenbaum's famous "Eliza" program be ported?"
 
 ![AIWebSearch-UI](./Examples/AIWebSearch-UI.png)
 
-> this is the output of the author's first run: while the document found looks a bit weird (your mileage may vary) the response is impressive!
->
-> (**not convinced? then just have a look at [the listed document](https://www.bussgeldbescheid-pruefer.de/index.php?id=62) (don't worry, it's in english), read it and find the relevant line yourself! presumably, you will be convinced now!**)
-
-### AI Web Search with live Reporting ###
-
-![AIWebSearch_reporting_I](./Examples/AIWebSearch_reporting_I.png)
-![AIWebSearch_reporting_II](./Examples/AIWebSearch_reporting_II.png)
-
-> the AI Web Search from the previous section already demonstrates that AI assisted loops may take some time to complete. However, without any recognizable feedback, users may get the impression that the program got stuck and may thus be tempted to abort it. This example therefore adds some simple live reporting of the actions the program is undertaking (see [Blockly workspace file](./Examples/AIWebSearch_reporting.json) - download it onto your computer and then upload it into the Blockly workspace)
-
-![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
-
-> this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
+> this is what the example may produce as output
 
 ### AI Computation Tool ###
 
