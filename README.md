@@ -30,7 +30,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 > **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#text-completion-proof-of-concept) and run your first inferences. Later, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents"**
 
-> **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI on a Mac so far**
+> **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI on a Mac so far. Additionally, the performance of generative AI is hard to predict - as a consequence, your mileage may vary when compared to what you saw in the video**
 
 ![Live Demo Screenshot](https://rozek.github.io/blockly-ai-playground/LiveDemo/Screenshot.png)
 
