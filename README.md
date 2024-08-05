@@ -848,17 +848,6 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is what the example may produce as output
 
-### AI Web Search with live Reporting ###
-
-![AIWebSearch_reporting_I](./Examples/AIWebSearch_reporting_I.png)
-![AIWebSearch_reporting_II](./Examples/AIWebSearch_reporting_II.png)
-
-> the AI Web Search from the previous section already demonstrates that AI assisted loops may take some time to complete. However, without any recognizable feedback, users may get the impression that the program got stuck and may thus be tempted to abort it. This example therefore adds some simple live reporting of the actions the program is undertaking (see [Blockly workspace file](./Examples/AIWebSearch_reporting.json) - download it onto your computer and then upload it into the Blockly workspace)
-
-![AIWebSearch_reporting-UI](./Examples/AIWebSearch_reporting-UI.png)
-
-> this is what you may get after running the above example (the intermediate reports have all vanished) - see how the program "reads" all found documents and aggregates the findings into a comprehensive output - even one that can be used for further processing!
-
 ### AI Computation Tool ###
 
 ![AIComputationTool](./Examples/AIComputationTool.png)
