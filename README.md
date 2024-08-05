@@ -850,13 +850,19 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Search Phrase Generation ###
 
+> if you want to conduct a web research for a given topic, you may have to generate a search phrase first - this example does that for you (see [Blockly workspace file](./Examples/SearchPhraseGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
+
 > t.b.w.
 
 ### AI Information Extraction ###
 
+> if you have a text that contains information you need for a given task, you want the AI to read that text and extract what is relevant - here is an example of how to do that (see [Blockly workspace file](./Examples/InformationExtractor.json) - download it onto your computer and then upload it into the Blockly workspace)
+
 > t.b.w.
 
 ### AI Information Validation ###
+
+> letting the AI extract relevant information from a given text may sound nice, but in fact, the AI often produces complete nonsens - here is an example how you can let the AI validate the actual relevance of its output itself (see [Blockly workspace file](./Examples/InformationValidator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 > t.b.w.
 
@@ -872,21 +878,37 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Parameter List Generation ###
 
+> letting the AI generate and execute a Javascript function to achieve a given objective first requires a well-defined list of parameters so that the function knows what data will be passed as its arguments and the AI knows what kind of argument list to create. Here is an example how you can generate such a parameter list (see [Blockly workspace file](./Examples/ParameterListGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
+
 > t.b.w.
 
 ### AI Code Generation and Execution ###
 
-> t.b.w.
-
-### AI Task Decomposer ###
+> this examples shows how to let the AI generate a JavaScript function to compute the given objective based on a list of parameters (see [Blockly workspace file](./Examples/FunctionGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 > t.b.w.
 
-### AI Response Generator ###
+### AI Task Decomposer (without existing knowledge) ###
+
+> at the core of an AI agent there is a component which breaks down a given task into smaller steps which may then be worked through. This example demonstrates how the AI does so from scratch (see [Blockly workspace file](./Examples/TaskDecomposer_I.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+> t.b.w.
+
+### AI Task Decomposer (using already existing knowledge) ###
+
+> often, an AI agent does not have to start its work from scratch but may use already existing "knowledge" - here is an example for generating the remaining steps to achieve a given objective in such a situation (see [Blockly workspace file](./Examples/TaskDecomposer_II.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 > t.b.w.
 
 ### AI Knowledge Generator ###
+
+> both the "ResearchTool" and the "ComputationTool" produce new "facts" which have to be added to existing knowledge for an AI agent to continue its work and (in the end) produce a response. This example shows how that can be done (see [Blockly workspace file](./Examples/KnowledgeGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+> t.b.w.
+
+### AI Answer Generator ###
+
+> every run of an AI agent should finally produce a response - this example demonstrates how to do so (see [Blockly workspace file](./Examples/AnswerGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 > t.b.w.
 
