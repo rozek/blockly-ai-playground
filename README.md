@@ -772,7 +772,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### Basic Settings ###
 
-![basicSettings](./Examples/basicSettings.png)
+![basicSettings_I](./Examples/basicSettings_I.png)![basicSettings_II](./Examples/basicSettings_II.png)
 
 > use this example to enter your basic AI-related settings - they will be stored in the browser's storage and may then be used by other programs without having to re-enter them over and over again (see [Blockly workspace file](./Examples/basicSettings.json) - download it onto your computer and then upload it into the Blockly workspace)
 
