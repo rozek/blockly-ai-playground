@@ -780,7 +780,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > as a hint, here are the settings used by the author himself
 
-### Chat Completion (Proof-of-Concept) ###
+### Text Completion (Proof-of-Concept) ###
 
 ![PoC](./Examples/PoC.png)
 
@@ -790,9 +790,15 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is what you may get as the result
 
-### Text Completion ###
+### Chat Completion ###
 
-> t.b.w.
+![PoC](./Examples/ChatCompletion.png)
+
+> here is an example for a simple ChatCompletion
+
+![PoC-UI](./Examples/ChatCompletion-UI.png)
+
+> this is what you the result may look like
 
 ### Text Summary ###
 
