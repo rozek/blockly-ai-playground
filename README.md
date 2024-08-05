@@ -848,6 +848,18 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is what the example may produce as output
 
+### AI Search Phrase Generation ###
+
+> t.b.w.
+
+### AI Information Extraction ###
+
+> t.b.w.
+
+### AI Information Validation ###
+
+> t.b.w.
+
 ### AI Computation Tool ###
 
 ![AIComputationTool](./Examples/AIComputationTool.png)
@@ -858,7 +870,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 > this is what you may get after running the above example
 
-### AI Code Generation nd Execution ###
+### AI Parameter List Generation ###
+
+> t.b.w.
+
+### AI Code Generation and Execution ###
 
 > t.b.w.
 
