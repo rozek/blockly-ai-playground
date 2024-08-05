@@ -809,7 +809,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![PoC](./Examples/ChatCompletion.png)
 
-> here is an example for a simple ChatCompletion (see [Blockly workspace file](./Examples/ChatCompletion.json)
+> here is an example for a simple ChatCompletion (see [Blockly workspace file](./Examples/ChatCompletion.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![PoC-UI](./Examples/ChatCompletion-UI.png)
 
@@ -823,11 +823,17 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![TextSummarizer-UI](./Examples/TextSummarizer-UI.png)
 
-> this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
+> this is the author's run to let the AI summarize the beginnings of "Alice in Wonderland" - your mileage may vary, of course
 
 ### AI Research Tool ###
 
-> t.b.w.
+![AIResearchTool](./Examples/AIResearchTool.png)
+
+> this is a demonstraton of the built-in "ResearchTool" for AI Agents: enter what you are looking for and let SearXNG and the AI look for relevant documents, read them for you and present a summary of what the system learned (see [Blockly workspace file](./Examples/AIResearchTool.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![AIResearchTool-UI](./Examples/AIResearchTool-UI.png)
+
+> it's definitely not simple to find a good answer for the question "to which programming languages has Joseph Weizenbaum's famous Eliza program been ported?" (even if you try yourself) - here is what the author's attempt produced as output: definitely incomplete, but not bad for just a few seconds of work...
 
 ### AI Web Search ###
 
