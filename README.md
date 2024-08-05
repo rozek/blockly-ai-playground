@@ -62,6 +62,7 @@ These are my plans for the near future:
 * create more examples (in the end, every custom block should be covered by at least one example)
 * make sure that everything is working properly in the most important browsers and on the most important platforms (including tablets, but not smartphones - their displays are just too small)
 * **important: create a "Browser Troubleshooting" section!**
+* quick notes on how to get and install Ollama (perhaps together with Open-WebUI)
 * create a tutorial for real beginners (perhaps with tutorial videos?)
 * use a bundler (vite) to make a real web app out of the playground
 * use some of the available Blockly plugins to enhance the user interface
