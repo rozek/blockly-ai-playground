@@ -782,11 +782,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### Text Completion (Proof-of-Concept) ###
 
-![PoC](./Examples/PoC.png)
+![PoC](./Examples/TextCompletion.png)
 
-> this is the "proof-of-concept" mentioned above - play around as you like! (see [Blockly workspace file](./Examples/PoC.json) - download it onto your computer and then upload it into the Blockly workspace)
+> this is the "proof-of-concept" mentioned above - play around as you like! (see [Blockly workspace file](./Examples/TextCompletion.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-![PoC-UI](./Examples/PoC-UI.png)
+![PoC-UI](./Examples/TextCompletion-UI.png)
 
 > this is what you may get as the result
 
@@ -794,7 +794,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![PoC](./Examples/ChatCompletion.png)
 
-> here is an example for a simple ChatCompletion
+> here is an example for a simple ChatCompletion (see [Blockly workspace file](./Examples/ChatCompletion.json)
 
 ![PoC-UI](./Examples/ChatCompletion-UI.png)
 
