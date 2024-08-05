@@ -230,7 +230,7 @@
     padding:0px 2px 0px 2px;
   }
 
-/**** Textline/Number/TextOutput ****/
+/**** Textline/Number/Text/FinePrintOutput ****/
 
   .Playground.UI.Element.TextlineOutput,
   .Playground.UI.Element.NumberOutput,
@@ -248,6 +248,11 @@
 
   .Playground.UI.Element.TextOutput {
     min-height:88px;
+  }
+
+  .Playground.UI.Element.FinePrintOutput {
+    top:1px; min-height:28px;
+    font-size:12px; font-weight:normal; line-height:18px;
   }
 
   .Playground.UI.Element.NumberOutput {
@@ -277,7 +282,7 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectOrdinal, expectNonEmptyString, expectText, expectedText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectIntegerInRange, expectOrdinal, expectNonEmptyString, expectText, expectedText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
@@ -509,9 +514,9 @@ const PlaygroundUITypes = [
     'textline-input', 'password-input', 'number-input', 'url-input', 'text-input',
     'speech-input',
     'checkbox', 'radiobutton-group', 'dropdown', 'button',
-    'textline-output', 'number-output', 'text-output',
+    'textline-output', 'number-output', 'text-output', 'fineprint-output',
     'text', 'fineprint',
-    'api-server-input', 'searxng-server-input',
+    'api-server-input',
 ];
 const PlaygroundUIEventTypes = ['click', 'input'];
 /**** showWorkspace ****/
@@ -655,7 +660,7 @@ function println(Message) {
 function logStep(Message) {
     expectText('log message', Message);
     if (getFromContext('logStepsToConsole') === true) {
-        println('\nnext Step: ' + Message);
+        println('\n----\nnext Step: ' + Message + '\n----');
     }
 }
 /**** logAction ****/
@@ -663,7 +668,7 @@ function logAction(Message) {
     expectText('log message', Message);
     if ((getFromContext('logStepsToConsole') === true) &&
         (getFromContext('logActionsToConsole') === true)) {
-        println('  ' + Message);
+        println(Message);
     }
 }
 /**** enqueueUIEvent ****/
@@ -757,8 +762,6 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
     let APIServer = (OptionSet.APIServer || getFromContext('APIServer') || '').trim();
     expectURL('APIServer', APIServer);
     let APIKey = (OptionSet.APIKey || getFromContext('APIKey') || '').trim();
-    if (APIKey === '')
-        throwError('Invalidargument: the given "APIKey" is empty');
     expectTextline('APIKey', APIKey);
     let Messages = [
         { role: 'system', content: MessageList[0] },
@@ -768,23 +771,34 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
         Messages.push({ role: 'assistant', content: MessageList[i] }, { role: 'user', content: MessageList[i + 1] });
     }
     const RequestBody = Object.assign({
-        messages: Messages, temperature: 0, top_k: 1, max_tokens: 200, stream: false
+        messages: Messages, temperature: 0, top_k: 1, seed: 12345,
+        max_tokens: 200, stream: false
     }, OptionSet);
     if (RequestBody.model == null)
         throwError('Missingargument: no AI "model" given');
+    RequestBody.num_predict = RequestBody.max_tokens;
     try {
         for (;;) {
+            const Headers = {
+                accept: 'application/json',
+                'content-type': 'application/json',
+            };
+            if (APIKey.trim() !== '') {
+                Headers.Authorization = `Bearer ${APIKey}`;
+            }
             const Response = await fetch(APIServer, {
                 method: 'POST',
-                headers: {
-                    accept: 'application/json',
-                    'content-type': 'application/json',
-                    Authorization: `Bearer ${APIKey}`,
-                },
+                headers: Headers,
                 body: JSON.stringify(RequestBody)
             });
             if (Response.ok) {
-                return (await Response.json()).choices[0].message.content;
+                const JSON = (await Response.json());
+                if ('choices' in JSON) {
+                    return JSON.choices[0].message.content;
+                }
+                else {
+                    return JSON.message.content;
+                }
             }
             if (Response.status === 429) {
                 if (window.confirm('API Request Limit reached\n\nDo you want to continue? ' +
@@ -809,7 +823,7 @@ async function ChatCompletionFor(MessageList, OptionSet = {}) {
 function RequestOptionsFrom(ContextPrefix = 'default_') {
     const Result = {};
     ('model temperature top_k top_p frequency_penalty presence_penalty ' +
-        'max_tokens return_citations return_images').split(' ').forEach((Option) => {
+        'max_tokens num_ctx return_citations return_images').split(' ').forEach((Option) => {
         const Candidate = (getFromContext(ContextPrefix + Option) ||
             getFromContext('default_' + Option));
         if (Candidate != null) {
@@ -839,17 +853,17 @@ async function ResearchFor(Objective) {
     expectText('objective', Objective);
     logStep('conducting web research to achieve ' + quoted(Objective));
     const SearchPhrase = await SearchPhraseForText(Objective);
-    const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
-    if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
-        throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
     const Findings = [];
     logAction('(searching for ' + quoted(SearchPhrase) + ')');
-    const URLList = await WebSearchFor(SearchPhrase, SearXNGThreshold);
+    const URLList = await WebSearchFor(SearchPhrase);
     if (URLList.length === 0) {
         logAction('(no relevant documents found)');
     }
     else {
         logAction('(reading ' + URLList.length + ' document(s))');
+        URLList.forEach((URL) => {
+            logAction(' - ' + quoted(URL));
+        });
     }
     for (const URL of URLList) {
         let Text;
@@ -861,16 +875,12 @@ async function ResearchFor(Objective) {
             logAction('(fetching Web document ' + quoted(URL) + ')');
             Text = await TextOfWebDocument(URL);
         }
-        if (Text.trim() === '') {
-            continue;
-        }
         const Finding = await FindingsFromText(Text, Objective);
-        if (await TextHelpsWith(Text, Objective)) {
+        if (await TextHelpsWith(Finding, Objective)) {
             Findings.push(Finding);
         }
     }
     if (Findings.length === 0) {
-        logAction('ignoring document - no relevant information found');
         return '';
     }
     else {
@@ -878,7 +888,7 @@ async function ResearchFor(Objective) {
         while (Findings.length > 0) {
             Result = await SolutionMergedFromTexts(Result, Findings.shift() || '', Objective);
         }
-        console.log('merged result', Result);
+        console.log('merged result', quoted(Result));
         return JSON.stringify((await SolutionEncodedFrom(Result, Objective)) || '');
     }
 }
@@ -902,11 +912,12 @@ async function SearchPhraseForText(Objective) {
 }
 /**** FindingsFromText ****/
 async function FindingsFromText(Text, Objective) {
-    expectText('text to analyze', Text);
+    //  expectText('text to analyze',Text)
     expectText('objective', Objective);
-    if (Text.trim() === '') {
+    if (!ValueIsText(Text) || (Text.trim() === '')) {
+        logAction('  (skipping empty or non-text document)');
         return '';
-    } // ignore empty or invalid files
+    }
     const MessageList = [
         expectedText('system template for information extractor', getFromContext('InformationExtractor_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
@@ -923,6 +934,9 @@ async function FindingsFromText(Text, Objective) {
 async function TextHelpsWith(Text, Objective) {
     expectText('text to analyze', Text);
     expectText('objective', Objective);
+    if (Text.trim() === '') {
+        return false;
+    } // ignore empty or invalid files
     const MessageList = [
         expectedText('system template for information validator', getFromContext('InformationValidator_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
@@ -933,7 +947,11 @@ async function TextHelpsWith(Text, Objective) {
     const OptionSet = RequestOptionsFrom('InformationValidator_');
     logAction('(validating relevance of findings)');
     let Response = await ChatCompletionFor(MessageList, OptionSet);
-    return (Response.trim().toLowerCase() === 'true');
+    const Relevance = (Response.trim().toLowerCase() === 'true');
+    if (Relevance == false) {
+        logAction('  (ignoring irrelevant findings)');
+    }
+    return Relevance;
 }
 /**** SolutionMergedFromTexts ****/
 async function SolutionMergedFromTexts(Text1, Text2, Objective) {
@@ -961,7 +979,7 @@ async function SolutionEncodedFrom(Text, Objective) {
         expectedText('system template for solution encoder', getFromContext('SolutionEncoder_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
             'Be precise and concise.'),
-        expectedText('system template for solution encoder', getFromContext('SolutionEncoder_UserTemplate')).replace('{{Text}}', Text)
+        expectedText('system template for solution encoder', getFromContext('SolutionEncoder_UserTemplate')).replace('{{TextToAnalyze}}', Text)
             .replace('{{Objective}}', Objective),
     ];
     const OptionSet = RequestOptionsFrom('SolutionEncoder_');
@@ -971,37 +989,59 @@ async function SolutionEncodedFrom(Text, Objective) {
     return (ValueIsList(JSONResponse) ? JSONResponse : []);
 }
 /**** ComputationOf ****/
-async function ComputationOf(Objective, Knowledge) {
+async function ComputationOf(Objective) {
     expectText('objective', Objective);
     logStep('using JavaScript to achieve ' + quoted(Objective));
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
     const ParameterList = await ParameterListFor(Objective);
     console.log('ParameterList', ParameterList);
-    const FunctionSource = await FunctionFor(Objective, ParameterList);
-    let Executable;
+    let FunctionSource = await FunctionFor(Objective, ParameterList);
+    let BlockCommentMatch = FunctionSource.match(/^\s*\/\*[\s\S]*\*\/\s*/);
+    let afterBlockComment = (BlockCommentMatch == null ? 0 : BlockCommentMatch[0].length);
+    if (FunctionSource.slice(afterBlockComment).startsWith('function')) {
+        FunctionSource = (FunctionSource.slice(0, afterBlockComment) +
+            'return ' +
+            FunctionSource.slice(afterBlockComment));
+    }
+    else {
+        throwError('FunctionGenerationError: could not generate executable function ' +
+            '(unexpected source format)');
+    }
+    console.log('FunctionSource', FunctionSource);
+    let compiledFunction;
     try {
         logAction('(compiling JavaScript function)');
-        const compiledFunction = new Function(`return ${FunctionSource}`);
-        Executable = compiledFunction();
-        console.log('compiled Function', '' + Executable);
+        compiledFunction = new Function(FunctionSource);
     }
     catch (Signal) {
         throwError('CompilationError: could not generate executable function\n' +
             'reason: ' + Signal);
     }
+    compiledFunction = compiledFunction();
+    if (compiledFunction == null)
+        throwError('FunctionGenerationError: could not create desired function');
     const ArgumentList = [];
     logAction('(generating argument list)');
     for (const Parameter of JSON.parse(ParameterList)) {
-        const Argument = await ArgumentValueFor(JSON.stringify(Parameter));
+        const Argument = JSON.parse(Knowledge[Parameter.Index].Fact);
         ArgumentList.push(Argument);
     }
     console.log('ArgumentList', ArgumentList);
     try {
         logAction('(executing JavaScript function)');
-        let Result = Executable.apply(null, ArgumentList);
+        let Result = compiledFunction.apply(null, ArgumentList);
+        console.log('computed Result', Result);
         if (Result == null) {
             Result = null;
         }
-        console.log('computed Result', Result);
         return JSON.stringify(Result);
     }
     catch (Signal) {
@@ -1013,17 +1053,38 @@ async function ComputationOf(Objective, Knowledge) {
 /**** ParameterListFor ****/
 async function ParameterListFor(Objective) {
     expectText('objective', Objective);
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
     const MessageList = [
         expectedText('system template for parameter list generator', getFromContext('ParameterListGenerator_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
             'Be precise and concise.'),
-        expectedText('user template for parameter list generator', getFromContext('ParameterListGenerator_UserTemplate')).replace('{{Objective}}', Objective),
+        expectedText('user template for parameter list generator', getFromContext('ParameterListGenerator_UserTemplate')).replace('{{Objective}}', Objective)
+            .replace('{{KnowledgeOverview}}', OverviewOfKnowledge(Knowledge)),
     ];
     const OptionSet = RequestOptionsFrom('ParameterListGenerator_');
     logAction('(generating parameter list)');
     let Response = await ChatCompletionFor(MessageList, OptionSet);
-    const ParameterList = JSONinText(Response);
-    return JSON.stringify(ValueIsParameterList(ParameterList) ? ParameterList : []);
+    let ParameterList = JSONinText(Response);
+    if (!ValueIsList(ParameterList)) {
+        ParameterList = [];
+    }
+    else {
+        console.log('ParameterList', ParameterList);
+        ParameterList.forEach((Parameter) => {
+            expectIntegerInRange('parameter fact index', Parameter.Index, 0, Knowledge.length - 1);
+            expectIdentifier('parameter name', Parameter.Name);
+            Parameter.Description = Knowledge[Parameter.Index].Description;
+        });
+    }
+    return JSON.stringify(ParameterList);
 }
 /**** FunctionFor ****/
 async function FunctionFor(Objective, JSONParameterList) {
@@ -1041,7 +1102,8 @@ async function FunctionFor(Objective, JSONParameterList) {
         expectedText('system template for function generator', getFromContext('FunctionGenerator_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
             'Be precise and concise.'),
-        expectedText('user template for function generator', getFromContext('FunctionGenerator_UserTemplate')).replace('{{Objective}}', Objective),
+        expectedText('user template for function generator', getFromContext('FunctionGenerator_UserTemplate')).replace('{{Objective}}', Objective)
+            .replace('{{ParameterList}}', ParameterList.map((Parameter) => Parameter.Name + ': ' + Parameter.Description).join('\n')),
     ];
     const OptionSet = RequestOptionsFrom('FunctionGenerator_');
     logAction('(generating function)');
@@ -1049,46 +1111,6 @@ async function FunctionFor(Objective, JSONParameterList) {
     if (/(^|\n)```javascript/.test(Response)) {
         Response = Response.replace(/^[\s\S]*```javascript\s*/, '')
             .replace(/```[\s\S]*$/, '');
-    }
-    return Response;
-}
-/**** ArgumentValueFor ****/
-async function ArgumentValueFor(JSONParameter) {
-    expectText('JSON-encoded parameter', JSONParameter);
-    let Parameter = undefined;
-    try {
-        Parameter = JSON.parse(JSONParameter);
-    }
-    catch (Signal) { /* nop */ }
-    if (!ValueIsParameter(Parameter))
-        throwError('InvalidArgument: the given "Parameter" argument does not ' +
-            'contain a valid JSON-encoded function parameter');
-    let Knowledge = undefined;
-    try {
-        let JSONKnowledge = '' + getFromContext('Knowledge');
-        Knowledge = JSON.parse(JSONKnowledge);
-    }
-    catch (Signal) { /* nop */ }
-    if (!ValueIsKnowledge(Knowledge)) {
-        Knowledge = [];
-    }
-    const MessageList = [
-        expectedText('system template for argument value generator', getFromContext('ArgumentGenerator_SystemTemplate') ||
-            getFromContext('default_SystemTemplate') ||
-            'Be precise and concise.'),
-        expectedText('user template for argument value generator', getFromContext('ArgumentGenerator_UserTemplate')).replace('{{Parameter.Description}}', Parameter.Description)
-            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
-    ];
-    const OptionSet = RequestOptionsFrom('ArgumentGenerator_');
-    logAction('(computing value for function parameter ' + quoted(Parameter.Description) + ')');
-    let Response = await ChatCompletionFor(MessageList, OptionSet);
-    let packedValue = JSONinText(Response);
-    if (ValueIsPlainObject(packedValue) && ('Value' in packedValue)) {
-        return packedValue.Value; // any JavaScript type
-    }
-    else {
-        console.error('unexpected "ArgumentValueFrom" output', packedValue);
-        throwError('InvalidResponse: unexpected output');
     }
     return Response;
 }
@@ -1108,8 +1130,8 @@ async function StepsDerivedFromText(Task) {
         expectedText('system template for task decomposer', getFromContext('TaskDecomposer_SystemTemplate') ||
             getFromContext('default_SystemTemplate') ||
             'Be precise and concise.'),
-        expectedText('system template for task decomposer', getFromContext('TaskDecomposer_UserTemplate')).replace('{{Task}}', Task)
-            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
+        expectedText('system template for task decomposer', getFromContext('TaskDecomposer_UserTemplate')).replace('{{TaskDescription}}', Task)
+            .replace('{{KnowledgeOverview}}', OverviewOfKnowledge(Knowledge)),
     ];
     const OptionSet = RequestOptionsFrom('TaskDecomposer_');
     logAction('(deriving the steps needed to perform the given task)');
@@ -1122,30 +1144,6 @@ async function StepsDerivedFromText(Task) {
         console.error('invalid list of steps', StepList);
         throwError('the LLM did not produce a valid step');
     }
-}
-/**** AnswerGeneratedFor ****/
-async function AnswerGeneratedFor(Task) {
-    expectText('task to perform', Task);
-    let Knowledge = undefined;
-    try {
-        let JSONKnowledge = '' + getFromContext('Knowledge');
-        Knowledge = JSON.parse(JSONKnowledge);
-    }
-    catch (Signal) { /* nop */ }
-    if (!ValueIsKnowledge(Knowledge)) {
-        Knowledge = [];
-    }
-    const MessageList = [
-        expectedText('system template for answer generator', getFromContext('AnswerGenerator_SystemTemplate') ||
-            getFromContext('default_SystemTemplate') ||
-            'Be precise and concise.'),
-        expectedText('system template for answer generator', getFromContext('AnswerGenerator_UserTemplate')).replace('{{Task}}', Task)
-            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
-    ];
-    const OptionSet = RequestOptionsFrom('AnswerGenerator_');
-    logAction('(generating response for the completed task)');
-    let Response = await ChatCompletionFor(MessageList, OptionSet);
-    return Response.trim();
 }
 /**** addKnowledgeFrom ****/
 async function addKnowledgeFrom(Objective, Fact) {
@@ -1174,6 +1172,30 @@ async function addKnowledgeFrom(Objective, Fact) {
     setInContext('Knowledge', JSON.stringify(Knowledge));
     return;
 }
+/**** AnswerGeneratedFor ****/
+async function AnswerGeneratedFor(Task) {
+    expectText('task to perform', Task);
+    let Knowledge = undefined;
+    try {
+        let JSONKnowledge = '' + getFromContext('Knowledge');
+        Knowledge = JSON.parse(JSONKnowledge);
+    }
+    catch (Signal) { /* nop */ }
+    if (!ValueIsKnowledge(Knowledge)) {
+        Knowledge = [];
+    }
+    const MessageList = [
+        expectedText('system template for answer generator', getFromContext('AnswerGenerator_SystemTemplate') ||
+            getFromContext('default_SystemTemplate') ||
+            'Be precise and concise.'),
+        expectedText('system template for answer generator', getFromContext('AnswerGenerator_UserTemplate')).replace('{{Task}}', Task)
+            .replace('{{Knowledge}}', JSON.stringify(Knowledge)),
+    ];
+    const OptionSet = RequestOptionsFrom('AnswerGenerator_');
+    logAction('(generating response for the completed task)');
+    let Response = await ChatCompletionFor(MessageList, OptionSet);
+    return Response.trim();
+}
 //------------------------------------------------------------------------------
 //--                           Playground AI Tools                            --
 //------------------------------------------------------------------------------
@@ -1191,6 +1213,12 @@ function ValueIsKnowledge(Value, JSONisAllowed = false) {
         return false;
     }
 }
+/**** OverviewOfKnowledge ****/
+function OverviewOfKnowledge(Knowledge) {
+    return (Knowledge.length === 0
+        ? ''
+        : Knowledge.map((Item, i) => i + ': ' + Item.Description).join('\n')); // yes, the output is 0-based
+}
 /**** ValueIsStep ****/
 function ValueIsStep(Value) {
     return (ValueIsPlainObject(Value) &&
@@ -1199,23 +1227,40 @@ function ValueIsStep(Value) {
         ValueIsNonEmptyString(Value.Justification));
 }
 /**** ValueIsStepList ****/
-function ValueIsStepList(Value) {
-    return ValueIsListSatisfying(Value, ValueIsStep);
+function ValueIsStepList(Value, JSONisAllowed = false) {
+    try {
+        if (JSONisAllowed && ValueIsString(Value)) {
+            Value = JSON.parse(Value);
+        }
+        return ValueIsListSatisfying(Value, ValueIsStep);
+    }
+    catch (Signal) {
+        return false;
+    }
 }
 /**** ValueIsParameter ****/
 function ValueIsParameter(Value) {
     return (ValueIsPlainObject(Value) &&
+        ValueIsOrdinal(Value.Index) &&
         ValueIsNonEmptyString(Value.Name) &&
         ValueIsNonEmptyString(Value.Description));
 }
 /**** ValueIsParameterList ****/
-function ValueIsParameterList(Value) {
-    return ValueIsListSatisfying(Value, ValueIsParameter);
+function ValueIsParameterList(Value, JSONisAllowed = false) {
+    try {
+        if (JSONisAllowed && ValueIsString(Value)) {
+            Value = JSON.parse(Value);
+        }
+        return ValueIsListSatisfying(Value, ValueIsParameter);
+    }
+    catch (Signal) {
+        return false;
+    }
 }
 /**** WebSearchFor ****/
-async function WebSearchFor(SearchPhrase, ScoreThreshold) {
+async function WebSearchFor(SearchPhrase) {
     try {
-        let URLList = await WebSearch(SearchPhrase, ScoreThreshold);
+        let URLList = await WebSearch(SearchPhrase);
         if (URLList.length > 10) {
             URLList.length = 10;
         }
@@ -1227,19 +1272,22 @@ async function WebSearchFor(SearchPhrase, ScoreThreshold) {
     }
 }
 /**** WebSearch - returns a list of URLs ****/
-async function WebSearch(SearchPhrase, ScoreThreshold) {
+async function WebSearch(SearchPhrase) {
     const SearXNGServer = getFromContext('SearXNGServer');
     if (ValueIsURL(SearXNGServer)) { // then search using the API
-        const SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+        let SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
+        if (ValueIsString(SearXNGThreshold)) {
+            SearXNGThreshold = parseFloat(SearXNGThreshold);
+        }
         if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
             throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
         const Parameters = new URLSearchParams({
-            q: SearchPhrase, languagedefault: 'en',
+            q: SearchPhrase, language: 'en',
             format: 'json', categories: 'general', num_results: '10'
         });
         const Response = await fetch(`${SearXNGServer}/search?${Parameters}`); // may fail!
         return (await Response.json()).results
-            .filter((Result) => Result.score >= ScoreThreshold)
+            .filter((Result) => Result.score >= SearXNGThreshold)
             .map((Result) => Result.url);
     }
     else { // else search using the Web interface
@@ -1272,7 +1320,7 @@ async function WebSearch(SearchPhrase, ScoreThreshold) {
             throwError('NoSearXNGServers: could not find any public SearXNG servers');
         const Server = SearXNGServers[Math.trunc(Math.random() * SearXNGServers.length)];
         const Parameters = new URLSearchParams({
-            q: SearchPhrase, languagedefault: 'en',
+            q: SearchPhrase, language: 'en',
             format: 'html', categories: 'general', num_results: '10'
         });
         const Response = await fetch(`${Server}/search?${Parameters}`); // may fail!
@@ -1372,8 +1420,16 @@ function TextWithoutSection(Text, Heading) {
 /**** TextOfWebDocument ****/
 async function TextOfWebDocument(URL) {
     try {
-        const Response = await fetch(URL); // may fail!
-        return HTMLtoText(await Response.text());
+        const Response = await fetch(URL, {
+            headers: { 'Accept': 'text/*' }
+        });
+        const ContentType = Response.headers.get('content-type');
+        if ((ContentType == null) || !ContentType.includes('text/')) {
+            return '';
+        }
+        else {
+            return HTMLtoText(await Response.text());
+        }
     }
     catch (Signal) { // don't worry about untrusted servers etc.
         console.error('failed to fetch ' + quoted(URL), Signal);
@@ -1514,7 +1570,9 @@ function externalAPI(Interpreter, global) {
     }));
     /**** setInContext ****/
     Interpreter.setProperty(global, 'setInContext', Interpreter.createNativeFunction(function _setInContext(Key, Value) {
-        setInContext(Key, Value);
+        setInContext(Key, ValueIsString(Value)
+            ? Value
+            : JSON.stringify(Playground.Interpreter.pseudoToNative(Value)));
     }));
     /**** removeFromContext ****/
     Interpreter.setProperty(global, 'removeFromContext', Interpreter.createNativeFunction(function _removeFromContext(Key) {
@@ -1612,6 +1670,10 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'appendTextOutput', Interpreter.createNativeFunction(function _appendTextOutput(Key, Label) {
         appendToUI(Key, Label, 'text-output', { readonly: true });
     }));
+    /**** appendFinePrintOutput ****/
+    Interpreter.setProperty(global, 'appendFinePrintOutput', Interpreter.createNativeFunction(function _appendFinePrintOutput(Key, Label) {
+        appendToUI(Key, Label, 'fineprint-output', { readonly: true });
+    }));
     /**** appendText ****/
     Interpreter.setProperty(global, 'appendText', Interpreter.createNativeFunction(function _appendText(Key) {
         appendToUI(Key, '', 'text');
@@ -1623,10 +1685,6 @@ function externalAPI(Interpreter, global) {
     /**** appendAPIServerInput ****/
     Interpreter.setProperty(global, 'appendAPIServerInput', Interpreter.createNativeFunction(function _appendAPIServerInput(Label) {
         appendToUI('APIServer', Label, 'api-server-input');
-    }));
-    /**** appendSearXNGServerInput ****/
-    Interpreter.setProperty(global, 'appendSearXNGServerInput', Interpreter.createNativeFunction(function _appendSearXNGServerInput(Label) {
-        appendToUI('SearXNGServer', Label, 'searxng-server-input');
     }));
     /**** configureUI ****/
     Interpreter.setProperty(global, 'configureUI', Interpreter.createNativeFunction(function _configureUI(Key, Option, Value) {
@@ -1716,6 +1774,7 @@ function externalAPI(Interpreter, global) {
     }));
     /**** ChatCompletionFor ****/
     Interpreter.setProperty(global, 'ChatCompletionFor', Interpreter.createAsyncFunction(async function _ChatCompletionFor(MessageList, OptionPrefix, Callback) {
+        MessageList = Playground.Interpreter.pseudoToNative(MessageList);
         try {
             allowIdentifier('option prefix', OptionPrefix);
             const OptionSet = Object.assign(RequestOptionsFrom(OptionPrefix || 'default_'), { temperature: 0, top_k: 1, max_tokens: 200, stream: false });
@@ -1825,9 +1884,9 @@ function externalAPI(Interpreter, global) {
         }
     }));
     /**** ComputationOf ****/
-    Interpreter.setProperty(global, 'ComputationOf', Interpreter.createAsyncFunction(async function _ComputationOf(Objective, Knowledge, Callback) {
+    Interpreter.setProperty(global, 'ComputationOf', Interpreter.createAsyncFunction(async function _ComputationOf(Objective, Callback) {
         try {
-            let Response = await ComputationOf(Objective, Knowledge); // JSON value
+            let Response = await ComputationOf(Objective); // JSON value
             Callback(Response);
         }
         catch (Signal) {
@@ -1857,33 +1916,11 @@ function externalAPI(Interpreter, global) {
             Callback(null);
         }
     }));
-    /**** ArgumentValueFor ****/
-    Interpreter.setProperty(global, 'ArgumentValueFor', Interpreter.createAsyncFunction(async function _ArgumentValueFor(Parameter, Callback) {
-        try {
-            let Response = await ArgumentValueFor(Parameter); // any JS type
-            Callback(Response);
-        }
-        catch (Signal) {
-            Playground.thrownException = Signal;
-            Callback(null);
-        }
-    }));
     /**** StepsDerivedFromText ****/
     Interpreter.setProperty(global, 'StepsDerivedFromText', Interpreter.createAsyncFunction(async function _StepsDerivedFromText(Task, Callback) {
         try {
             let Response = await StepsDerivedFromText(Task);
             Callback(Playground.Interpreter.nativeToPseudo(Response));
-        }
-        catch (Signal) {
-            Playground.thrownException = Signal;
-            Callback(null);
-        }
-    }));
-    /**** AnswerGeneratedFor ****/
-    Interpreter.setProperty(global, 'AnswerGeneratedFor', Interpreter.createAsyncFunction(async function _AnswerGeneratedFor(Task, Callback) {
-        try {
-            let Response = await AnswerGeneratedFor(Task);
-            Callback(Response);
         }
         catch (Signal) {
             Playground.thrownException = Signal;
@@ -1901,6 +1938,17 @@ function externalAPI(Interpreter, global) {
             Callback(null);
         }
     }));
+    /**** AnswerGeneratedFor ****/
+    Interpreter.setProperty(global, 'AnswerGeneratedFor', Interpreter.createAsyncFunction(async function _AnswerGeneratedFor(Task, Callback) {
+        try {
+            let Response = await AnswerGeneratedFor(Task);
+            Callback(Response);
+        }
+        catch (Signal) {
+            Playground.thrownException = Signal;
+            Callback(null);
+        }
+    }));
     /**** ValueIsKnowledge ****/
     Interpreter.setProperty(global, 'ValueIsKnowledge', Interpreter.createNativeFunction(function _ValueIsKnowledge(Value, JSONisAllowed) {
         return ValueIsKnowledge(Value, JSONisAllowed);
@@ -1910,16 +1958,16 @@ function externalAPI(Interpreter, global) {
         return ValueIsStep(Value);
     }));
     /**** ValueIsStepList ****/
-    Interpreter.setProperty(global, 'ValueIsStepList', Interpreter.createNativeFunction(function _ValueIsStepList(Value) {
-        return ValueIsStepList(Value);
+    Interpreter.setProperty(global, 'ValueIsStepList', Interpreter.createNativeFunction(function _ValueIsStepList(Value, JSONisAllowed) {
+        return ValueIsStepList(Value, JSONisAllowed);
     }));
     /**** ValueIsParameter ****/
     Interpreter.setProperty(global, 'ValueIsParameter', Interpreter.createNativeFunction(function _ValueIsParameter(Value) {
         return ValueIsParameter(Value);
     }));
     /**** ValueIsParameterList ****/
-    Interpreter.setProperty(global, 'ValueIsParameterList', Interpreter.createNativeFunction(function _ValueIsParameterList(Value) {
-        return ValueIsParameterList(Value);
+    Interpreter.setProperty(global, 'ValueIsParameterList', Interpreter.createNativeFunction(function _ValueIsParameterList(Value, JSONisAllowed) {
+        return ValueIsParameterList(Value, JSONisAllowed);
     }));
     /**** ValueIsWikipediaURL ****/
     Interpreter.setProperty(global, 'ValueIsWikipediaURL', Interpreter.createNativeFunction(function _ValueIsWikipediaURL(Value) {
@@ -1965,10 +2013,7 @@ function externalAPI(Interpreter, global) {
     Interpreter.setProperty(global, 'WebSearch', Interpreter.createAsyncFunction(async function _WebSearch(SearchPhrase, Callback) {
         try {
             expectNonEmptyString('search phrase', SearchPhrase);
-            const ScoreThreshold = getFromContext('SearXNGScoreThreshold') || 2;
-            if (!ValueIsNumberInRange(ScoreThreshold, 0, 10, true, true))
-                throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
-            const Result = (await WebSearchFor(SearchPhrase, ScoreThreshold))
+            const Result = (await WebSearchFor(SearchPhrase))
                 .filter((URL) => URL.startsWith('https://'));
             Callback(Playground.Interpreter.nativeToPseudo(Result));
         }
@@ -2078,7 +2123,7 @@ function startBlocklyProgram() {
     if (Playground.InterpreterState !== 'idle') {
         return;
     }
-    let Code = 'clearUI();\n' + javascriptGenerator.workspaceToCode(Playground.Workspace);
+    let Code = javascriptGenerator.workspaceToCode(Playground.Workspace);
     console.log('Code', Code);
     console.log('Playground', Playground);
     try {
@@ -2088,10 +2133,12 @@ function startBlocklyProgram() {
         console.error('Blockly Code Generation Error', Signal);
         window.alert('Blockly Code Generation Error\n\n' + Signal);
     }
+    clearContext();
+    clearUI();
     Object.assign(Playground.Context, {
         APIServer: undefined, APIKey: undefined,
         SearXNGServer: 'http:127.0.0.1:8080', SearXNGScoreThreshold: 2,
-        default_model: undefined, default_max_tokens: 2048,
+        default_model: undefined, default_max_tokens: 2048, default_num_ctx: undefined,
         default_temperature: 0, default_top_p: undefined, default_top_k: 1,
         default_presence_penalty: undefined, default_frequency_penalty: 1,
         default_SystemTemplate: 'Be precise and concise.',
@@ -2106,7 +2153,7 @@ capturing its key points and main ideas. The summary should be clear, accurate,
 and significantly shorter than the original text.
 
 Text to summarize:
-{{TextToSummarize}}
+{{TextToSummarize}}.
 
 Please provide a concise summary of the above text in no more than 3-4 sentences.
 `,
@@ -2115,15 +2162,16 @@ Please provide a concise summary of the above text in no more than 3-4 sentences
         TaskDecomposer_presence_penalty: undefined, TaskDecomposer_frequency_penalty: 1,
         TaskDecomposer_SystemTemplate: 'Be precise and concise.',
         TaskDecomposer_UserTemplate: `
-You are an AI assistant trained to perform a given task. Your role is to
-analyze and break down the following task into clear, logical, and sequential
-steps taking into account what you already know and the tools you have at hand:
+You are an AI assistant trained to perform a given task. Your role is to analyze
+the already available information and use that as the starting point to break
+down the following task into clear, logical, and sequential steps taking into
+account the tools you have at hand:
 
 Task Description:
-{{Task}}
+{{TaskDescription}}.
 
-What you already know:
-{{KnowledgeList}}
+Already available informations:
+{{KnowledgeOverview}}
 
 The available tools are:
 
@@ -2165,13 +2213,14 @@ Example format:
   }
 ]
 
-Ensure that your steps:
-- Do not recompute or regenerate any already known information
-- Are comprehensive and cover all aspects of the task
-- Are presented in a logical order
-- Are clear and easy to understand for someone unfamiliar with the task
-- Are specific and actionable
-- End with a step using the ResponseTool
+Ensure that your steps are
+- comprehensive and cover all aspects of the task
+- presented in a logical order
+- clear and easy to understand for someone unfamiliar with the task
+- specific and actionable
+
+Avoid unnecessary steps. Use the already available information as your
+starting point. End your list with a step using the ResponseTool.
 
 Your goal is to create a guide that anyone could follow to successfully complete
 the given task, presented in a valid JSON format.
@@ -2185,7 +2234,7 @@ You are an AI assistant tasked with formulating effective search engine queries.
 Your goal is to create a concise, relevant query that will help find information
 about the following problem:
 
-{{Objective}}
+{{Objective}}.
 
 Generate a search query that:
 1. Captures the core elements of the problem
@@ -2206,9 +2255,14 @@ Your task is to answer the following question based ONLY on the information
 provided in the given text. Do not use any external knowledge or information
 beyond what is explicitly stated in the text.
 
-Text: {{TextToRead}}
+Text:
+{{TextToRead}}.
 
-Question: {{Objective}}
+Question:
+{{Objective}}.
+
+Remember to answer the question from the given text only. Avoid anything that
+is not part of the given text.
 
 Answer:
 `,
@@ -2221,8 +2275,11 @@ You are an expert at analyzing text for relevance to specific problems. Your
 task is to determine whether a given text contains information that could help
 solve a particular problem.
 
-Text to analyze: {{TextToAnalzye}}
-Problem to solve: {{Objective}}
+Text to analyze:
+{{TextToAnalzye}}.
+
+Problem to solve:
+{{Objective}}.
 
 Carefully examine the text and consider whether it contains any information,
 concepts, ideas, or insights that could be useful in addressing or solving the
@@ -2251,9 +2308,9 @@ text that addresses the **Objective**. Output only the merged text, without any
 additional content.
 
 ### Inputs:
-- **Text 1:** {{Text1}}
-- **Text 2:** {{Text2}}
-- **Objective:** {{Objective}}
+- **Text 1:** {{Text1}}.
+- **Text 2:** {{Text2}}.
+- **Objective:** {{Objective}}.
 
 ### Output:
 `,
@@ -2266,8 +2323,11 @@ Generate a concise, machine-processable solution for a given problem solely
 based on the information in a given text. Output only the solution as a
 JSON-compliant list, without any explanations or additional context.
 
-Text to analyze: {{Text}}
-Problem to solve: {{Objective}}
+Text to analyze:
+{{TextToAnalyze}}.
+
+Problem to solve:
+{{Objective}}.
 
 Response format:
 Output a JSON array in the form: ["item1", "item2", "item3"]
@@ -2279,31 +2339,30 @@ and that the entire output is valid JSON.
         ParameterListGenerator_presence_penalty: undefined, ParameterListGenerator_frequency_penalty: 1,
         ParameterListGenerator_SystemTemplate: 'Be precise and concise.',
         ParameterListGenerator_UserTemplate: `
-Generate the minimal list of parameters for a JavaScript function designed to
-compute the result of a given objective. The output should be a valid JSON list,
-where each element is an object containing the following fields:
-- "Name": the name of the argument
-- "Description": a human-readable description of the argument's purpose
+Use the following list of already available informations and decide which of
+them could be used to achieve the given objective by running a Javascript
+function with the chosen informations as its arguments.
+
+Already available informations:
+{{KnowledgeOverview}}.
+
+Now use the chosen informations and construct a parameter list in JSON format where
+each element is an object containing the following fields:
+
+- "Index": the index of the chosen item from the list of informations
+- "Name": a valid JavaScript function parameter name for the chosen information
 
 Here is an example JSON list for a function that calculates the area of a
 rectangle:
 [
-  {
-    "Name": "width",
-    "Description": "The width of the rectangle"
-  },
-  {
-    "Name": "height",
-    "Description": "The height of the rectangle"
-  }
+  { "Index":0, "Name":"width" },
+  { "Index":1, "Name":"height" }
 ]
 
 Please generate a similar JSON list for a function that achieves the following
 objective
 
-{{Objective}}
-
-Remember to list only really relevant parameters!
+{{Objective}}.
 `,
         FunctionGenerator_model: undefined, FunctionGenerator_max_tokens: 2048,
         FunctionGenerator_temperature: 0, FunctionGenerator_top_p: undefined, FunctionGenerator_top_k: 1,
@@ -2312,46 +2371,18 @@ Remember to list only really relevant parameters!
         FunctionGenerator_UserTemplate: `
 You are a highly skilled JavaScript developer. Your task is to generate a
 JavaScript function that computes a specific result based on a given objective
-and a list of arguments. Each argument is described by the type of data it will
-contain. Ensure that the function is well-documented with comments explaining
-each step.
-Output the generated function only. Avoid any "example usage", "module.exports",
-"export" statements or any other text outside the actual function.
+and a list of arguments. Each argument is described by its name and the type of
+data it will contain. Ensure that the function is well-documented with comments
+explaining each step.
 
-### Objective:
-{{Objective}}
+The objective:
+{{Objective}}.
 
-### Arguments:
+The list of arguments:
 {{ParameterList}}
 
-### Function Source:
-`,
-        ArgumentGenerator_model: undefined, ArgumentGenerator_max_tokens: 2048,
-        ArgumentGenerator_temperature: 0, ArgumentGenerator_top_p: undefined, ArgumentGenerator_top_k: 1,
-        ArgumentGenerator_presence_penalty: undefined, ArgumentGenerator_frequency_penalty: 1,
-        ArgumentGenerator_SystemTemplate: 'Be precise and concise.',
-        ArgumentGenerator_UserTemplate: `
-You are given a list of known facts and a description of a function argument.
-Your task is to extract the relevant data for the specified function argument
-from the list of known facts. The argument value should be either a single
-value or a list of values, packed into a JavaScript object with the sole
-property "Value". Output the result as valid JSON.
-
-
-### Known Facts:
-{{Knowledge}}
-
-### Function Argument Description:
-{{Parameter.Description}}
-
-### Output:
-Provide the extracted data in the following JSON format:
-{
-  "Value": <extracted data as a boolean, number, string, array or object>
-}
-
-Important: do NOT perform the computation needed to achieve the objective
-yourself, just create the required argument.
+Output the generated function only. Avoid any "example usage", "module.exports"
+or "export" statements or any other text outside the actual function.
 `,
         KnowledgeGenerator_model: undefined, KnowledgeGenerator_max_tokens: 2048,
         KnowledgeGenerator_temperature: 0, KnowledgeGenerator_top_p: undefined, KnowledgeGenerator_top_k: 1,
@@ -2359,12 +2390,13 @@ yourself, just create the required argument.
         KnowledgeGenerator_SystemTemplate: 'Be precise and concise.',
         KnowledgeGenerator_UserTemplate: `
 Generate a brief and concise headline (1 line, 50 words max) for the
-following data that was gathered in order to achieve the given objective:
+following fact that was gathered in order to achieve the given objective:
 
-{{Fact}}
+Fact:
+{{Fact}}.
 
 Objective:
-{{Objective}}
+{{Objective}}.
 
 Focus on the key points that are most relevant to the stated objective. Use
 clear and simple language. Do not include any extraneous details.
@@ -2378,7 +2410,7 @@ Given a specific task and all known facts, generate a brief and concise
 human-readable result.
 
 Task:
-{{Task}}
+{{Task}}.
 
 Known facts:
 {{Knowledge}}
@@ -3280,6 +3312,30 @@ javascriptGenerator.forBlock['appendTextOutput'] = function (Block, Generator) {
     let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
     return `appendTextOutput(${Key},${Label});\n`;
 };
+/**** appendFinePrintOutput ****/
+Blockly.Blocks['appendFinePrintOutput'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'appendFinePrintOutput',
+            tooltip: 'appends a "fineprint" output element to the Playground User Interface',
+            helpUrl: '',
+            message0: 'append fineprint output element %1 labelled %2 to UI',
+            args0: [
+                { type: 'input_value', name: 'key', check: 'String' },
+                { type: 'input_value', name: 'label', check: 'String' },
+            ],
+            previousStatement: null,
+            nextStatement: null,
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['appendFinePrintOutput'] = function (Block, Generator) {
+    let Key = Generator.valueToCode(Block, 'key', Order.NONE) || '""';
+    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
+    return `appendFinePrintOutput(${Key},${Label});\n`;
+};
 /**** appendText ****/
 Blockly.Blocks['appendText'] = {
     init: function () {
@@ -3339,26 +3395,6 @@ Blockly.Blocks['appendAPIServerInput'] = {
 javascriptGenerator.forBlock['appendAPIServerInput'] = function (Block, Generator) {
     let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
     return `appendAPIServerInput(${Label});\n`;
-};
-/**** appendSearXNGServerInput ****/
-Blockly.Blocks['appendSearXNGServerInput'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'appendSearXNGServerInput',
-            tooltip: 'appends a URL input element for SearXNG Servers to the Playground User Interface',
-            helpUrl: '',
-            message0: 'append SearXNG Server input element labelled %1 to UI',
-            args0: [{ type: 'input_value', name: 'label', check: 'String' }],
-            previousStatement: null,
-            nextStatement: null,
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['appendSearXNGServerInput'] = function (Block, Generator) {
-    let Label = Generator.valueToCode(Block, 'label', Order.NONE) || '""';
-    return `appendSearXNGServerInput(${Label});\n`;
 };
 /**** configureUI ****/
 Blockly.Blocks['configureUI'] = {
@@ -4086,25 +4122,6 @@ javascriptGenerator.forBlock['FunctionFor'] = function (Block, Generator) {
     let Parameters = Generator.valueToCode(Block, 'parameters', Order.NONE) || '"[]"';
     return [`FunctionFor(${Objective},${Parameters})`, Order.FUNCTION_CALL];
 };
-/**** ArgumentValueFor ****/
-Blockly.Blocks['ArgumentValueFor'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'ArgumentValueFor',
-            tooltip: 'derives a function argument using its parameter description and the existing knowledge',
-            helpUrl: '',
-            message0: 'argument for %1',
-            args0: [{ type: 'input_value', name: 'parameter', check: 'String' },],
-            output: 'String',
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['ArgumentValueFor'] = function (Block, Generator) {
-    let Parameter = Generator.valueToCode(Block, 'parameter', Order.NONE) || '""';
-    return [`ArgumentValueFor(${Parameter})`, Order.FUNCTION_CALL];
-};
 /**** StepsDerivedFromText ****/
 Blockly.Blocks['StepsDerivedFromText'] = {
     init: function () {
@@ -4123,25 +4140,6 @@ Blockly.Blocks['StepsDerivedFromText'] = {
 javascriptGenerator.forBlock['StepsDerivedFromText'] = function (Block, Generator) {
     let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
     return [`StepsDerivedFromText(${Objective})`, Order.FUNCTION_CALL];
-};
-/**** AnswerGeneratedFor ****/
-Blockly.Blocks['AnswerGeneratedFor'] = {
-    init: function () {
-        this.jsonInit({
-            type: 'AnswerGeneratedFor',
-            tooltip: 'creates a human-readable response for a given task based on the gathered knowledge',
-            helpUrl: '',
-            message0: 'answer for %1',
-            args0: [{ type: 'input_value', name: 'task', check: 'String' }],
-            output: 'String',
-            colour: 60,
-            inputsInline: true
-        });
-    }
-};
-javascriptGenerator.forBlock['AnswerGeneratedFor'] = function (Block, Generator) {
-    let Task = Generator.valueToCode(Block, 'task', Order.NONE) || '""';
-    return [`AnswerGeneratedFor(${Task})`, Order.FUNCTION_CALL];
 };
 /**** addKnowledgeFrom ****/
 Blockly.Blocks['addKnowledgeFrom'] = {
@@ -4165,6 +4163,25 @@ javascriptGenerator.forBlock['addKnowledgeFrom'] = function (Block, Generator) {
     let Objective = Generator.valueToCode(Block, 'objective', Order.NONE) || '""';
     let Fact = Generator.valueToCode(Block, 'fact', Order.NONE) || '""';
     return `addKnowledgeFrom(${Objective},${Fact});\n`;
+};
+/**** AnswerGeneratedFor ****/
+Blockly.Blocks['AnswerGeneratedFor'] = {
+    init: function () {
+        this.jsonInit({
+            type: 'AnswerGeneratedFor',
+            tooltip: 'creates a human-readable response for a given task based on the gathered knowledge',
+            helpUrl: '',
+            message0: 'answer for %1',
+            args0: [{ type: 'input_value', name: 'task', check: 'String' }],
+            output: 'String',
+            colour: 60,
+            inputsInline: true
+        });
+    }
+};
+javascriptGenerator.forBlock['AnswerGeneratedFor'] = function (Block, Generator) {
+    let Task = Generator.valueToCode(Block, 'task', Order.NONE) || '""';
+    return [`AnswerGeneratedFor(${Task})`, Order.FUNCTION_CALL];
 };
 /**** ValueIsKnowledge ****/
 Blockly.Blocks['ValueIsKnowledge'] = {
@@ -4221,7 +4238,7 @@ Blockly.Blocks['ValueIsStepList'] = {
 };
 javascriptGenerator.forBlock['ValueIsStepList'] = function (Block, Generator) {
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsStepList(${Value})`, Order.FUNCTION_CALL];
+    return [`ValueIsStepList(${Value},true)`, Order.FUNCTION_CALL];
 };
 /**** ValueIsParameter ****/
 Blockly.Blocks['ValueIsParameter'] = {
@@ -4259,7 +4276,7 @@ Blockly.Blocks['ValueIsParameterList'] = {
 };
 javascriptGenerator.forBlock['ValueIsParameterList'] = function (Block, Generator) {
     let Value = Generator.valueToCode(Block, 'value', Order.NONE) || 'undefined';
-    return [`ValueIsParameterList(${Value})`, Order.FUNCTION_CALL];
+    return [`ValueIsParameterList(${Value},true)`, Order.FUNCTION_CALL];
 };
 /**** ValueIsWikipediaURL ****/
 Blockly.Blocks['ValueIsWikipediaURL'] = {
@@ -4895,10 +4912,10 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "appendTextlineOutput" },
                     { kind: "block", type: "appendNumberOutput" },
                     { kind: "block", type: "appendTextOutput" },
+                    { kind: "block", type: "appendFinePrintOutput" },
                     { kind: "block", type: "appendText" },
                     { kind: "block", type: "appendFinePrint" },
                     { kind: "block", type: "appendAPIServerInput" },
-                    { kind: "block", type: "appendSearXNGServerInput" },
                     { kind: "block", type: "configureUI" },
                     { kind: "block", type: "ConfigurationOf" },
                     { kind: "block", type: "EnablingOf" },
@@ -4941,10 +4958,9 @@ const WorkspaceSpecification = {
                     { kind: "block", type: "ComputationOf" },
                     { kind: "block", type: "ParameterListFor" },
                     { kind: "block", type: "FunctionFor" },
-                    { kind: "block", type: "ArgumentValueFor" },
                     { kind: "block", type: "StepsDerivedFromText" },
-                    { kind: "block", type: "AnswerGeneratedFor" },
                     { kind: "block", type: "addKnowledgeFrom" },
+                    { kind: "block", type: "AnswerGeneratedFor" },
                 ]
             }, {
                 kind: "category",
@@ -5150,10 +5166,10 @@ class PlaygroundUIItemView extends Component {
             case 'textline-output': return html `<${TextlineOutputItem} Item=${Item}/>`;
             case 'number-output': return html `<${NumberOutputItem} Item=${Item}/>`;
             case 'text-output': return html `<${TextOutputItem} Item=${Item}/>`;
+            case 'fineprint-output': return html `<${FinePrintOutputItem} Item=${Item}/>`;
             case 'text': return html `<${TextViewItem} Item=${Item}/>`;
             case 'fineprint': return html `<${FinePrintViewItem} Item=${Item}/>`;
             case 'api-server-input': return html `<${APIServerInputItem} Item=${Item}/>`;
-            case 'searxng-server-input': return html `<${SearXNGServerInputItem} Item=${Item}/>`;
             default: throwError('InvalidArgument: missing or invalid "Item.Type"');
         }
         return undefined;
@@ -5610,6 +5626,27 @@ class TextOutputItem extends PlaygroundUIItemView {
       `;
     }
 }
+/**** FinePrintOutputItem ****/
+class FinePrintOutputItem extends PlaygroundUIItemView {
+    render(PropSet) {
+        const { Item } = PropSet;
+        const { OptionSet } = Item;
+        const Key = Item.Key;
+        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
+        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
+        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
+        const LineWrapping = acceptableOptionalBoolean(OptionSet.LineWrapping);
+        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
+        let ValueToShow = acceptableText(getFromContext(Key), '');
+        return html `
+        <div class="Playground UI Label">${Item.Label}</>
+        <div class="Playground UI Element FinePrintOutput">
+          ${ValueToShow}
+        </>
+        <div class="Playground UI newLine"/>
+      `;
+    }
+}
 /**** TextViewItem ****/
 class TextViewItem extends PlaygroundUIItemView {
     render(PropSet) {
@@ -5695,66 +5732,7 @@ class APIServerInputItem extends PlaygroundUIItemView {
           <option value="" selected disabled>(select)</option>
           <option value="https://api.openai.com/v1/chat/completions">Open AI</option>
           <option value="https://api.perplexity.ai/chat/completions">Perplexity AI</option>
-        </select>
-        <div class="Playground UI newLine"/>
-      `;
-    }
-}
-/**** SearXNGServerInputItem ****/
-class SearXNGServerInputItem extends PlaygroundUIItemView {
-    constructor() {
-        super(...arguments);
-        Object.defineProperty(this, "ValueToShow", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: ''
-        });
-    }
-    render(PropSet) {
-        const my = this, me = this;
-        const { Item } = PropSet;
-        const { OptionSet } = Item;
-        const Key = 'SearXNGServer';
-        const Placeholder = acceptableOptionalTextline(OptionSet.Placeholder);
-        const readonly = acceptableOptionalBoolean(OptionSet.readonly);
-        const minLength = acceptableOptionalOrdinal(OptionSet.minLength);
-        const maxLength = acceptableOptionalOrdinal(OptionSet.maxLength);
-        const Pattern = acceptableOptionalTextline(OptionSet.Pattern);
-        const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
-        if ((document.activeElement == null) ||
-            !document.activeElement.contains(my.View)) {
-            my.ValueToShow = acceptableTextline(getFromContext(Key), '');
-        }
-        function onInput(Event) {
-            if (Enabling == false) {
-                return consumingEvent(Event);
-            }
-            setInContext(Key, Event.target.value);
-            enqueueUIEvent('input', Key);
-        }
-        function onChange(Event) {
-            if (Enabling == false) {
-                return consumingEvent(Event);
-            }
-            setInContext(Key, Event.target.value);
-            Event.target.value = '';
-            enqueueUIEvent('input', Key);
-        }
-        function onBlur() { me.rerender(); }
-        return html `
-        <div class="Playground UI Label">${Item.Label}</>
-        <input type="url" class="Playground UI Element URLInput"
-          value=${my.ValueToShow} minlength=${minLength} maxlength=${maxLength}
-          readOnly=${readonly} placeholder=${Placeholder}
-          pattern=${Pattern}
-          disabled=${Enabling == false} onInput=${onInput} onBlur=${onBlur}
-        />
-        <select onChange=${onChange} style="
-          display:inline-block; position:relative;
-          top:1px; height:28px; margin-left:4px;
-        ">
-          <option value="" selected disabled>(select)</option>
+          <option value="http://127.0.0.1:11434/api/chat">local Ollama</option>
         </select>
         <div class="Playground UI newLine"/>
       `;
