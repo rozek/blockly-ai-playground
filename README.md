@@ -1,5 +1,6 @@
 <center>
   <a href="#prerequisites">Prerequisites</a> |
+  <a href="#browser-troubleshooting">Browser Troubleshooting</a> |
   <a href="#current-status-and-future-plans">Future plans</a> |
   <a href="#playground-context">Playground Context</a> |
   <a href="#playground-ui">Playground UI</a> |
@@ -52,6 +53,18 @@ As a consequence, you will need
 
 * the **URL of an API entry point** (either locally on your machine or on the internet) and
 * an **API Access Key** if you are using an official AI provider
+
+## Browser Troubleshooting ##
+
+Modern browser security may cause a lot of trouble when a web application wants to communicate with servers that have not been configured properly. If you know what you are doing, you may lower specific security levels in order to get the experience you expect.
+
+### CORS ###
+
+t.b.w.
+
+### Communicating with you own PC ###
+
+t.b.w.
 
 ## Current Status and Future Plans ##
 
