@@ -817,11 +817,11 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### Text Summary ###
 
-![TextSummary](./Examples/TextSummary.png)
+![TextSummarizer](./Examples/TextSummarizer.png)
 
-> this example summarizes a given text (see [Blockly workspace file](./Examples/TextSummary.json) - download it onto your computer and then upload it into the Blockly workspace)
+> this example summarizes a given text (see [Blockly workspace file](./Examples/TextSummarizer.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-![TextSummary-UI](./Examples/TextSummary-UI.png)
+![TextSummarizer-UI](./Examples/TextSummarizer-UI.png)
 
 > this is the authors run to let the AI summarize the first chapter of "Alice in Wonderland" - your mileage may vary, of course
 
