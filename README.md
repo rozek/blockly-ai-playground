@@ -10,7 +10,7 @@
   <a href="#miscellany">Miscellany</a> |
   <a href="#object-support">Object Support</a> |
   <a href="#examples">Simple Examples</a> |
-  <a href="#ai-examples">AI Examples</a>
+  <a href="#ai-examples">AI Examples</a> |
   <a href="#diy-ai-applications">DIY AI Applications</a>
 </center>
 
