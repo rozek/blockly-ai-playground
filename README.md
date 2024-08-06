@@ -920,9 +920,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Task Decomposer (using already existing knowledge) ###
 
+![TaskDecomposer_II](./Examples/TaskDecomposer_II.png)
+
 > often, an AI agent does not have to start its work from scratch but may use already existing "knowledge" - here is an example for generating the remaining steps to achieve a given objective in such a situation (see [Blockly workspace file](./Examples/TaskDecomposer_II.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![TaskDecomposer_II-UI](./Examples/TaskDecomposer_II-UI.png)
+
+> if you already liked the previous example, this one will impress you: yes, the AI is really able to take existing knowledge into account!
 
 ### AI Knowledge Generator ###
 
