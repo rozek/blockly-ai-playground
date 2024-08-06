@@ -870,9 +870,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Information Validation ###
 
+![InformationValidator](./Examples/InformationValidator.png)
+
 > letting the AI extract relevant information from a given text may sound nice, but in fact, the AI often produces complete nonsens - here is an example how you can let the AI validate the actual relevance of its output itself (see [Blockly workspace file](./Examples/InformationValidator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![InformationValidator-UI](./Examples/InformationValidator-UI.png)
+
+> useful excerpts should display "true", nonsense "false"
 
 ### AI Computation Tool ###
 
