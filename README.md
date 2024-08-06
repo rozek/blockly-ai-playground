@@ -957,7 +957,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ![AIAgent-UI](./Examples/AIAgent-UI.png)
 
-> this is what you may get as output. **Feel free to compare this output with what MS Copilt or Perplexity AI will tell you - and be impressed!** Nota bene: your mileage will definitely vary from run to run - use that experience to treat every response from an AI (or an AI Agent) with care, even if you asked a "professional" one!
+> this is what you may get as a result. **Feel free to compare this output with what MS Copilot or Perplexity AI will tell you - and be impressed!** Nota bene: your mileage will <u>definitely</u> vary from run to run - use that experience to treat every response from an AI (or an AI Agent) with care, even if you asked a "professional" one!
 
 ## License ##
 
