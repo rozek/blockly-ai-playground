@@ -63,7 +63,7 @@ Modern browser security may cause a lot of trouble when a web application wants 
 
 t.b.w.
 
-### Communicating with you own PC ###
+### Communicating with your own PC ###
 
 t.b.w.
 
