@@ -950,10 +950,12 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Agent ###
 
-![AI-Agent_I](./Examples/AI-Agent_I.png)
-![AI-Agent_II](./Examples/AI-Agent_II.png)
+![AIAgent_I](./Examples/AIAgent_I.png)
+![AIAgent_II](./Examples/AIAgent_II.png)
 
 > this example contains a full-blown AI agent (it's a bit like your own, personal "Copilot"): give it a "task" and watch how it decomposes it into smaller steps it is then working through. The agent has two "tools" at hand: a "ResearchTool" that can conduct web researches (like the [AI Web Search](#ai-web-search) from above) and a "ComputationTool" which creates and runs a JavaScript function that is used whenever some information has to be computed rather than looked up in the Internet. The outcome of each step is added to the agent's "knowledge" and stored in the browser - this gives the agent the possibility to skip over already completed steps when it was aborted and restarted later (provided that the "task" was not changed in between)
+
+![AIAgent-UI](./Examples/AIAgent-UI.png)
 
 ### Steps derived from a given Objective ###
 
