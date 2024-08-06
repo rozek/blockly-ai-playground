@@ -910,9 +910,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Task Decomposer (without existing knowledge) ###
 
+![TaskDecomposer_I](./Examples/TaskDecomposer_I.png)
+
 > at the core of an AI agent there is a component which breaks down a given task into smaller steps which may then be worked through. This example demonstrates how the AI does so from scratch (see [Blockly workspace file](./Examples/TaskDecomposer_I.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![TaskDecomposer_I-UI](./Examples/TaskDecomposer_I-UI.png)
+
+> this is what you may get - not too bad!
 
 ### AI Task Decomposer (using already existing knowledge) ###
 
