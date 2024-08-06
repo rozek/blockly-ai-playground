@@ -900,9 +900,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Code Generation and Execution ###
 
+![FunctionGenerator](./Examples/FunctionGenerator.png)
+
 > this examples shows how to let the AI generate a JavaScript function to compute the given objective based on a list of parameters (see [Blockly workspace file](./Examples/FunctionGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![FunctionGenerator-UI](./Examples/FunctionGenerator-UI.png)
+
+> sometimes, the generated code is really impressive...
 
 ### AI Task Decomposer (without existing knowledge) ###
 
