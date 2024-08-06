@@ -636,7 +636,6 @@ function removeFromUI(Key) {
 }
 /**** clearConsole ****/
 function clearConsole() {
-    removeFromUI('Console');
     setInContext('Console', '');
     //  rerenderPlayground()
 }
@@ -888,7 +887,6 @@ async function ResearchFor(Objective) {
         while (Findings.length > 0) {
             Result = await SolutionMergedFromTexts(Result, Findings.shift() || '', Objective);
         }
-        console.log('merged result', quoted(Result));
         return JSON.stringify((await SolutionEncodedFrom(Result, Objective)) || '');
     }
 }
@@ -1004,6 +1002,7 @@ async function ComputationOf(Objective) {
     const ParameterList = await ParameterListFor(Objective);
     console.log('ParameterList', ParameterList);
     let FunctionSource = await FunctionFor(Objective, ParameterList);
+    console.log('FunctionSource', FunctionSource);
     let BlockCommentMatch = FunctionSource.match(/^\s*\/\*[\s\S]*\*\/\s*/);
     let afterBlockComment = (BlockCommentMatch == null ? 0 : BlockCommentMatch[0].length);
     if (FunctionSource.slice(afterBlockComment).startsWith('function')) {
@@ -1015,7 +1014,6 @@ async function ComputationOf(Objective) {
         throwError('FunctionGenerationError: could not generate executable function ' +
             '(unexpected source format)');
     }
-    console.log('FunctionSource', FunctionSource);
     let compiledFunction;
     try {
         logAction('(compiling JavaScript function)');
@@ -1077,7 +1075,6 @@ async function ParameterListFor(Objective) {
         ParameterList = [];
     }
     else {
-        console.log('ParameterList', ParameterList);
         ParameterList.forEach((Parameter) => {
             expectIntegerInRange('parameter fact index', Parameter.Index, 0, Knowledge.length - 1);
             expectIdentifier('parameter name', Parameter.Name);
@@ -1541,7 +1538,6 @@ function HTMLtoText(HTML, Options) {
 //------------------------------------------------------------------------------
 /**** rerenderPlayground ****/
 function rerenderPlayground() {
-    console.log('rerenderPlayground', Playground.InterpreterState);
     if (Playground.View != null) {
         Playground.View.rerender();
     }
@@ -2124,8 +2120,6 @@ function startBlocklyProgram() {
         return;
     }
     let Code = javascriptGenerator.workspaceToCode(Playground.Workspace);
-    console.log('Code', Code);
-    console.log('Playground', Playground);
     try {
         Playground.Interpreter = new Interpreter(Code, externalAPI);
     }
@@ -5915,7 +5909,6 @@ async function loadExample(Example) {
     }
 }
 function SetFromKeyValueList(List) {
-    console.log('List', List);
     expectListSatisfying('key value list', List, ValueIsKeyValuePair);
     const Result = {};
     List.forEach((Pair) => Result[Pair[0]] = Pair[1]);
