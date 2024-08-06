@@ -358,7 +358,7 @@ These two blocks enable or disable specific UI elements.
 
 ![clearConsole](./Screenshots/clearConsole.png)
 
-> clears the built-in "Console" and (if need be) removes an item with this name from the UI (see [related example](#console)). If you just want the clear the console but keep its UI element, simply set the context item "Console" to an empty string.
+> clears the built-in "Console" (see [related example](#console)).
 
 ![print](./Screenshots/print.png)
 
