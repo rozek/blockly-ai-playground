@@ -890,9 +890,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Parameter List Generation ###
 
+![ParameterListGenerator](./Examples/ParameterListGenerator.png)
+
 > letting the AI generate and execute a Javascript function to achieve a given objective first requires a well-defined list of parameters so that the function knows what data will be passed as its arguments and the AI knows what kind of argument list to create. Here is an example how you can generate such a parameter list (see [Blockly workspace file](./Examples/ParameterListGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![ParameterListGenerator-UI](./Examples/ParameterListGenerator-UI.png)
+
+> a parameter's "Index" property refers to the knowledge list entry from which the parameter was derived.
 
 ### AI Code Generation and Execution ###
 
