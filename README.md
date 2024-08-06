@@ -962,7 +962,7 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ## DIY AI Applications ##
 
-Now that you saw numerous examples for the custom blocks provided by the "blockly-ai-playground", find some simple but useful examples you could build yourself.
+Now that you saw numerous examples for the custom blocks provided by the "blockly-ai-playground", here are some simple but useful examples of actual AI-assisted applications you (or your students) could build yourself/themselves.
 
 ### Translator ###
 
