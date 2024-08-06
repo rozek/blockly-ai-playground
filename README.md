@@ -11,6 +11,7 @@
   <a href="#object-support">Object Support</a> |
   <a href="#examples">Simple Examples</a> |
   <a href="#ai-examples">AI Examples</a>
+  <a href="#diy-ai-applications">DIY AI Applications</a>
 </center>
 
 # blockly-ai-playground #
@@ -958,6 +959,21 @@ The following examples actually include AI-related blocks. As before, the Blockl
 ![AIAgent-UI](./Examples/AIAgent-UI.png)
 
 > this is what you may get as a result. **Feel free to compare this output with what MS Copilot or Perplexity AI will tell you - and be impressed!** Nota bene: your mileage will <u>definitely</u> vary from run to run - use that experience to treat every response from an AI (or an AI Agent) with care, even if you asked a "professional" one!
+
+## DIY AI Applications ##
+
+Now that you saw numerous examples for the custom blocks provided by the "blockly-ai-playground", find some simple but useful examples you could build yourself.
+
+### Translator ###
+
+![TranslatorApp_I](./Examples/TranslatorApp_I.png)
+![TranslatorApp_II](./Examples/TranslatorApp_II.png)
+
+> this is a simple application which translates a given text into english. If you replace text input and output by the blocks for speech recognition and synthesis, you may even talk to that application - isn't that cool?
+
+![TranslatorApp-UI](./Examples/TranslatorApp-UI.png)
+
+> and here is how a translation run could look like
 
 ## License ##
 
