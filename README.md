@@ -850,9 +850,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Search Phrase Generation ###
 
+![SearchPhraseGenerator](./Examples/SearchPhraseGenerator.png)
+
 > if you want to conduct a web research for a given topic, you may have to generate a search phrase first - this example does that for you (see [Blockly workspace file](./Examples/SearchPhraseGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![SearchPhraseGenerator-UI](./Examples/SearchPhraseGenerator-UI.png)
+
+> and here you see what a search phrase may look like
 
 ### AI Information Extraction ###
 
