@@ -940,9 +940,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Answer Generator ###
 
+![AnswerGenerator](./Examples/AnswerGenerator.png)
+
 > every run of an AI agent should finally produce a response - this example demonstrates how to do so (see [Blockly workspace file](./Examples/AnswerGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![AnswerGenerator-UI](./Examples/AnswerGenerator-UI.png)
+
+> formulating sentences is something that AI is good at.
 
 ### AI Agent ###
 
