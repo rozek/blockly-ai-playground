@@ -930,9 +930,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Knowledge Generator ###
 
+![KnowledgeGenerator](./Examples/KnowledgeGenerator.png)
+
 > both the "ResearchTool" and the "ComputationTool" produce new "facts" which have to be added to existing knowledge for an AI agent to continue its work and (in the end) produce a response. This example shows how that can be done (see [Blockly workspace file](./Examples/KnowledgeGenerator.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![KnowledgeGenerator-UI](./Examples/KnowledgeGenerator-UI.png)
+
+> this is what "knowledge" generated from a "fact" may look like. In this case, the "fact" is already part of the description - which wasn't planned, but does not hurt.
 
 ### AI Answer Generator ###
 
