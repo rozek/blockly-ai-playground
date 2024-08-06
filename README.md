@@ -860,9 +860,13 @@ The following examples actually include AI-related blocks. As before, the Blockl
 
 ### AI Information Extraction ###
 
+![InformationExtractor](./Examples/InformationExtractor.png)
+
 > if you have a text that contains information you need for a given task, you want the AI to read that text and extract what is relevant - here is an example of how to do that (see [Blockly workspace file](./Examples/InformationExtractor.json) - download it onto your computer and then upload it into the Blockly workspace)
 
-> t.b.w.
+![InformationExtractor-UI](./Examples/InformationExtractor-UI.png)
+
+> here you have an example for a useful information extraction 
 
 ### AI Information Validation ###
 
