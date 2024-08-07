@@ -676,20 +676,6 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 
 
-### Text-to-Speech ###
-
-![speak](./Examples/speak.png)
-
-> this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json))
-
-### WebSpeech ###
-
-![WebSpeech](./Examples/WebSpeech.png)
-
-> this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json))
-
-
-
 ### Context ###
 
 ![Context](./Examples/Context.png)
@@ -704,6 +690,10 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 
 
+### Input Elements ###
+
+> t.b.w.
+
 ### Textline Input ###
 
 ![TextlineInput](./Examples/TextlineInput.png)
@@ -716,7 +706,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example demonstrates speech recognition using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/SpeechInput.json))
 
-### CheckboxElement ###
+### Checkbox ###
 
 > t.b.w.
 
@@ -730,7 +720,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > t.b.w.
 
-### APIServerInputElement ###
+### APIServer Input ###
 
 > t.b.w.
 
@@ -760,11 +750,29 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example demonstrates how to react on a button click (see [Blockly workspace file](./Examples/ButtonWasClicked.json))
 
+
+
 ### Objects ###
 
 ![Objects](./Examples/Objects.png)
 
 > this example demonstrates how to work with objects (see [Blockly workspace file](./Examples/Objects.json))
+
+
+
+### Text-to-Speech ###
+
+![speak](./Examples/speak.png)
+
+> this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json))
+
+### WebSpeech ###
+
+![WebSpeech](./Examples/WebSpeech.png)
+
+> this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json))
+
+
 
 ### Web Search ###
 
@@ -781,6 +789,17 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 ### Wikipedia Article Retrieval ###
 
 > t.b.w.
+
+
+
+### Conversion of HTML to Text ###
+
+> t.b.w.
+
+### Extraction of JSON from a Text ###
+
+> t.b.w.
+
 
 
 ## AI Examples ##
