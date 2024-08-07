@@ -692,7 +692,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Input Elements ###
 
-> t.b.w.
+![InputElements](./Examples/InputElements.png)
+
+> this example shows all available input elements (see [Blockly workspace file](./Examples/InputElements.json))
+
+![InputElements-UI](./Examples/InputElements-UI.png)
 
 ### Textline Input ###
 
