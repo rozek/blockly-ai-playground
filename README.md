@@ -704,6 +704,8 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json)). the other input elements work quite similarly
 
+![TextlineInput-UI](./Examples/TextlineInput-UI.png)
+
 ### SpeechInput ###
 
 ![SpeechInput](./Examples/SpeechInput.png)
