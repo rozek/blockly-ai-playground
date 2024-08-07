@@ -106,6 +106,7 @@ the inferencing parameters
 
 * `default_model` - the model to use for completions (no preset, as it highly depends on the configured API Server)
 * `default_max_tokens` - the maximum number of completion tokens to be returned (preset to 2048)
+* `default_num_ctx` - the maximum context size (no preset, if set it must be greater than "max_tokens")
 * `default_temperature` - the "response randomness" setting (0...2, preset to 0)
 * `default_top_p` - the "nucleus sampling threshold" setting (0...1, no preset)
 * `default_top_k` - the "top-k filtering setting" setting (0...2048, preset to 1)
