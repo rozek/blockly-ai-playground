@@ -755,7 +755,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![OutputElements](./Examples/OutputElements.png)
 
-> this example shows all output elements of the playground UI (see [Blockly workspace file](./Examples/OutputElements.json))
+> this example shows all output elements of the playground UI (see [Blockly workspace file](./Examples/OutputElements.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![OutputElements-UI](./Examples/OutputElements-UI.png)
 
@@ -769,7 +769,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![enable_disable](./Examples/enable_disable.png)
 
-> this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json))
+> this example demonstrates the effects of enabling or diabling either the whole UI or individual UI elements (see [Blockly workspace file](./Examples/enable_disable.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### Event Loop ###
 
@@ -779,7 +779,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![ButtonWasClicked](./Examples/ButtonWasClicked.png)
 
-> this example demonstrates how to react on a button click (see [Blockly workspace file](./Examples/ButtonWasClicked.json))
+> this example demonstrates how to react on a button click (see [Blockly workspace file](./Examples/ButtonWasClicked.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 
 
@@ -787,7 +787,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![Objects](./Examples/Objects.png)
 
-> this example demonstrates how to work with objects (see [Blockly workspace file](./Examples/Objects.json))
+> this example demonstrates how to work with objects (see [Blockly workspace file](./Examples/Objects.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 
 
@@ -795,13 +795,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![speak](./Examples/speak.png)
 
-> this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json))
+> this example demonstrates text-to-speech synthesis using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/speak.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### WebSpeech ###
 
 ![WebSpeech](./Examples/WebSpeech.png)
 
-> this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json))
+> this example illustrates how to use the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/WebSpeech.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 
 
