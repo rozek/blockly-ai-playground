@@ -648,31 +648,30 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![Hello_World](./Examples/Hello_World.png)
 
-> this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json))
-
+> this is the typical "Hello, World" example (see [Blockly workspace file](./Examples/Hello_World.json) - download it onto your computer and then upload it into the Blockly workspace)
 ### Alert, Confirm, Prompt ###
 
 ![Alert_Confirm_Prompt](./Examples/Alert_Confirm_Prompt.png)
 
-> if you do not want to implement a "real" user interface (with an event loop), it may already be sufficient to use the browser's built-in pop-up dialogs `alert`, `confirm` and `prompt` - for simple use cases, at least. This example demonstrates how to use them (see [Blockly workspace file](./Examples/Alert_Confirm_Prompt.json))
+> if you do not want to implement a "real" user interface (with an event loop), it may already be sufficient to use the browser's built-in pop-up dialogs `alert`, `confirm` and `prompt` - for simple use cases, at least. This example demonstrates how to use them (see [Blockly workspace file](./Examples/Alert_Confirm_Prompt.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### Console ###
 
 ![Console](./Examples/Console.png)
 
-> this example demonstrates all Console functions (see [Blockly workspace file](./Examples/Console.json))
+> this example demonstrates all Console functions (see [Blockly workspace file](./Examples/Console.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### Suspend, Resume, Abort ###
 
 ![Suspend_Resume_Abort](./Examples/Suspend_Resume_Abort.png)
 
-> use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json))
+> use this little Blockly program to get familiar with "Suspend", "Resume" and "Abort" (see [Blockly workspace file](./Examples/Suspend_Resume_Abort.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### throw ###
 
 ![throwError](./Examples/throwError.png)
 
-> this example illustrates how to use the "throw" block (see [Blockly workspace file](./Examples/throwError.json)) - please note, that all blocks following a "throw" will not be evaluated as throwing an exception will terminate a Blockly program
+> this example illustrates how to use the "throw" block (see [Blockly workspace file](./Examples/throwError.json) - download it onto your computer and then upload it into the Blockly workspace) - please note, that all blocks following a "throw" will not be evaluated as throwing an exception will terminate a Blockly program
 
 
 
@@ -680,13 +679,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![Context](./Examples/Context.png)
 
-> this example demonstrates all local context functions (see [Blockly workspace file](./Examples/Context.json))
+> this example demonstrates all local context functions (see [Blockly workspace file](./Examples/Context.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### preserve and restore ###
 
 ![preserve_restore](./Examples/preserve_restore.png)
 
-> this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json))
+> this example demonstrates how to preserve and restore context items (see [Blockly workspace file](./Examples/preserve_restore.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 
 
@@ -694,7 +693,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![InputElements](./Examples/InputElements.png)
 
-> this example shows all available input elements (see [Blockly workspace file](./Examples/InputElements.json))
+> this example shows all available input elements (see [Blockly workspace file](./Examples/InputElements.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![InputElements-UI](./Examples/InputElements-UI.png)
 
@@ -702,7 +701,7 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![TextlineInput](./Examples/TextlineInput.png)
 
-> this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json)). the other input elements work quite similarly
+> this example shows textline input elements in several variations (see [Blockly workspace file](./Examples/TextlineInput.json) - download it onto your computer and then upload it into the Blockly workspace). the other input elements work quite similarly
 
 ![TextlineInput-UI](./Examples/TextlineInput-UI.png)
 
@@ -710,13 +709,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![SpeechInput](./Examples/SpeechInput.png)
 
-> this example demonstrates speech recognition using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/SpeechInput.json))
+> this example demonstrates speech recognition using the Browser's built-in WebSpeech API (see [Blockly workspace file](./Examples/SpeechInput.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ### Checkbox ###
 
 ![Checkbox](./Examples/Checkbox.png)
 
-> Checkboxes support context values `'true'` and `'false'` (actually, any value different from `'true'` is considered `'false'`)
+> Checkboxes support context values `'true'` and `'false'` (actually, any value different from `'true'` is considered `'false'`) (see [Blockly workspace file](./Examples/Checkbox.json) - download it onto your computer and then upload it into the Blockly workspace)
 
 ![Checkbox-UI](./Examples/Checkbox-UI.png)
 
@@ -726,7 +725,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![RadiobuttonGroup](./Examples/RadiobuttonGroup.png)
 
-> this example illustrates how to use a radiobutton group (see [Blockly workspace file](./Examples/RadiobuttonGroup.json))
+> Radiobutton groups may manage an arbitrary number of individual radio buttons, from which at most one may be checked at any time. These buttons have to be added using "append Choice" blocks (see [Blockly workspace file](./Examples/RadiobuttonGroup.json) - download it onto your computer and then upload it into the Blockly workspace). The value of a radiobutton group is then the (0-based) index of the checked radiobutton - any invalid context value will uncheck all buttons.
+
+![RadiobuttonGroup-UI](./Examples/RadiobuttonGroup-UI.png)
+
+> if you want to react on changes of a radiobutton group's state, just check for new user input.
 
 ### DropDown ###
 
