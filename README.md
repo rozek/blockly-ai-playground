@@ -743,7 +743,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### APIServer Input ###
 
-> t.b.w.
+![APIServerInput](./Examples/APIServerInput.png)
+
+> the "APIServerInput" element is just a special URLInput element: in contrast to the normal one it adds a drop-down menu with predefined URls for common API servers (see [Blockly workspace file](./Examples/APIServerInput.json) - download it onto your computer and then upload it into the Blockly workspace).
+
+![APIServerInput-UI](./Examples/APIServerInput-UI.png)
+
+> here you see what an APIServerInput element looks like 
 
 ### Output Elements ###
 
