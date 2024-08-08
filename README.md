@@ -769,7 +769,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Event Loop ###
 
-> t.b.w.
+![EventLoop](./Examples/EventLoop.png)
+
+> user input and button clicks are handled within "event loops". This example illustrates how you can implement a simple program which waits for the user to enter some text, enables a "Start" button whenever such text exists and - after clicking the button - disables the whole user interface in order to avoid unwanted changes while the computer does some lengthy processing, displays any results and then re-enables the user interface again (see [Blockly workspace file](./Examples/EventLoop.json) - download it onto your computer and then upload it into the Blockly workspace)
+
+![EventLoop-UI](./Examples/EventLoop-UI.png)
+
+> here is what the user interface looks like - of course, the example does not implement any real "processing" but simply uses a short delay to create the illusion of some lengthy work.
 
 ### Button Clicks ###
 
