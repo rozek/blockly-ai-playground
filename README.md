@@ -757,6 +757,10 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > this example shows all output elements of the playground UI (see [Blockly workspace file](./Examples/OutputElements.json))
 
+![OutputElements-UI](./Examples/OutputElements-UI.png)
+
+> here you see what the output elements look like 
+
 ### Configuration Options ###
 
 > t.b.w.
