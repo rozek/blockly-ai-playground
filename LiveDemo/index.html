@@ -282,7 +282,7 @@
 *                                                                              *
 *******************************************************************************/
 const { Order, javascriptGenerator } = javascript;
-import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectIntegerInRange, expectOrdinal, expectNonEmptyString, expectText, expectedText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
+import { quoted, ValueIsBoolean, ValueIsNumber, ValueIsNumberInRange, ValueIsInteger, ValueIsIntegerInRange, ValueIsOrdinal, ValueIsCardinal, ValueIsString, ValueIsNonEmptyString, ValueIsStringMatching, ValueIsText, ValueIsTextline, ValueIsPlainObject, ValueIsList, ValueIsListSatisfying, ValueIsOneOf, ValueIsFunction, ValueIsColor, ValueIsEMailAddress, ValueIsURL, ValidatorForClassifier, acceptNil, rejectNil, expectBoolean, expectNumber, expectIntegerInRange, expectOrdinal, allowString, expectNonEmptyString, expectText, expectedText, expectTextline, allowPlainObject, expectPlainObject, expectListSatisfying, expectOneOf, expectURL, } from 'javascript-interface-library';
 import { render, html, Component } from 'htm/preact';
 import hyperactiv from 'hyperactiv';
 const { observe, computed } = hyperactiv;
@@ -482,7 +482,13 @@ function getFromContext(Key) {
 /**** setInContext ****/
 function setInContext(Key, Value) {
     expectIdentifier('context item key', Key);
-    Playground.Context[Key] = Value;
+    allowString('context item value', Value);
+    if (Value == null) {
+        delete Playground.Context[Key];
+    }
+    else {
+        Playground.Context[Key] = Value;
+    }
     const Index = Playground.UI.findIndex((Item) => Item.Key === Key);
     if (Index >= 0) {
         rerenderPlayground();
@@ -658,15 +664,15 @@ function println(Message) {
 /**** logStep ****/
 function logStep(Message) {
     expectText('log message', Message);
-    if (getFromContext('logStepsToConsole') === true) {
+    if (getFromContext('logStepsToConsole') === 'true') {
         println('\n----\nnext Step: ' + Message + '\n----');
     }
 }
 /**** logAction ****/
 function logAction(Message) {
     expectText('log message', Message);
-    if ((getFromContext('logStepsToConsole') === true) &&
-        (getFromContext('logActionsToConsole') === true)) {
+    if ((getFromContext('logStepsToConsole') === 'true') &&
+        (getFromContext('logActionsToConsole') === 'true')) {
         println(Message);
     }
 }
@@ -1146,6 +1152,9 @@ async function StepsDerivedFromText(Task) {
 async function addKnowledgeFrom(Objective, Fact) {
     expectText('objective', Objective);
     expectText('fact', Fact);
+    if (Fact.trim().length === 0) {
+        return;
+    }
     let Knowledge = undefined;
     try {
         let JSONKnowledge = '' + getFromContext('Knowledge');
@@ -1272,10 +1281,7 @@ async function WebSearchFor(SearchPhrase) {
 async function WebSearch(SearchPhrase) {
     const SearXNGServer = getFromContext('SearXNGServer');
     if (ValueIsURL(SearXNGServer)) { // then search using the API
-        let SearXNGThreshold = getFromContext('SearXNGScoreThreshold') || 2;
-        if (ValueIsString(SearXNGThreshold)) {
-            SearXNGThreshold = parseFloat(SearXNGThreshold);
-        }
+        let SearXNGThreshold = parseFloat(getFromContext('SearXNGScoreThreshold') || '2');
         if (!ValueIsNumberInRange(SearXNGThreshold, 0, 10, true, true))
             throwError('InvalidContextItem: invalid "SearXNGScoreThreshold" context item found');
         const Parameters = new URLSearchParams({
@@ -1289,16 +1295,14 @@ async function WebSearch(SearchPhrase) {
     }
     else { // else search using the Web interface
         let SearXNGServers = [];
-        const SearXNGServerList = getFromContext('SearXNGServerList');
-        if (ValueIsString(SearXNGServerList)) {
-            try {
-                const URLList = JSON.parse(SearXNGServerList);
-                if (ValueIsListSatisfying(URLList, ValueIsURL)) {
-                    SearXNGServers = URLList;
-                }
+        const SearXNGServerList = getFromContext('SearXNGServerList') || '[]';
+        try {
+            const URLList = JSON.parse(SearXNGServerList);
+            if (ValueIsListSatisfying(URLList, ValueIsURL)) {
+                SearXNGServers = URLList;
             }
-            catch (Signal) { /* nop */ }
         }
+        catch (Signal) { /* nop */ }
         if (SearXNGServers.length === 0) {
             const Response = await fetch('https://searx.space/data/instances.json');
             if (Response.ok) {
@@ -2129,6 +2133,7 @@ function startBlocklyProgram() {
     }
     clearContext();
     clearUI();
+    enableUI();
     Object.assign(Playground.Context, {
         APIServer: undefined, APIKey: undefined,
         SearXNGServer: 'http:127.0.0.1:8080', SearXNGScoreThreshold: 2,
@@ -5327,7 +5332,7 @@ class NumberInputItem extends PlaygroundUIItemView {
             if (Enabling == false) {
                 return consumingEvent(Event);
             }
-            setInContext(Key, parseFloat(Event.target.value));
+            setInContext(Key, Event.target.value);
             enqueueUIEvent('input', Key);
         }
         function onBlur() { me.rerender(); }
@@ -5454,18 +5459,18 @@ class CheckboxItem extends PlaygroundUIItemView {
         const { OptionSet } = Item;
         const Key = Item.Key;
         const Enabling = acceptableBoolean(OptionSet.Enabling, true) && Playground.UIEnabling;
-        let ValueToShow = acceptableBoolean(getFromContext(Key), false);
+        let ValueToShow = acceptableString(getFromContext(Key), 'false');
         function onClick(Event) {
             if (Enabling == false) {
                 return consumingEvent(Event);
             }
-            setInContext(Key, Event.target.checked);
+            setInContext(Key, '' + Event.target.checked);
             enqueueUIEvent('input', Key);
         }
         return html `
         <div class="Playground UI Label">${Item.Label}</>
         <input type="checkbox" class="Playground UI Element Checkbox"
-          checked=${ValueToShow}
+          checked=${ValueToShow === 'true'}
           disabled=${Enabling == false} onClick=${onClick}
         />
         <div class="Playground UI newLine"/>
@@ -5483,12 +5488,12 @@ class RadiobuttonGroupItem extends PlaygroundUIItemView {
             .map((Choice) => Choice.trim())
             .filter((Choice) => Choice !== '');
         const GroupName = Key + '-Group';
-        let selectedIndex = acceptableOrdinal(getFromContext(Key), -1);
+        let selectedIndex = parseInt(acceptableString(getFromContext(Key), '-1'));
         function onClick(Event, Index) {
             if (Enabling == false) {
                 return consumingEvent(Event);
             }
-            setInContext(Key, Index);
+            setInContext(Key, '' + Index);
             enqueueUIEvent('input', Key);
         }
         return html `
@@ -5521,12 +5526,12 @@ class DropDownItem extends PlaygroundUIItemView {
         const Choices = acceptableText(OptionSet.Choices, '').split('\n')
             .map((Choice) => Choice.trim())
             .filter((Choice) => Choice !== '');
-        let selectedIndex = acceptableOrdinal(getFromContext(Key), -1);
+        let selectedIndex = parseInt(acceptableString(getFromContext(Key), '-1'), 10);
         function onInput(Event) {
             if (Enabling == false) {
                 return consumingEvent(Event);
             }
-            setInContext(Key, Event.target.selectedIndex);
+            setInContext(Key, '' + Event.target.selectedIndex);
             enqueueUIEvent('input', Key);
         }
         return html `
