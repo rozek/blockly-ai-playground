@@ -761,10 +761,6 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 > here you see what the output elements look like 
 
-### Configuration Options ###
-
-> t.b.w.
-
 ### enable and disable ###
 
 ![enable_disable](./Examples/enable_disable.png)
