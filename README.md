@@ -714,7 +714,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Checkbox ###
 
-> t.b.w.
+![Checkbox](./Examples/Checkbox.png)
+
+> Checkboxes support context values `'true'` and `'false'` (actually, any value different from `'true'` is considered `'false'`)
+
+![Checkbox-UI](./Examples/Checkbox-UI.png)
+
+> if you want to react on changes of a checkbox's state, just check for new user input.
 
 ### Radiobutton Group ###
 
