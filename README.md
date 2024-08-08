@@ -809,9 +809,21 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Web Search ###
 
+![WebSearch](./Examples/WebSearch.png)
+
+> t.b.w.
+
+![WebSearch-UI](./Examples/WebSearch-UI.png)
+
 > t.b.w.
 
 ### Web Document Retrieval ###
+
+![WebDocRetrieval](./Examples/WebDocRetrieval.png)
+
+> t.b.w.
+
+![WebDocRetrieval-UI](./Examples/WebDocRetrieval-UI.png)
 
 > t.b.w.
 
