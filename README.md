@@ -733,7 +733,13 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### DropDown ###
 
-> t.b.w.
+![DropDown](./Examples/DropDown.png)
+
+> Drop-down menus may manage an arbitrary number of separate choices, from which at most one may be selected at any time. These choices have to be added using "append Choice" blocks (see [Blockly workspace file](./Examples/DropDown.json) - download it onto your computer and then upload it into the Blockly workspace). The value of a drop-down menu is then the (0-based) index of the selected choice - any invalid context value will deselect all choices.
+
+![DropDown-UI](./Examples/DropDown-UI.png)
+
+> if you want to react on changes of a drop-down menu's state, just check for new user input.
 
 ### APIServer Input ###
 
