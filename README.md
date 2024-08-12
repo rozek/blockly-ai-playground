@@ -811,11 +811,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![WebSearch](./Examples/WebSearch.png)
 
-> t.b.w.
+> the "blockly-ai-playground" can search the web for information which may be relevant to perform a given task. This example illustrates how such a search works
 
 ![WebSearch-UI](./Examples/WebSearch-UI.png)
 
-> t.b.w.
+> here is what you may get when searching for "Joseph Weizenbaum"
 
 ### Web Document Retrieval ###
 
