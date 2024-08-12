@@ -821,11 +821,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![WebDocRetrieval](./Examples/WebDocRetrieval.png)
 
-> t.b.w.
+> after having identified which web documents could be relevant for a certain task, this document has to be loaded and converted to plain text so that the AI will be able to process it. Binary files and other kinds of documents will have to be ignored (i.e., they will just result in an empty text string `''`) - right now, the text loader only supports documents with the MIME type `text/*` 
 
 ![WebDocRetrieval-UI](./Examples/WebDocRetrieval-UI.png)
 
-> here is the output 
+> here is the output after reading a document decribing the "Weizenbaum Institute" in Germany.
 
 ### Wikipedia Search ###
 
