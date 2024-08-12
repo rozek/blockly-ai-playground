@@ -853,21 +853,21 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![HTMLtoText](./Examples/HTMLtoText.png)
 
-> t.b.w.
+> HTML is not what an AI should process directly - it's actual contents should first be converted into plain text, perhaps with some proper formatting for titles, paragraphs and links to help the AI identifying them more reliably. This example demonstrates how to perform this conversion
 
 ![HTMLtoText-UI](./Examples/HTMLtoText-UI.png)
 
-> t.b.w.
+> here you see the conversion result
 
 ### Extraction of JSON from a Text ###
 
 ![JSONinText](./Examples/JSONinText.png)
 
-> t.b.w.
+> even when instructed to output plain JSON only, an AI may still "decorate" JSON output with explanations and comments. In this example you will see how to extract a JSON specification from a given text
 
 ![JSONinText-UI](./Examples/JSONinText-UI.png)
 
-> t.b.w.
+> and here you see the actually extracted JSON specification
 
 
 
