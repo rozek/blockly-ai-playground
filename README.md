@@ -851,6 +851,12 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Conversion of HTML to Text ###
 
+![HTMLtoText](./Examples/HTMLtoText.png)
+
+> t.b.w.
+
+![HTMLtoText-UI](./Examples/HTMLtoText-UI.png)
+
 > t.b.w.
 
 ### Extraction of JSON from a Text ###
