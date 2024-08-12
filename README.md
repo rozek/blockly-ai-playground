@@ -244,7 +244,7 @@ These two blocks enable or disable specific UI elements.
 
 ![showUI](./Screenshots/showUI.png)
 
-> switches to the playground user interface pane
+> switches to the playground user interface pane (see [related example](#hello-world))
 
 ![UIElements](./Screenshots/enableUI.png)
 
@@ -272,23 +272,23 @@ These two blocks enable or disable specific UI elements.
 
 ![appendTextlineInput](./Screenshots/appendTextlineInput.png)
 
-> appends a textline input element (based on an [HTML input element of type "text"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern`, `SpellChecking` and `Enabling` (see [related example](#textline-input))
+> appends a textline input element (based on an [HTML input element of type "text"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/text)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern`, `SpellChecking` and `Enabling` (see [related example](#input-elements))
 
 ![appendPasswordInput](./Screenshots/appendPasswordInput.png)
 
-> appends a password input element (based on an [HTML input element of type "password"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+> appends a password input element (based on an [HTML input element of type "password"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling` (see [related example](#input-elements))
 
 ![appendNumberInput](./Screenshots/appendNumberInput.png)
 
-> appends a number input element (based on an [HTML input element of type "number"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `Minimum`, `Maximum`, `Stepping` and `Enabling`
+> appends a number input element (based on an [HTML input element of type "number"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `Minimum`, `Maximum`, `Stepping` and `Enabling` (see [related example](#input-elements))
 
 ![appendURLInput](./Screenshots/appendURLInput.png)
 
-> appends a URL input element (based on an [HTML input element of type "url"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+> appends a URL input element (based on an [HTML input element of type "url"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/url)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling` (see [related example](#input-elements))
 
 ![appendTextInput](./Screenshots/appendTextInput.png)
 
-> appends a (multiline) text input element (based on an [HTML textarea](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `LineWrapping`, `SpellChecking` and `Enabling`
+> appends a (multiline) text input element (based on an [HTML textarea](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `LineWrapping`, `SpellChecking` and `Enabling` (see [related example](#input-elements))
 
 ![appendSpeechInput](./Screenshots/appendSpeechInput.png)
 
@@ -300,7 +300,7 @@ These two blocks enable or disable specific UI elements.
 
 ![appendCheckbox](./Screenshots/appendCheckbox.png)
 
-> appends a checkbox element (based on an [HTML input element of type "checkbox"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element only supports the option `Enabling`
+> appends a checkbox element (based on an [HTML input element of type "checkbox"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox)) with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended. This element only supports the option `Enabling` (see [related example](#checkbox))
 
 ![appendRadiobuttonGroup](./Screenshots/appendRadiobuttonGroup.png)
 
@@ -312,11 +312,11 @@ These two blocks enable or disable specific UI elements.
 
 > appends a drop-down element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
 >
-> After adding a new DropDown to the UI, you still have to define the entries from which the user may select. This can be done using the "append Choice" block - one per selectable entry. The context item associated with the DropDown will then contain the (0-based) index of the currently selected entry
+> After adding a new DropDown to the UI, you still have to define the entries from which the user may select. This can be done using the "append Choice" block - one per selectable entry. The context item associated with the DropDown will then contain the (0-based) index of the currently selected entry (see [related example](#dropdown))
 
 ![appendButton](./Screenshots/appendButton.png)
 
-> appends a button element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended
+> appends a button element with the given name and label to the UI. If an element with the same name already exists, it is removed before the new one is appended (see [related example](#input-elements))
 
 ![appendTextlineOutput](./Screenshots/appendTextlineOutput.png)
 
@@ -340,11 +340,11 @@ These two blocks enable or disable specific UI elements.
 
 ![appendAPIServerInput](./Screenshots/appendAPIServerInput.png)
 
-> appends a URL input element customized for the selection or input of the `APIServer` context item with the given label to the UI. If an element with the name `APIServer` already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling`
+> appends a URL input element customized for the selection or input of the `APIServer` context item with the given label to the UI. If an element with the name `APIServer` already exists, it is removed before the new one is appended. This element supports the options `Placeholder`, `readonly`, `minLength`, `maxLength`, `Pattern` and `Enabling` (see [related example](#apiserver-input))
 
 ![configureUI](./Screenshots/configureUI.png)
 
-> sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options and option values are meaningful (and, thus, used by the UI), depends on the type of the given UI element
+> sets the current value of a given option for an UI element with the given key to a given value. If no element with the given key can be found, an exception is thrown and the program aborted. Which options and option values are meaningful (and, thus, used by the UI), depends on the type of the given UI element (see [related example](#textline-input))
 
 ![ConfigurationOf](./Screenshots/ConfigurationOf.png)
 
@@ -372,7 +372,7 @@ These two blocks enable or disable specific UI elements.
 
 ![appendChoiceTo](./Screenshots/appendChoiceTo.png)
 
-> appends the given text to the list of choices for a radiobutton group or a drop-down element
+> appends the given text to the list of choices for a radiobutton group or a drop-down element (see [related example](#dropdown))
 
 ![clearConsole](./Screenshots/clearConsole.png)
 
@@ -396,7 +396,7 @@ These two blocks enable or disable specific UI elements.
 
 ![wheneverUIEventOccurred](./Screenshots/wheneverUIEventOccurred.png)
 
-> starts an event loop and runs the given statements whenever a new UI event was received, waiting indefinitely for new events
+> starts an event loop and runs the given statements whenever a new UI event was received, waiting indefinitely for new events (see [related example](#event-loop))
 
 ![ButtonWasClicked](./Screenshots/ButtonWasClicked.png)
 
@@ -404,7 +404,7 @@ These two blocks enable or disable specific UI elements.
 
 ![InputWasChanged](./Screenshots/InputWasChanged.png)
 
-> returns `true` if the currently processed UI event indicates that new input for the UI element with the given name was received - or `false` otherwise
+> returns `true` if the currently processed UI event indicates that new input for the UI element with the given name was received - or `false` otherwise (see [related example](#webspeech))
 
 ![leaveUIEventLoop](./Screenshots/leaveUIEventLoop.png)
 
@@ -417,12 +417,12 @@ The following blocks perform basic AI functions
 ![ChatCompletionForOptionPrefix](./Screenshots/ChatCompletionForWithOptionPrefix.png)
 ![ChatCompletionFor](./Screenshots/ChatCompletionFor.png)
 
-> performs a chat completion for the given list of messages and returns the string created by the LLM. The message list must consist of an initial "system" message, a "user" message and (optionally) a sequence of "assistant" and "user" messages. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_`
+> performs a chat completion for the given list of messages and returns the string created by the LLM. The message list must consist of an initial "system" message, a "user" message and (optionally) a sequence of "assistant" and "user" messages. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_` (see [related example](#text-completion-proof-of-concept))
 
 ![TextCompletionForWithOptionPrefix](./Screenshots/TextCompletionForWithOptionPrefix.png)
 ![TextCompletionFor](./Screenshots/TextCompletionFor.png)
 
-> performs a text completion for the given prompt. The prompt is used to generate a "system" and a "user" message which are then used to generate a "chat completion". The "system" message is generated from the `SystemTemplate` context item, the "user" message from `UserTemplate`. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_`.  
+> performs a text completion for the given prompt. The prompt is used to generate a "system" and a "user" message which are then used to generate a "chat completion". The "system" message is generated from the `SystemTemplate` context item, the "user" message from `UserTemplate`. If provided, any required options (such as `model`, `temperature`, `top_k` etc.) are taken from context items whose names start with the given option prefix. If such context items do not exist, are empty or the prefix is missing, any options are taken from context items whose names start with `default_` (see [related example](#chat-completion))
 
 ### AI Mezzanines ###
 
@@ -430,7 +430,7 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![SummaryOfText](./Screenshots/SummaryOfText.png)
 
-> returns a summary of the given text. The block uses its own set of context items (prefixed with `Summarizer_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set
+> returns a summary of the given text. The block uses its own set of context items (prefixed with `Summarizer_`) to configure the inferencing parameters for text summarization - missing (or empty) items are taken from the default set (see [related example](#text-summary))
 
 ![TaskDecomposer](./Screenshots/TaskDecomposer.png)
 
@@ -444,19 +444,19 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![ResearchFor](./Screenshots/ResearchFor.png)
 
-> uses the given "objective" to generate an adequate search phrase, search the internet, fetch all documents found by the search engine, extract any relevant information from these documents and produce a common result from all individual findings. Internally, this block uses the search phrase generator, information extractor and validator, solution merger and solution encoder described below.
+> uses the given "objective" to generate an adequate search phrase, search the internet, fetch all documents found by the search engine, extract any relevant information from these documents and produce a common result from all individual findings. Internally, this block uses the search phrase generator, information extractor and validator, solution merger and solution encoder described below (see [related example](#ai-research-tool))
 
 ![SearchGenerator](./Screenshots/SearchGenerator.png)
 
-> generates a "phrase" which can be used to perform an internet search using a common search engine (or SearXNG) (see [AI Web Search](#ai-web-search) example)
+> generates a "phrase" which can be used to perform an internet search using a common search engine (or SearXNG) (see [AI Web Search](#ai-search-phrase-generation) example)
 
 ![InformationExtractor](./Screenshots/InformationExtractor.png)
 
-> a web search usually returns a list of URLs - one per document that seems relevant. This block now fetches one of theses documents from the given URL, "reads" it and extracts any information that seems relevant for the given objective (see [AI Web Search](#ai-web-search) example)
+> a web search usually returns a list of URLs - one per document that seems relevant. This block now fetches one of theses documents from the given URL, "reads" it and extracts any information that seems relevant for the given objective (see [AI Web Search](#ai-information-extraction) example)
 
 ![InformationValidator](./Screenshots/InformationValidator.png)
 
-> extracting information from a document may return nonsense. In order not to dilute the final result, this block checks if the given extract is actually relevant for the given objective or not. It returns `true` if it is or `false` otherwise (see [AI Web Search](#ai-web-search) example)
+> extracting information from a document may return nonsense. In order not to dilute the final result, this block checks if the given extract is actually relevant for the given objective or not. It returns `true` if it is or `false` otherwise (see [AI Web Search](#ai-information-validation) example)
 
 ![SolutionMerger](./Screenshots/SolutionMerger.png)
 
@@ -464,19 +464,19 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![SolutionEncoder](./Screenshots/SolutionEncoder.png)
 
-> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search-with-live-reporting))
+> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search))
 
 ![ComputationOf](./Screenshots/ComputationOf.png)
 
-> generates a JavaScript function to achieve the given "objective", executes it and returns the result. This block internally uses the parameter list, function and argument generators described below.
+> generates a JavaScript function to achieve the given "objective", executes it and returns the result. This block internally uses the parameter list, function and argument generators described below (see [related example](#ai-computation-tool))
 
 ![ParameterListGenerator](./Screenshots/ParameterListGenerator.png)
 
-> uses the current "knowledge" (taken from the context item `Knowledge`) and generates a (possibly empty) list of parameter specifications for a Javascript function to achieve the given "objective")
+> uses the current "knowledge" (taken from the context item `Knowledge`) and generates a (possibly empty) list of parameter specifications for a Javascript function to achieve the given "objective") (see [related example](#ai-parameter-list-generation))
 
 ![FunctionGenerator](./Screenshots/FunctionGenerator.png)
 
-> uses the given parameter specification list and generates a JavaScript function to achieve the given "objective".
+> uses the given parameter specification list and generates a JavaScript function to achieve the given "objective" (see [related example](#ai-code-generation-and-execution))
 
 ![ArgumentGenerator](./Screenshots/ArgumentGenerator.png)
 
