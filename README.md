@@ -464,7 +464,7 @@ The following blocks internally use AI requests themselves to perform some tasks
 
 ![SolutionEncoder](./Screenshots/SolutionEncoder.png)
 
-> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search with live Reporting](#ai-web-search))
+> AI responses are often "noisy", i.e. they contain additional "decorative" words besides the actually requested information. This block therefore extracts the plain response and returns it as a list of facts (see example [AI Web Search](#ai-web-search))
 
 ![ComputationOf](./Screenshots/ComputationOf.png)
 
