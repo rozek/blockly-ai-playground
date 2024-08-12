@@ -841,11 +841,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![WikipediaArticleRetrieval](./Examples/WikipediaArticleRetrieval.png)
 
-> fter finding a relevant Wikipedia article, that document has to be loaded and prepared for the AI to be processed. This example demonstrates how this can be achieved (loading Wikipedia articles is a bit more complicated than loading a plain text or HTML file because the actual content is surrounded by a lot of "boilerplate" such as Wikipedia-related links)
+> after having identified a relevant Wikipedia article, that document has to be loaded and prepared for the AI to be processed. This example demonstrates how this can be achieved (loading Wikipedia articles is a bit more complicated than loading a plain text or HTML file because the actual content is surrounded by a lot of "boilerplate" such as Wikipedia-related links)
 
 ![WikipediaArticleRetrieval-UI](./Examples/WikipediaArticleRetrieval-UI.png)
 
-> t.b.w.
+> here you see the beginnings of a Wikipedia article about Joseph Weizenbaum
 
 
 
