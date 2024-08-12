@@ -73,7 +73,17 @@ Here is an example for a free extension for Chrome browsers (and compatible ones
 
 ### Communicating with your own PC ###
 
-t.b.w.
+Modern browsers require HTTPS instead of HTTP for several security and trust reasons.
+
+HTTPS requires servers to provide valid certificates to establish a secure, encrypted connection between the client and server, ensuring data integrity and authenticity.
+
+However, this requirement makes it difficult for a web application to communicate with "localhost" because certificate authorities (CAs) do not issue certificates for "localhost" since it is not a unique, publicly-owned domain. Sometimes, self-signed certificates are used instead, but these are not trusted by browsers by default.
+
+A better alternative is to configure a browser to trust "localhost" independend of a certificate:
+
+1. Open Google Chrome (or a similar browser) and type chrome://flags in the address bar
+2. Now activate the settings shown below (you may have top search for them in the list the browser will present)<br> ![BrowserFlags](BrowserFlags.png) <br>The last settings is optional and only required if you want to access a different computer in you LAN at home
+3. you may have to restart your browser afterwards
 
 ## Current Status and Future Plans ##
 
