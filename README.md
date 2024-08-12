@@ -839,6 +839,12 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Wikipedia Article Retrieval ###
 
+![WikipediaArticleRetrieval](./Examples/WikipediaArticleRetrieval.png)
+
+> t.b.w.
+
+![WikipediaArticleRetrieval-UI](./Examples/WikipediaArticleRetrieval-UI.png)
+
 > t.b.w.
 
 
