@@ -829,6 +829,12 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Wikipedia Search ###
 
+![WikipediaSearch](./Examples/WikipediaSearch.png)
+
+> t.b.w.
+
+![WikipediaSearch-UI](./Examples/WikipediaSearch-UI.png)
+
 > t.b.w.
 
 ### Wikipedia Article Retrieval ###
