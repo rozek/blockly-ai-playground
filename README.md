@@ -82,8 +82,8 @@ However, this requirement makes it difficult for a web application to communicat
 A better alternative is to configure a browser to trust "localhost" independend of a certificate:
 
 1. Open Google Chrome (or a similar browser) and type chrome://flags in the address bar
-2. Now activate the settings shown below (you may have top search for them in the list the browser will present)<br> ![BrowserFlags](BrowserFlags.png) <br>The last settings is optional and only required if you want to access a different computer in you LAN at home
-3. you may have to restart your browser afterwards
+2. Now activate the settings shown below (you may have to search for them in the list the browser will present to you)<br> ![BrowserFlags](BrowserFlags.png) <br>The last setting is optional and only required if you want to access a different computer in your LAN at home
+3. You may have to restart your browser afterwards
 
 ## Current Status and Future Plans ##
 
