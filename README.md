@@ -831,11 +831,11 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ![WikipediaSearch](./Examples/WikipediaSearch.png)
 
-> t.b.w.
+> Wikipedia is often a good source for reliable information. This example demonstrates how to search Wikipedia based on a given search phrase
 
 ![WikipediaSearch-UI](./Examples/WikipediaSearch-UI.png)
 
-> t.b.w.
+> here is the list of Wikipedia articles you may get when searching fo "Joseph Weizenbaum"
 
 ### Wikipedia Article Retrieval ###
 
