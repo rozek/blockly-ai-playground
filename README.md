@@ -861,6 +861,12 @@ Here are a few examples which you can upload into the Blockly workspace to get f
 
 ### Extraction of JSON from a Text ###
 
+![JSONinText](./Examples/JSONinText.png)
+
+> t.b.w.
+
+![JSONinText-UI](./Examples/JSONinText-UI.png)
+
 > t.b.w.
 
 
