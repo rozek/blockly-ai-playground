@@ -63,9 +63,11 @@ Modern browser security may cause a lot of trouble when a web application wants 
 
 Cross-Origin Resource Sharing (CORS) is a security feature implemented in web browsers that allows or restricts web pages from making requests to a domain different from the one that served the web page. It is needed to prevent malicious websites from accessing sensitive data on other domains without permission, thereby protecting user data and maintaining web security.
 
-Incorrect CORS settings of a server can block legitimate requests from different domains, leading to functionality issues in web applications. This often results in CORS errors, where the browser blocks the request due to a lack of proper authorization from the server.
+Incorrect CORS settings of a <u>server</u>(!) can block legitimate requests from different domains, leading to functionality issues in web applications. This often results in CORS errors, where the browser blocks the request due to a lack of proper authorization from the server.
 
-To get rid of CORS errors as a browser user, you may install a browser extension that adds the necessary CORS headers to server requests, allowing cross-origin requests to succeed. However, this method should be used only for development purposes, as it can introduce security risks if used indiscriminately
+To get rid of CORS errors as a browser user, you may install a browser extension that adds the necessary CORS headers to server requests, allowing cross-origin requests to succeed. However, this method should be used only for development purposes, as it can introduce security risks if used indiscriminately.
+
+Here is an example for a free extension for Chrome browsers (and compatible ones)
 
 ![CORS Unblocking Extension](CORS-Unblocking.png)
 
