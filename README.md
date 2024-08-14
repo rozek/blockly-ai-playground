@@ -28,8 +28,6 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 > **Import News: you no longer need to install your own SearXNG Server to perform web searches - just leave the SearXNGServer context item empty!**
 
-> **CORS note: modern browser security measures may complicate API requests. To succeed, you may have to install a "CORS Unblocking" extension into your browser (like [this](https://chromewebstore.google.com/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai) one)**
-
 > **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#text-completion-proof-of-concept) and run your first inferences. Later, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents". Finally, when you are ready, build your own AI-assisted applications - perhaps, based on the [DIY AI Applications](#diy-ai-applications) examples**
 
 > **Please note: the "blockly-ai-playground" has only been tested with Perplexity AI (and Ollama with Llama 3.1) on a Mac so far. Additionally, the performance of generative AI is hard to predict - as a consequence, your mileage may vary when compared to what you saw in the video**
@@ -67,7 +65,7 @@ Incorrect CORS settings of a <u>server</u>(!) can block legitimate requests from
 
 To get rid of CORS errors as a browser user, you may install a browser extension that adds the necessary CORS headers to server requests, allowing cross-origin requests to succeed. However, this method should be used only for development purposes, as it can introduce security risks if used indiscriminately.
 
-Here is an example for a free extension for Chrome browsers (and compatible ones)
+Here is an example for a free extension for Chrome browsers (and compatible ones) - [this](https://chromewebstore.google.com/detail/cross-domain-cors/mjhpgnbimicffchbodmgfnemoghjakai) one works fine and is free.
 
 ![CORS Unblocking Extension](CORS-Unblocking.png)
 
