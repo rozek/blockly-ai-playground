@@ -24,7 +24,7 @@ experiment with AI and build your own AI agents using Blockly - even if you are 
 
 > (Work in progress - it was my contribution to the [Backdrop Build v5](https://backdropbuild.com/) contest and had to be launched as an MVP before their deadline. I'm now working on polishing it up...)
 
-[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: please read "Overview" and "Prerequisites" first**
+[Live Demo](https://rozek.github.io/blockly-ai-playground/LiveDemo) **Warning: please read [Overview](#overview) and [Prerequisites](#prerequisites) first. And [Browser Troubleshooting](#browser-troubleshooting) may help you in case of problems**
 
 > **Recommendation: start with the [basic Settings example](#basic-settings) and enter your `APIServer`, `APIKey` and `default_model` settings, at least. Then use the [PoC example](#text-completion-proof-of-concept) and run your first inferences. Later, you may also try the [AI-assisted Web Search](#ai-web-search) and the [AI Agent](#ai-agent) to learn about the benefits of "AI agents". Finally, when you are ready, build your own AI-assisted applications - perhaps, based on the [DIY AI Applications](#diy-ai-applications) examples**
 
